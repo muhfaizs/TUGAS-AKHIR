@@ -7,6 +7,29 @@
 
 :root {
     color-scheme: light;
+
+    /* SatuKIA Design Tokens */
+    --kia-primary: #0D9488;
+    --kia-primary-dark: #0F766E;
+    --kia-primary-deeper: #064E3B;
+    --kia-accent: #F97316;
+    --kia-accent-soft: #FDBA74;
+    --kia-coral: #FB7185;
+    --kia-bg: #F0FDFA;
+    --kia-surface: #FFFFFF;
+    --kia-text: #0F172A;
+    --kia-text-muted: #64748B;
+    --kia-text-light: #94A3B8;
+    --kia-border: rgba(15, 23, 42, 0.06);
+    --kia-glass: rgba(255,255,255,0.7);
+    --kia-glass-border: rgba(255,255,255,0.3);
+    --kia-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --kia-shadow-md: 0 4px 20px rgba(13,148,136,0.1);
+    --kia-shadow-lg: 0 20px 60px rgba(13,148,136,0.15);
+    --kia-shadow-xl: 0 32px 80px rgba(13,148,136,0.2);
+    --kia-radius: 20px;
+    --kia-radius-sm: 12px;
+    --kia-radius-xs: 8px;
 }
 
 * {

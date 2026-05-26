@@ -33,12 +33,17 @@
             <div class="lp-nav-links">
                 @if (Route::has('login'))
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="lp-nav-link lp-nav-link--solid">Dashboard</a>
+                        @php
+                            $dashboardUrl = match(auth()->user()->role) {
+                                'super admin', 'bidan', 'kader' => route('admin.dashboard'),
+                                'orang tua' => route('orangtua.dashboard'),
+                                default => '/'
+                            };
+                        @endphp
+                        <a href="{{ $dashboardUrl }}" class="lp-nav-link lp-nav-link--solid">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="lp-nav-link lp-nav-link--ghost">Masuk</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="lp-nav-link lp-nav-link--solid">Daftar</a>
-                        @endif
+                        <a href="{{ route('login') }}?tab=register" class="lp-nav-link lp-nav-link--solid">Daftar</a>
                     @endauth
                 @endif
             </div>
@@ -282,9 +287,7 @@
                 @if (Route::has('login'))
                     <a href="{{ route('login') }}" class="lp-btn lp-btn--white">Masuk Sekarang</a>
                 @endif
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}" class="lp-btn lp-btn--ghost-white">Daftar Gratis</a>
-                @endif
+                <a href="{{ route('login') }}?tab=register" class="lp-btn lp-btn--ghost-white">Daftar Gratis</a>
             </div>
         </div>
     </section>

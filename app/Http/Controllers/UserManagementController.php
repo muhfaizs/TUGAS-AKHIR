@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
+
+class UserManagementController extends Controller
+{
+    /**
+     * Display the user management page.
+     */
+    public function index(Request $request): View
+    {
+        $query = User::query();
+
+        // Search
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('nik_ortu', 'like', "%{$search}%")
+                    ->orWhere('nip_bidan', 'like', "%{$search}%")
+                    ->orWhere('nomor_kontak', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by role
+        if ($role = $request->input('role')) {
+            $query->where('role', $role);
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('dashboard.users.index', compact('users'));
+    }
+
+    /**
+     * Store a newly created user.
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:50', 'unique:tb_user,username'],
+            'password' => ['required', 'string', 'min:8', Password::defaults()],
+            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nomor_kontak' => ['nullable', 'string', 'max:15'],
+            'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
+            'nip_bidan' => ['nullable', 'string', 'max:30'],
+            'nik_ortu' => ['nullable', 'string', 'size:16'],
+            'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
+            'is_active' => ['nullable', 'boolean'],
+            'wilayah_kerja' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email'],
+        ], [
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'role.required' => 'Role wajib dipilih.',
+            'nik_ortu.size' => 'NIK harus 16 digit.',
+        ]);
+
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = false;
+        }
+
+        User::create($validated);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Pengguna berhasil ditambahkan.');
+    }
+
+    /**
+     * Get a single user for editing (AJAX).
+     */
+    public function show(User $user): JsonResponse
+    {
+        return response()->json($user->only([
+            'id_user', 'username', 'nama_lengkap', 'nomor_kontak',
+            'role', 'nip_bidan', 'nik_ortu', 'kode_instansi_dinkes',
+            'is_active', 'wilayah_kerja', 'email',
+        ]));
+    }
+
+    /**
+     * Update the specified user.
+     */
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:50', Rule::unique('tb_user', 'username')->ignore($user->id_user, 'id_user')],
+            'password' => ['nullable', 'string', 'min:8', Password::defaults()],
+            'nama_lengkap' => ['required', 'string', 'max:255'],
+            'nomor_kontak' => ['nullable', 'string', 'max:15'],
+            'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
+            'nip_bidan' => ['nullable', 'string', 'max:30'],
+            'nik_ortu' => ['nullable', 'string', 'size:16'],
+            'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
+            'is_active' => ['nullable', 'boolean'],
+            'wilayah_kerja' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $user->id_user . ',id_user'],
+        ], [
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'role.required' => 'Role wajib dipilih.',
+            'nik_ortu.size' => 'NIK harus 16 digit.',
+        ]);
+
+        // Only update password if provided
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        }
+
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = false;
+        }
+
+        $user->update($validated);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Data pengguna berhasil diperbarui.');
+    }
+
+    /**
+     * Remove the specified user.
+     */
+    public function destroy(User $user): RedirectResponse
+    {
+        // Prevent deleting yourself
+        if ($user->id_user === auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Pengguna berhasil dihapus.');
+    }
+}
