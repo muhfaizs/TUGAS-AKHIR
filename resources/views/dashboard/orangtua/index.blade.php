@@ -23,16 +23,14 @@
     @else
         <!-- Child Selector -->
         <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-            <label style="font-weight: 600; color: #475569;">Pilih Anak:</label>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <label for="select-anak" style="font-weight: 600; color: #475569;">Pilih Anak:</label>
+            <select id="select-anak" onchange="window.location.href=this.value" style="padding: 10px 16px; border-radius: 12px; border: 1px solid #E2E8F0; font-size: 14px; font-weight: 600; color: #0F172A; background-color: #fff; outline: none; min-width: 200px; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 24 24\" fill=\"%2364748B\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 12px center; background-size: 20px;">
                 @foreach ($anakList as $anak)
-                    <a href="{{ route('orangtua.dashboard', ['anak_id' => $anak->id_anak]) }}" 
-                       style="padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s;
-                              {{ $selectedAnak->id_anak === $anak->id_anak ? 'background: #0D9488; color: #fff; box-shadow: 0 4px 12px rgba(13,148,136,0.3);' : 'background: #fff; color: #64748B; border: 1px solid #E2E8F0;' }}">
+                    <option value="{{ route('orangtua.dashboard', ['anak_id' => $anak->id_anak]) }}" {{ $selectedAnak->id_anak === $anak->id_anak ? 'selected' : '' }}>
                         {{ $anak->nama_anak }}
-                    </a>
+                    </option>
                 @endforeach
-            </div>
+            </select>
         </div>
 
         @if ($pengukuranList->isEmpty())

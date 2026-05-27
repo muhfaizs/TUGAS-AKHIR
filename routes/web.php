@@ -27,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:super admin,bidan,kader')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
+        // Anak Management (for Admin, Bidan, Kader)
+        Route::resource('anak', \App\Http\Controllers\Admin\AnakController::class)->except(['show']);
+
         // User Management (Super Admin only)
         Route::middleware('role:super admin')->group(function () {
             Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
@@ -35,6 +38,10 @@ Route::middleware('auth')->group(function () {
             Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
             Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         });
+
+        // Profile routes (Admin & Bidan)
+        Route::get('/profile', [\App\Http\Controllers\Admin\AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [\App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('profile.update');
     });
 
     // Kader routes

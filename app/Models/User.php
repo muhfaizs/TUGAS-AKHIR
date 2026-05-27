@@ -40,6 +40,7 @@ class User extends Authenticatable
         'is_active',
         'wilayah_kerja',
         'email',
+        'foto_profil',
     ];
 
     /**

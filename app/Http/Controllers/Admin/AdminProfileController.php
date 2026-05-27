@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Controllers\Kader;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
-class KaderProfileController extends Controller
+class AdminProfileController extends Controller
 {
     /**
      * Show the profile edit form.
      */
     public function edit(Request $request): View
     {
-        return view('dashboard.kader.profile', [
+        return view('dashboard.admin.profile', [
             'user' => $request->user(),
         ]);
     }
@@ -31,7 +32,6 @@ class KaderProfileController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $user->id_user . ',id_user'],
-            'wilayah_kerja' => ['nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ], [
@@ -59,7 +59,7 @@ class KaderProfileController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('kader.profile.edit')
+        return redirect()->route('admin.profile.edit')
             ->with('success', 'Profil berhasil diperbarui.');
     }
 }

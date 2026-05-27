@@ -40,21 +40,32 @@
 
             <nav class="sidebar-nav">
                 @if (auth()->user()->isSuperAdmin() || auth()->user()->isBidan() || auth()->user()->isKader())
-                    <p class="sidebar-section-label">Menu Utama</p>
 
                     <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         Dashboard
                     </a>
 
+                    @if(!auth()->user()->isSuperAdmin())
+                    <a href="{{ route('admin.anak.index') }}" class="sidebar-link {{ request()->routeIs('admin.anak.*') ? 'sidebar-link--active' : '' }}" id="nav-admin-anak">
+                        <svg viewBox="0 0 24 24"><path d="M13 2v8h8c0-4.42-3.58-8-8-8zm6.32 13.89C20.37 14.54 21 12.84 21 11H6.44l-.95-2H2v2h2.22s1.89 4.07 2.12 4.42C5.24 16.01 4.5 17.17 4.5 18.5 4.5 20.43 6.07 22 8 22c1.76 0 3.22-1.3 3.46-3h2.08c.24 1.7 1.7 3 3.46 3 1.93 0 3.5-1.57 3.5-3.5 0-1.04-.46-1.97-1.18-2.61zM8 20c-.83 0-1.5-.67-1.5-1.5S7.17 17 8 17s1.5.67 1.5 1.5S8.83 20 8 20zm9 0c-.83 0-1.5-.67-1.5-1.5S16.17 17 17 17s1.5.67 1.5 1.5S17.83 20 17 20z"/></svg>
+                        Kelola Data Anak
+                    </a>
+                    @endif
+
+                    @if (auth()->user()->role === 'super admin' || auth()->user()->role === 'bidan')
                     @if (auth()->user()->role === 'super admin')
-                    <p class="sidebar-section-label">Manajemen</p>
                     <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'sidebar-link--active' : '' }}" id="nav-users">
                         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                         Kelola Pengguna
                     </a>
+                    @endif
+                    <a href="{{ route('admin.profile.edit') }}" class="sidebar-link {{ request()->routeIs('admin.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-admin-profile">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Profil Saya
+                    </a>
                 @elseif (auth()->user()->role === 'kader')
-                    <p class="sidebar-section-label">Manajemen</p>
+
                     <a href="{{ route('kader.pengukuran.create') }}" class="sidebar-link {{ request()->routeIs('kader.pengukuran.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-pengukuran">
                         <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
                         Input Pengukuran
@@ -67,7 +78,6 @@
                 @endif
 
                 @if (auth()->user()->isOrangTua())
-                    <p class="sidebar-section-label">Menu Utama</p>
 
                     <a href="{{ route('orangtua.dashboard') }}" class="sidebar-link {{ request()->routeIs('orangtua.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-ot-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
@@ -113,8 +123,8 @@
 
                 <div class="topbar-right">
                     <div class="topbar-user">
-                        <div class="topbar-avatar">
-                            {{ strtoupper(substr(auth()->user()->nama_lengkap, 0, 2)) }}
+                        <div class="topbar-avatar" style="{{ auth()->user()->foto_profil ? 'background-image: url(' . asset('storage/' . auth()->user()->foto_profil) . '); background-size: cover; background-position: center; color: transparent;' : '' }}">
+                            {{ auth()->user()->foto_profil ? '' : strtoupper(substr(auth()->user()->nama_lengkap, 0, 2)) }}
                         </div>
                         <div class="topbar-user-info">
                             <span class="topbar-user-name">{{ auth()->user()->nama_lengkap }}</span>

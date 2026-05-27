@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Manajemen Profil Kader')
-@section('page_title', 'Profil Kader')
+@section('title', 'Manajemen Profil')
+@section('page_title', 'Profil Pengguna')
 @section('page_subtitle', 'Kelola informasi pribadi dan keamanan akun Anda')
 
 @section('content')
@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('kader.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -70,12 +70,6 @@
             <div>
                 <label for="email" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Alamat Email (Opsional)</label>
                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="contoh@email.com">
-            </div>
-
-            <!-- Wilayah Kerja -->
-            <div>
-                <label for="wilayah_kerja" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Wilayah Kerja</label>
-                <input type="text" name="wilayah_kerja" id="wilayah_kerja" value="{{ old('wilayah_kerja', $user->wilayah_kerja) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="Masukkan wilayah kerja">
             </div>
 
             <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 8px 0;">

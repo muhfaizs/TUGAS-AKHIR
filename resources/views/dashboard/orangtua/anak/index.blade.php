@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="anak-header">
-    <a href="{{ route('orangtua.anak.create') }}" class="btn-add">
+    <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.create') : route('admin.anak.create') }}" class="btn-add">
         <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
         Daftarkan Anak Baru
     </a>
@@ -20,10 +20,10 @@
                     {{ strtoupper(substr($a->nama_anak, 0, 2)) }}
                 </div>
                 <div class="anak-actions">
-                    <a href="{{ route('orangtua.anak.edit', $a) }}" class="btn-icon btn-icon-edit" title="Edit">
+                    <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.edit', $a) : route('admin.anak.edit', $a) }}" class="btn-icon btn-icon-edit" title="Edit">
                         <svg viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
                     </a>
-                    <form method="POST" action="{{ route('orangtua.anak.destroy', $a) }}" class="inline-form" onsubmit="return confirm('Yakin ingin menghapus data anak ini?');">
+                    <form method="POST" action="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.destroy', $a) : route('admin.anak.destroy', $a) }}" class="inline-form" onsubmit="return confirm('Yakin ingin menghapus data anak ini?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-icon btn-icon-delete" title="Hapus">
@@ -43,6 +43,18 @@
                     <span class="detail-label">Jenis Kelamin</span>
                     <span class="detail-value">{{ $a->jenis_kelamin }}</span>
                 </div>
+                @if($a->golongan_darah)
+                <div class="anak-detail">
+                    <span class="detail-label">Golongan Darah</span>
+                    <span class="detail-value">{{ $a->golongan_darah }}</span>
+                </div>
+                @endif
+                @if (!auth()->user()->isOrangTua() && $a->orangTua)
+                <div class="anak-detail">
+                    <span class="detail-label">Orang Tua</span>
+                    <span class="detail-value">{{ $a->orangTua->nama_lengkap }}</span>
+                </div>
+                @endif
                 
                 <div class="anak-stats">
                     <div class="stat-box">
@@ -53,6 +65,12 @@
                         <span class="stat-val">{{ $a->panjang_lahir }}<small>cm</small></span>
                         <span class="stat-lbl">Panjang Lahir</span>
                     </div>
+                    @if($a->lingkar_kepala_lahir)
+                    <div class="stat-box">
+                        <span class="stat-val">{{ $a->lingkar_kepala_lahir }}<small>cm</small></span>
+                        <span class="stat-lbl">Lingkar Kepala</span>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -60,7 +78,7 @@
         <div class="anak-empty">
             <svg class="empty-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
             <p>Belum ada data anak yang didaftarkan.</p>
-            <a href="{{ route('orangtua.anak.create') }}" class="btn-add">Daftarkan Sekarang</a>
+            <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.create') : route('admin.anak.create') }}" class="btn-add">Daftarkan Sekarang</a>
         </div>
     @endforelse
 </div>

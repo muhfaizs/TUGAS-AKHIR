@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\OrangTua;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Anak;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -15,7 +16,8 @@ class AnakController extends Controller
      */
     public function index(Request $request): View
     {
-        $anak = $request->user()->anak()->latest()->get();
+        // Admins, bidan, and kader can see all children
+        $anak = Anak::with('orangTua')->latest()->get();
 
         return view('dashboard.orangtua.anak.index', compact('anak'));
     }
@@ -25,7 +27,8 @@ class AnakController extends Controller
      */
     public function create(): View
     {
-        return view('dashboard.orangtua.anak.create');
+        $orangTuaList = User::where('role', 'orang tua')->orderBy('nama_lengkap')->get();
+        return view('dashboard.orangtua.anak.create', compact('orangTuaList'));
     }
 
     /**
@@ -34,6 +37,7 @@ class AnakController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'id_user' => ['required', 'exists:tb_user,id_user'],
             'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
@@ -51,6 +55,7 @@ class AnakController extends Controller
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
         ], [
+            'id_user.required' => 'Orang tua wajib dipilih.',
             'nik_anak.required' => 'NIK anak wajib diisi.',
             'nik_anak.size' => 'NIK anak harus 16 digit.',
             'nik_anak.unique' => 'NIK anak sudah terdaftar.',
@@ -63,9 +68,9 @@ class AnakController extends Controller
             'panjang_lahir.required' => 'Panjang lahir wajib diisi.',
         ]);
 
-        $request->user()->anak()->create($validated);
+        Anak::create($validated);
 
-        return redirect()->route('orangtua.anak.index')
+        return redirect()->route('admin.anak.index')
             ->with('success', 'Data anak berhasil didaftarkan.');
     }
 
@@ -74,12 +79,8 @@ class AnakController extends Controller
      */
     public function edit(Request $request, Anak $anak): View
     {
-        // Ensure this child belongs to the logged-in user
-        if ($anak->id_user !== $request->user()->id_user) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('dashboard.orangtua.anak.edit', compact('anak'));
+        $orangTuaList = User::where('role', 'orang tua')->orderBy('nama_lengkap')->get();
+        return view('dashboard.orangtua.anak.edit', compact('anak', 'orangTuaList'));
     }
 
     /**
@@ -87,11 +88,8 @@ class AnakController extends Controller
      */
     public function update(Request $request, Anak $anak): RedirectResponse
     {
-        if ($anak->id_user !== $request->user()->id_user) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $validated = $request->validate([
+            'id_user' => ['required', 'exists:tb_user,id_user'],
             'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak,' . $anak->id_anak . ',id_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
@@ -109,6 +107,7 @@ class AnakController extends Controller
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
         ], [
+            'id_user.required' => 'Orang tua wajib dipilih.',
             'nik_anak.required' => 'NIK anak wajib diisi.',
             'nik_anak.size' => 'NIK anak harus 16 digit.',
             'nik_anak.unique' => 'NIK anak sudah terdaftar.'
@@ -116,7 +115,7 @@ class AnakController extends Controller
 
         $anak->update($validated);
 
-        return redirect()->route('orangtua.anak.index')
+        return redirect()->route('admin.anak.index')
             ->with('success', 'Data anak berhasil diperbarui.');
     }
 
@@ -125,13 +124,9 @@ class AnakController extends Controller
      */
     public function destroy(Request $request, Anak $anak): RedirectResponse
     {
-        if ($anak->id_user !== $request->user()->id_user) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $anak->delete();
 
-        return redirect()->route('orangtua.anak.index')
+        return redirect()->route('admin.anak.index')
             ->with('success', 'Data anak berhasil dihapus.');
     }
 }

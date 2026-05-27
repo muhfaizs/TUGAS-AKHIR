@@ -8,7 +8,7 @@
 <div class="profile-container">
     <div class="profile-card">
         <div class="profile-header">
-            <div class="profile-avatar">
+            <div class="profile-avatar" style="{{ $user->foto_profil ? 'background-image: url(' . asset('storage/' . $user->foto_profil) . '); background-size: cover; background-position: center; color: transparent;' : '' }}">
                 {{ strtoupper(substr($user->nama_lengkap, 0, 2)) }}
             </div>
             <div class="profile-info">
@@ -27,11 +27,21 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('orangtua.profile.update') }}" class="profile-form">
+        <form method="POST" action="{{ route('orangtua.profile.update') }}" class="profile-form" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <div class="form-grid">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="foto_profil">Ubah Foto Profil (opsional)</label>
+                    <input type="file" id="foto_profil" name="foto_profil" class="form-input" accept="image/*">
+                    @if($user->foto_profil)
+                        <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" name="hapus_foto" id="hapus_foto" value="1">
+                            <label for="hapus_foto" style="font-size: 13px; color: #EF4444; cursor: pointer;">Hapus foto saat ini</label>
+                        </div>
+                    @endif
+                </div>
                 <div class="form-group">
                     <label for="nama_lengkap">Nama Lengkap</label>
                     <input type="text" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required class="form-input">

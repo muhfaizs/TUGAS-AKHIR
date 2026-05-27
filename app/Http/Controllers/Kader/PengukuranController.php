@@ -39,11 +39,23 @@ class PengukuranController extends Controller
         $tinggiInMeters = $validated['tinggi_badan'] / 100;
         $imt = $validated['berat_badan'] / ($tinggiInMeters * $tinggiInMeters);
 
-        // IMT Flagging logic (simplified for general toddlers/children)
-        // Normally WHO charts are used. We use a simple threshold for the sake of the requirement:
-        // E.g., < 14 (gizi kurang) or > 18 (risiko obesitas) for toddlers.
-        // Let's use < 13.5 or > 19 as flag_risiko = true.
-        $flagRisiko = ($imt < 13.5 || $imt > 19) ? true : false;
+        // IMT Flagging logic
+        // Merah: < 13.5 or > 19
+        // Kuning: >= 13.5 and < 14.5 OR > 18 and <= 19
+        // Hijau: >= 14.5 and <= 18
+        $imtColor = 'hijau'; // default green
+        $statusText = 'Normal';
+        $flagRisiko = false;
+
+        if ($imt < 13.5 || $imt > 19) {
+            $imtColor = 'merah';
+            $statusText = 'Perlu Perhatian';
+            $flagRisiko = true;
+        } elseif (($imt >= 13.5 && $imt < 14.5) || ($imt > 18 && $imt <= 19)) {
+            $imtColor = 'kuning';
+            $statusText = 'Hampir Perlu Perhatian';
+            $flagRisiko = true;
+        }
 
         Pengukuran::create([
             'id_anak' => $validated['id_anak'],
@@ -57,6 +69,11 @@ class PengukuranController extends Controller
         ]);
 
         return redirect()->route('kader.pengukuran.create')
-            ->with('success', 'Data pengukuran berhasil disimpan. IMT: ' . round($imt, 2) . ($flagRisiko ? ' (Perlu Perhatian)' : ' (Normal)'));
+            ->with([
+                'success' => 'Data pengukuran berhasil disimpan.',
+                'imt_status' => $statusText,
+                'imt_value' => round($imt, 2),
+                'imt_color' => $imtColor
+            ]);
     }
 }

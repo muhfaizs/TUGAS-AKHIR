@@ -12,21 +12,29 @@ class Anak extends Model
     protected $fillable = [
         'id_user',
         'nik_anak',
+        'no_bpjs',
         'nama_anak',
+        'anak_ke',
         'tempat_lahir',
         'tanggal_lahir',
         'jenis_kelamin',
+        'golongan_darah',
         'berat_lahir',
         'panjang_lahir',
+        'lingkar_kepala_lahir',
+        'kondisi_lahir',
         'nama_ayah',
         'nama_ibu',
         'catatan',
+        'riwayat_alergi',
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
         'berat_lahir' => 'float',
         'panjang_lahir' => 'float',
+        'lingkar_kepala_lahir' => 'float',
+        'anak_ke' => 'integer',
     ];
 
     /**

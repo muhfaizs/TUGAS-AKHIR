@@ -8,8 +8,23 @@
 <div x-data="pengukuranForm()" class="pengukuran-container" style="max-width: 600px; margin: 0 auto; background: #fff; padding: 32px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
     
     @if (session('success'))
-        <div style="padding: 16px; background: rgba(16,185,129,0.1); color: #059669; border-radius: 12px; margin-bottom: 24px; font-size: 14px; font-weight: 500;">
+        @php
+            $bg = 'rgba(16,185,129,0.1)';
+            $text = '#059669'; // Hijau
+            if(session('imt_color') == 'merah') {
+                $bg = 'rgba(239,68,68,0.1)';
+                $text = '#DC2626';
+            } elseif(session('imt_color') == 'kuning') {
+                $bg = 'rgba(245,158,11,0.1)';
+                $text = '#D97706';
+            }
+        @endphp
+        <div style="padding: 16px; background: {{ $bg }}; color: {{ $text }}; border-radius: 12px; margin-bottom: 24px; font-size: 14px; font-weight: 600;">
             {{ session('success') }}
+            @if(session('imt_value'))
+                <br>
+                IMT: <strong>{{ session('imt_value') }}</strong> &mdash; {{ session('imt_status') }}
+            @endif
         </div>
     @endif
 

@@ -34,6 +34,7 @@ class ProfileController extends Controller
             'nik_ortu' => ['required', 'string', 'size:16', Rule::unique('tb_user')->ignore($user->id_user, 'id_user')],
             'username' => ['required', 'string', 'max:50', Rule::unique('tb_user')->ignore($user->id_user, 'id_user')],
             'password' => ['nullable', 'string', 'min:8', 'confirmed', Password::defaults()],
+            'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'nomor_kontak.required' => 'Nomor kontak wajib diisi.',
@@ -55,6 +56,18 @@ class ProfileController extends Controller
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
+        }
+
+        if ($request->has('hapus_foto') && $request->hapus_foto == '1') {
+            if ($user->foto_profil && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto_profil)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto_profil);
+            }
+            $user->foto_profil = null;
+        } elseif ($request->hasFile('foto_profil')) {
+            if ($user->foto_profil && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto_profil)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto_profil);
+            }
+            $user->foto_profil = $request->file('foto_profil')->store('profile_photos', 'public');
         }
 
         $user->save();
