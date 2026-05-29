@@ -23,7 +23,47 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('kader.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data">
+    @php
+        $oldPosyanduId = old('posyandu_id', $user->posyandu_id);
+        $initPuskesmasId = '';
+        $initKabupatenId = '';
+        if ($oldPosyanduId) {
+            $pos = $posyanduList->firstWhere('id', $oldPosyanduId);
+            if ($pos) {
+                $initPuskesmasId = $pos->puskesmas_id;
+                $pusk = $puskesmasList->firstWhere('id', $initPuskesmasId);
+                if ($pusk) {
+                    $initKabupatenId = $pusk->kabupaten_id;
+                }
+            }
+        }
+    @endphp
+
+    <form method="POST" action="{{ route('kader.profile.update') }}" x-data="{ 
+        showPassword: false, 
+        kabupatenList: {{ json_encode($kabupatenList) }}, 
+        puskesmasList: {{ json_encode($puskesmasList) }}, 
+        posyanduList: {{ json_encode($posyanduList) }}, 
+        kabupaten_id: {{ $initKabupatenId ?: '""' }}, 
+        puskesmas_id: '', 
+        posyandu_id: '', 
+        init() {
+            this.$nextTick(() => {
+                this.puskesmas_id = {{ $initPuskesmasId ?: '""' }};
+                this.$nextTick(() => {
+                    this.posyandu_id = {{ $oldPosyanduId ?: '""' }};
+                });
+            });
+        },
+        get filteredPuskesmas() {
+            if (!this.kabupaten_id) return [];
+            return this.puskesmasList.filter(p => p.kabupaten_id == this.kabupaten_id);
+        },
+        get filteredPosyandu() {
+            if (!this.puskesmas_id) return [];
+            return this.posyanduList.filter(p => p.puskesmas_id == this.puskesmas_id);
+        }
+    }" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -72,10 +112,37 @@
                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="contoh@email.com">
             </div>
 
-            <!-- Wilayah Kerja -->
+            <!-- Kabupaten/Kota -->
             <div>
-                <label for="wilayah_kerja" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Wilayah Kerja</label>
-                <input type="text" name="wilayah_kerja" id="wilayah_kerja" value="{{ old('wilayah_kerja', $user->wilayah_kerja) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="Masukkan wilayah kerja">
+                <label for="kabupaten_id" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Kabupaten/Kota (Tempat Tugas)</label>
+                <select id="kabupaten_id" x-model="kabupaten_id" class="form-input" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; background-color: #fff;" @change="puskesmas_id = ''; posyandu_id = ''">
+                    <option value="">Pilih Kabupaten/Kota</option>
+                    @foreach($kabupatenList as $k)
+                        <option value="{{ $k->id }}">{{ $k->nama_kabupaten }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Puskesmas -->
+            <div>
+                <label for="puskesmas_id" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Puskesmas</label>
+                <select id="puskesmas_id" x-model="puskesmas_id" class="form-input" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; background-color: #fff;" @change="posyandu_id = ''">
+                    <option value="">Pilih Puskesmas</option>
+                    <template x-for="p in filteredPuskesmas" :key="p.id">
+                        <option :value="p.id" x-text="p.nama_puskesmas"></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Posyandu -->
+            <div>
+                <label for="posyandu_id" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Posyandu (Tempat Tugas) <span style="color: #EF4444;">*</span></label>
+                <select name="posyandu_id" id="posyandu_id" x-model="posyandu_id" required class="form-input" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; background-color: #fff;">
+                    <option value="">Pilih Posyandu</option>
+                    <template x-for="p in filteredPosyandu" :key="p.id">
+                        <option :value="p.id" x-text="p.nama_posyandu"></option>
+                    </template>
+                </select>
             </div>
 
             <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 8px 0;">
@@ -97,6 +164,9 @@
                     Simpan Perubahan
                 </button>
             </div>
+        </div>
+    </form>
+</div>
         </div>
     </form>
 </div>

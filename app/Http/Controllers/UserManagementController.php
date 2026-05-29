@@ -36,8 +36,11 @@ class UserManagementController extends Controller
         }
 
         $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $kabupatenList = \App\Models\Kabupaten::all();
+        $puskesmasList = \App\Models\Puskesmas::all();
+        $posyanduList = \App\Models\Posyandu::with('puskesmas')->get();
 
-        return view('dashboard.users.index', compact('users'));
+        return view('dashboard.users.index', compact('users', 'kabupatenList', 'puskesmasList', 'posyanduList'));
     }
 
     /**
@@ -55,7 +58,9 @@ class UserManagementController extends Controller
             'nik_ortu' => ['nullable', 'string', 'size:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
             'is_active' => ['nullable', 'boolean'],
-            'wilayah_kerja' => ['nullable', 'string', 'max:255'],
+            'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
+            'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
+            'posyandu_id' => ['nullable', 'exists:posyandus,id'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email'],
         ], [
             'username.required' => 'Username wajib diisi.',
@@ -85,7 +90,7 @@ class UserManagementController extends Controller
         return response()->json($user->only([
             'id_user', 'username', 'nama_lengkap', 'nomor_kontak',
             'role', 'nip_bidan', 'nik_ortu', 'kode_instansi_dinkes',
-            'is_active', 'wilayah_kerja', 'email',
+            'is_active', 'kabupaten_id', 'puskesmas_id', 'posyandu_id', 'email',
         ]));
     }
 
@@ -104,7 +109,9 @@ class UserManagementController extends Controller
             'nik_ortu' => ['nullable', 'string', 'size:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
             'is_active' => ['nullable', 'boolean'],
-            'wilayah_kerja' => ['nullable', 'string', 'max:255'],
+            'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
+            'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
+            'posyandu_id' => ['nullable', 'exists:posyandus,id'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $user->id_user . ',id_user'],
         ], [
             'username.required' => 'Username wajib diisi.',

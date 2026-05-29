@@ -36,7 +36,7 @@ class LoginController extends Controller
             /** @var User $user */
             $user = Auth::user();
 
-            if (!$user->is_active) {
+            if (! $user->is_active) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -50,9 +50,10 @@ class LoginController extends Controller
 
             return match ($user->role) {
                 'super admin' => redirect()->intended(route('admin.dashboard')),
-                'bidan' => redirect()->intended(route('admin.dashboard')),
+                'bidan' => redirect()->intended(route('bidan.dashboard')),
                 'kader' => redirect()->intended(route('admin.dashboard')),
                 'orang tua' => redirect()->intended(route('orangtua.dashboard')),
+                'dinkes' => redirect()->intended(route('dinkes.dashboard')),
                 default => redirect()->intended('/'),
             };
         }

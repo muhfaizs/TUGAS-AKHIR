@@ -225,10 +225,36 @@
                         <input type="text" name="kode_instansi_dinkes" id="modal_kode_instansi" x-model="form.kode_instansi_dinkes" class="um-input" placeholder="Masukkan kode instansi">
                     </div>
 
-                    <!-- Wilayah Kerja (conditional: bidan, kader, dinkes) -->
+                    <!-- Kabupaten (conditional: bidan, kader, dinkes) -->
                     <div class="um-field" x-show="['bidan', 'kader', 'dinkes'].includes(form.role)">
-                        <label for="modal_wilayah_kerja" class="um-label">Wilayah Kerja</label>
-                        <input type="text" name="wilayah_kerja" id="modal_wilayah_kerja" x-model="form.wilayah_kerja" class="um-input" placeholder="Contoh: Posyandu Melati / Kecamatan A">
+                        <label for="modal_kabupaten_id" class="um-label">Kabupaten/Kota</label>
+                        <select id="modal_kabupaten_id" x-model="form.kabupaten_id" class="um-input um-select" @change="form.puskesmas_id = ''; form.posyandu_id = ''">
+                            <option value="">Pilih Kabupaten/Kota</option>
+                            @foreach($kabupatenList as $k)
+                                <option value="{{ $k->id }}">{{ $k->nama_kabupaten }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Wilayah Kerja (conditional: bidan, kader) -->
+                    <div class="um-field" x-show="['bidan', 'kader'].includes(form.role)">
+                        <label for="modal_puskesmas_id" class="um-label">Puskesmas (Tempat Tugas)</label>
+                        <select name="puskesmas_id" id="modal_puskesmas_id" x-model="form.puskesmas_id" class="um-input um-select" @change="form.posyandu_id = ''">
+                            <option value="">Pilih Puskesmas</option>
+                            <template x-for="p in filteredPuskesmas" :key="p.id">
+                                <option :value="p.id" x-text="p.nama_puskesmas"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="um-field" x-show="['kader'].includes(form.role)">
+                        <label for="modal_posyandu_id" class="um-label">Posyandu (Tempat Tugas)</label>
+                        <select name="posyandu_id" id="modal_posyandu_id" x-model="form.posyandu_id" class="um-input um-select">
+                            <option value="">Pilih Posyandu</option>
+                            <template x-for="p in filteredPosyandu" :key="p.id">
+                                <option :value="p.id" x-text="p.nama_posyandu"></option>
+                            </template>
+                        </select>
                     </div>
                 </div>
 
@@ -251,6 +277,9 @@ function userManager() {
         showPassword: false,
         isEdit: false,
         editId: null,
+        kabupatenList: @json($kabupatenList),
+        puskesmasList: @json($puskesmasList),
+        posyanduList: @json($posyanduList),
         form: {
             nama_lengkap: '{{ old('nama_lengkap', '') }}',
             username: '{{ old('username', '') }}',
@@ -260,14 +289,26 @@ function userManager() {
             nik_ortu: '{{ old('nik_ortu', '') }}',
             kode_instansi_dinkes: '{{ old('kode_instansi_dinkes', '') }}',
             is_active: {{ old('is_active', 'true') === 'true' || old('is_active', '1') == '1' ? 'true' : 'false' }},
-            wilayah_kerja: '{{ old('wilayah_kerja', '') }}',
+            kabupaten_id: '',
+            puskesmas_id: '{{ old('puskesmas_id', '') }}',
+            posyandu_id: '{{ old('posyandu_id', '') }}',
             email: '{{ old('email', '') }}',
+        },
+
+        get filteredPuskesmas() {
+            if (!this.form.kabupaten_id) return [];
+            return this.puskesmasList.filter(p => p.kabupaten_id == this.form.kabupaten_id);
+        },
+
+        get filteredPosyandu() {
+            if (!this.form.puskesmas_id) return [];
+            return this.posyanduList.filter(p => p.puskesmas_id == this.form.puskesmas_id);
         },
 
         openCreate() {
             this.isEdit = false;
             this.editId = null;
-            this.form = { nama_lengkap: '', username: '', role: '', nomor_kontak: '', nip_bidan: '', nik_ortu: '', kode_instansi_dinkes: '', is_active: true, wilayah_kerja: '', email: '' };
+            this.form = { nama_lengkap: '', username: '', role: '', nomor_kontak: '', nip_bidan: '', nik_ortu: '', kode_instansi_dinkes: '', is_active: true, kabupaten_id: '', puskesmas_id: '', posyandu_id: '', email: '' };
             this.showModal = true;
         },
 
@@ -279,6 +320,14 @@ function userManager() {
                     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                 });
                 const data = await res.json();
+                let kab_id = '';
+                if (data.kabupaten_id) {
+                    kab_id = data.kabupaten_id;
+                } else if (data.puskesmas_id) {
+                    const foundPusk = this.puskesmasList.find(p => p.id == data.puskesmas_id);
+                    if (foundPusk) kab_id = foundPusk.kabupaten_id;
+                }
+
                 this.form = {
                     nama_lengkap: data.nama_lengkap || '',
                     username: data.username || '',
@@ -288,9 +337,19 @@ function userManager() {
                     nik_ortu: data.nik_ortu || '',
                     kode_instansi_dinkes: data.kode_instansi_dinkes || '',
                     is_active: data.is_active === undefined ? true : !!data.is_active,
-                    wilayah_kerja: data.wilayah_kerja || '',
+                    kabupaten_id: kab_id,
+                    puskesmas_id: '',
+                    posyandu_id: '',
                     email: data.email || '',
                 };
+
+                this.$nextTick(() => {
+                    this.form.puskesmas_id = data.puskesmas_id || '';
+                    this.$nextTick(() => {
+                        this.form.posyandu_id = data.posyandu_id || '';
+                    });
+                });
+
                 this.showModal = true;
             } catch (err) {
                 alert('Gagal memuat data pengguna.');

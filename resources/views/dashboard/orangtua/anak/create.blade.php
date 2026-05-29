@@ -6,6 +6,9 @@
 
 @section('content')
 <div class="wizard-container" x-data="anakWizard()" x-cloak>
+    @php
+        $routePrefix = auth()->user()->isOrangTua() ? 'orangtua' : (auth()->user()->isBidan() ? 'bidan' : 'admin');
+    @endphp
     
     <!-- Wizard Progress -->
     <div class="wizard-progress">
@@ -38,7 +41,7 @@
     @endif
 
     <div class="wizard-card">
-        <form method="POST" action="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.store') : route('admin.anak.store') }}" id="form-anak">
+        <form method="POST" action="{{ route($routePrefix . '.anak.store') }}" id="form-anak">
             @csrf
 
             <!-- Step 1: Data Dasar -->

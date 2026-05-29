@@ -35,8 +35,10 @@
                     @auth
                         @php
                             $dashboardUrl = match(auth()->user()->role) {
-                                'super admin', 'bidan', 'kader' => route('admin.dashboard'),
+                                'super admin', 'kader' => route('admin.dashboard'),
+                                'bidan' => route('bidan.dashboard'),
                                 'orang tua' => route('orangtua.dashboard'),
+                                'dinkes' => route('dinkes.dashboard'),
                                 default => '/'
                             };
                         @endphp

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Anak extends Model
 {
     protected $table = 'tb_anak';
+
     protected $primaryKey = 'id_anak';
 
     protected $fillable = [
@@ -51,5 +52,21 @@ class Anak extends Model
     public function pengukuran()
     {
         return $this->hasMany(Pengukuran::class, 'id_anak', 'id_anak');
+    }
+
+    /**
+     * Get the tindakan medis records associated with the anak.
+     */
+    public function tindakanMedis()
+    {
+        return $this->hasMany(TindakanMedis::class, 'id_anak', 'id_anak');
+    }
+
+    /**
+     * Get the imunisasi records associated with the anak.
+     */
+    public function imunisasi()
+    {
+        return $this->hasMany(Imunisasi::class, 'id_anak', 'id_anak');
     }
 }

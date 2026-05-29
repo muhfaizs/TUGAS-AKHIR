@@ -33,6 +33,9 @@ class User extends Authenticatable
         'role',
         'nip_bidan',
         'id_posyandu_kader',
+        'puskesmas_id',
+        'posyandu_id',
+        'kabupaten_id',
         'nik_ortu',
         'kode_instansi_dinkes',
         'hak_akses_master',
@@ -42,6 +45,14 @@ class User extends Authenticatable
         'email',
         'foto_profil',
     ];
+
+    /**
+     * Get the Kabupaten associated with the user.
+     */
+    public function kabupaten()
+    {
+        return $this->belongsTo(Kabupaten::class, 'kabupaten_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -101,10 +112,50 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user is Dinkes.
+     */
+    public function isDinkes(): bool
+    {
+        return $this->role === 'dinkes';
+    }
+
+    /**
      * Get the children associated with this user (if Orang Tua).
      */
     public function anak()
     {
         return $this->hasMany(Anak::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the tindakan medis records associated with this bidan.
+     */
+    public function tindakanMedis()
+    {
+        return $this->hasMany(TindakanMedis::class, 'id_bidan', 'id_user');
+    }
+
+    /**
+     * Get the imunisasi records associated with this bidan.
+     */
+    public function imunisasi()
+    {
+        return $this->hasMany(Imunisasi::class, 'id_bidan', 'id_user');
+    }
+
+    /**
+     * Get the Puskesmas associated with the Bidan/Admin.
+     */
+    public function puskesmas()
+    {
+        return $this->belongsTo(Puskesmas::class, 'puskesmas_id');
+    }
+
+    /**
+     * Get the Posyandu associated with the Kader.
+     */
+    public function posyandu()
+    {
+        return $this->belongsTo(Posyandu::class, 'posyandu_id');
     }
 }

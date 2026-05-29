@@ -17,6 +17,9 @@ class KaderProfileController extends Controller
     {
         return view('dashboard.kader.profile', [
             'user' => $request->user(),
+            'kabupatenList' => \App\Models\Kabupaten::all(),
+            'puskesmasList' => \App\Models\Puskesmas::all(),
+            'posyanduList' => \App\Models\Posyandu::with('puskesmas')->get(),
         ]);
     }
 
@@ -31,14 +34,15 @@ class KaderProfileController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $user->id_user . ',id_user'],
-            'wilayah_kerja' => ['nullable', 'string', 'max:255'],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'posyandu_id' => ['required', 'exists:posyandus,id'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email ini sudah digunakan oleh akun lain.',
             'password.min' => 'Password minimal 8 karakter.',
+            'posyandu_id.required' => 'Tempat tugas (Posyandu) wajib diisi.',
         ]);
 
         if (empty($validated['password'])) {

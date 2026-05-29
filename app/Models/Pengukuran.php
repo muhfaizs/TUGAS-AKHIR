@@ -41,4 +41,29 @@ class Pengukuran extends Model
     {
         return $this->belongsTo(User::class, 'id_kader', 'id_user');
     }
+
+    public function getStatusGiziAttribute()
+    {
+        $imt = $this->imt;
+        if ($imt < 13.5) {
+            return 'Gizi Buruk';
+        } elseif ($imt >= 13.5 && $imt < 14.5) {
+            return 'Gizi Kurang';
+        } elseif ($imt > 18 && $imt <= 19) {
+            return 'Risiko Lebih';
+        } elseif ($imt > 19) {
+            return 'Gizi Lebih';
+        }
+        return 'Gizi Baik';
+    }
+
+    public function getStatusStuntingAttribute()
+    {
+        if ($this->imt < 13.5) {
+            return 'Stunting';
+        } elseif ($this->imt >= 13.5 && $this->imt < 14.5) {
+            return 'Berisiko Stunting';
+        }
+        return 'Normal';
+    }
 }

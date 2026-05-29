@@ -4,9 +4,9 @@ namespace App\Http\Controllers\OrangTua;
 
 use App\Http\Controllers\Controller;
 use App\Models\Anak;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class AnakController extends Controller
 {
@@ -70,6 +70,55 @@ class AnakController extends Controller
     }
 
     /**
+     * Display the integrated medical history timeline for a child.
+     */
+    public function show(Request $request, Anak $anak): View
+    {
+        // Ensure this child belongs to the logged-in user
+        if ($anak->id_user !== $request->user()->id_user) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Eager load relations
+        $anak->load(['orangTua', 'pengukuran.kader', 'tindakanMedis.bidan', 'imunisasi.bidan']);
+
+        // Collect all history items into a single collection
+        $history = collect();
+
+        foreach ($anak->pengukuran as $p) {
+            $history->push([
+                'type' => 'pengukuran',
+                'date' => $p->tanggal_pengukuran,
+                'data' => $p,
+                'actor' => $p->kader->nama_lengkap ?? 'Kader',
+            ]);
+        }
+
+        foreach ($anak->tindakanMedis as $t) {
+            $history->push([
+                'type' => 'tindakan',
+                'date' => $t->tanggal_pemeriksaan,
+                'data' => $t,
+                'actor' => $t->bidan->nama_lengkap ?? 'Bidan',
+            ]);
+        }
+
+        foreach ($anak->imunisasi as $i) {
+            $history->push([
+                'type' => 'imunisasi',
+                'date' => $i->tanggal_pemberian,
+                'data' => $i,
+                'actor' => $i->bidan->nama_lengkap ?? 'Bidan',
+            ]);
+        }
+
+        // Sort descending by date
+        $timeline = $history->sortByDesc('date')->values();
+
+        return view('dashboard.orangtua.anak.show', compact('anak', 'timeline'));
+    }
+
+    /**
      * Show the form for editing the specified child.
      */
     public function edit(Request $request, Anak $anak): View
@@ -92,7 +141,7 @@ class AnakController extends Controller
         }
 
         $validated = $request->validate([
-            'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak,' . $anak->id_anak . ',id_anak'],
+            'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak,'.$anak->id_anak.',id_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date', 'before_or_equal:today'],
@@ -111,7 +160,7 @@ class AnakController extends Controller
         ], [
             'nik_anak.required' => 'NIK anak wajib diisi.',
             'nik_anak.size' => 'NIK anak harus 16 digit.',
-            'nik_anak.unique' => 'NIK anak sudah terdaftar.'
+            'nik_anak.unique' => 'NIK anak sudah terdaftar.',
         ]);
 
         $anak->update($validated);

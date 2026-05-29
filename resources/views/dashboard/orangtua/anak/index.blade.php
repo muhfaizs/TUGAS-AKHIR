@@ -5,8 +5,11 @@
 @section('page_subtitle', 'Pantau dan kelola data anak Anda')
 
 @section('content')
+@php
+    $routePrefix = auth()->user()->isOrangTua() ? 'orangtua' : (auth()->user()->isBidan() ? 'bidan' : 'admin');
+@endphp
 <div class="anak-header">
-    <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.create') : route('admin.anak.create') }}" class="btn-add">
+    <a href="{{ route($routePrefix . '.anak.create') }}" class="btn-add">
         <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
         Daftarkan Anak Baru
     </a>
@@ -20,10 +23,13 @@
                     {{ strtoupper(substr($a->nama_anak, 0, 2)) }}
                 </div>
                 <div class="anak-actions">
-                    <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.edit', $a) : route('admin.anak.edit', $a) }}" class="btn-icon btn-icon-edit" title="Edit">
+                    <a href="{{ route($routePrefix . '.anak.show', $a) }}" class="btn-icon btn-icon-view" title="Riwayat Kesehatan">
+                        <svg viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+                    </a>
+                    <a href="{{ route($routePrefix . '.anak.edit', $a) }}" class="btn-icon btn-icon-edit" title="Edit">
                         <svg viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
                     </a>
-                    <form method="POST" action="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.destroy', $a) : route('admin.anak.destroy', $a) }}" class="inline-form" onsubmit="return confirm('Yakin ingin menghapus data anak ini?');">
+                    <form method="POST" action="{{ route($routePrefix . '.anak.destroy', $a) }}" class="inline-form" onsubmit="return confirm('Yakin ingin menghapus data anak ini?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-icon btn-icon-delete" title="Hapus">
@@ -78,7 +84,7 @@
         <div class="anak-empty">
             <svg class="empty-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
             <p>Belum ada data anak yang didaftarkan.</p>
-            <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.create') : route('admin.anak.create') }}" class="btn-add">Daftarkan Sekarang</a>
+            <a href="{{ route($routePrefix . '.anak.create') }}" class="btn-add">Daftarkan Sekarang</a>
         </div>
     @endforelse
 </div>
@@ -115,6 +121,7 @@
     width: 32px; height: 32px; border-radius: 8px; border: none; background: none; cursor: pointer;
     display: grid; place-items: center; transition: all 0.2s; color: #94A3B8; text-decoration: none;
 }
+.btn-icon-view:hover { background: rgba(16,185,129,0.1); color: #059669; }
 .btn-icon-edit:hover { background: rgba(14,165,233,0.1); color: #0284C7; }
 .btn-icon-delete:hover { background: rgba(239,68,68,0.1); color: #DC2626; }
 .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }

@@ -6,6 +6,9 @@
 
 @section('content')
 <div class="wizard-container">
+    @php
+        $routePrefix = auth()->user()->isOrangTua() ? 'orangtua' : (auth()->user()->isBidan() ? 'bidan' : 'admin');
+    @endphp
     @if ($errors->any())
         <div class="wizard-errors">
             <ul>
@@ -17,7 +20,7 @@
     @endif
 
     <div class="wizard-card">
-        <form method="POST" action="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.update', $anak) : route('admin.anak.update', $anak) }}">
+        <form method="POST" action="{{ route($routePrefix . '.anak.update', $anak) }}">
             @csrf
             @method('PUT')
 
@@ -133,7 +136,7 @@
             </div>
 
             <div class="wizard-footer">
-                <a href="{{ auth()->user()->isOrangTua() ? route('orangtua.anak.index') : route('admin.anak.index') }}" class="btn-prev">Batal</a>
+                <a href="{{ route($routePrefix . '.anak.index') }}" class="btn-prev">Batal</a>
                 <div class="spacer"></div>
                 <button type="submit" class="btn-submit">Simpan Perubahan</button>
             </div>
