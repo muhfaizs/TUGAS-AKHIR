@@ -45,6 +45,9 @@
                             <a href="{{ route('bidan.tindakan.edit', $t) }}" class="btn-icon btn-icon-edit" title="Edit">
                                 <svg viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
                             </a>
+                            <a href="{{ route('bidan.tindakan.pdf', $t) }}" class="btn-icon" style="color: #6366F1;" title="Cetak/Download PDF" onmouseover="this.style.background='rgba(99,102,241,0.1)';" onmouseout="this.style.background='none';">
+                                <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                            </a>
                             @if($t->anak && $t->anak->orangTua && $t->anak->orangTua->nomor_kontak)
                             <form method="POST" action="{{ route('bidan.anak.send-notification', $t->anak->id_anak) }}" class="inline-form" target="_blank">
                                 @csrf

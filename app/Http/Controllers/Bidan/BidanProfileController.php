@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Bidan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kabupaten;
+use App\Models\Puskesmas;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,8 +20,8 @@ class BidanProfileController extends Controller
     {
         return view('dashboard.bidan.profile', [
             'user' => $request->user(),
-            'kabupatenList' => \App\Models\Kabupaten::all(),
-            'puskesmasList' => \App\Models\Puskesmas::all(),
+            'kabupatenList' => Kabupaten::all(),
+            'puskesmasList' => Puskesmas::all(),
         ]);
     }
 

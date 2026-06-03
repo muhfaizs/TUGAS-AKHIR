@@ -5,12 +5,16 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Bidan\BidanProfileController;
 use App\Http\Controllers\Bidan\ImunisasiController;
+use App\Http\Controllers\Bidan\NotificationController;
 use App\Http\Controllers\Bidan\TindakanMedisController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Kader\KaderProfileController;
 use App\Http\Controllers\Kader\PengukuranController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\OrangTua\AnakController;
 use App\Http\Controllers\OrangTua\ProfileController;
+use App\Http\Controllers\PdfExportController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,15 +34,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // Notifications
-    Route::post('/notifikasi/read-all', [\App\Http\Controllers\NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.read-all');
+    Route::post('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.read-all');
 
     // Admin routes (super admin, kader)
     Route::middleware('role:super admin,kader')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
-        Route::get('/anak/{id_anak}/rekam-medis-pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadRekamMedisAnak'])->name('anak.rekam-medis.pdf');
-        Route::get('/tindakan/{tindakan}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadTindakanMedis'])->name('tindakan.pdf');
-        Route::get('/imunisasi/{imunisasi}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadImunisasi'])->name('imunisasi.pdf');
+        Route::get('/anak/{id_anak}/rekam-medis-pdf', [PdfExportController::class, 'downloadRekamMedisAnak'])->name('anak.rekam-medis.pdf');
+        Route::get('/tindakan/{tindakan}/pdf', [PdfExportController::class, 'downloadTindakanMedis'])->name('tindakan.pdf');
+        Route::get('/imunisasi/{imunisasi}/pdf', [PdfExportController::class, 'downloadImunisasi'])->name('imunisasi.pdf');
 
         // Anak Management (for Admin, Kader)
         Route::resource('anak', App\Http\Controllers\Admin\AnakController::class);
@@ -65,14 +69,19 @@ Route::middleware('auth')->group(function () {
         Route::resource('anak', App\Http\Controllers\Admin\AnakController::class);
 
         // Anak & Pasien Management
-        Route::post('/anak/{anak}/send-notification', [\App\Http\Controllers\Bidan\NotificationController::class, 'send'])->name('anak.send-notification');
-        Route::post('/anak/{anak}/send-system', [\App\Http\Controllers\Bidan\NotificationController::class, 'sendSystem'])->name('anak.send-system');
+        Route::post('/anak/{anak}/send-notification', [NotificationController::class, 'send'])->name('anak.send-notification');
+        Route::post('/anak/{anak}/send-system', [NotificationController::class, 'sendSystem'])->name('anak.send-system');
 
         // Tindakan Medis
         Route::resource('tindakan', TindakanMedisController::class)->except(['show']);
 
         // Imunisasi
         Route::resource('imunisasi', ImunisasiController::class)->except(['show']);
+
+        // PDF Downloads
+        Route::get('/anak/{id_anak}/rekam-medis-pdf', [PdfExportController::class, 'downloadRekamMedisAnak'])->name('anak.rekam-medis.pdf');
+        Route::get('/tindakan/{tindakan}/pdf', [PdfExportController::class, 'downloadTindakanMedis'])->name('tindakan.pdf');
+        Route::get('/imunisasi/{imunisasi}/pdf', [PdfExportController::class, 'downloadImunisasi'])->name('imunisasi.pdf');
 
         // Profile routes
         Route::get('/profile', [BidanProfileController::class, 'edit'])->name('profile.edit');
@@ -93,6 +102,7 @@ Route::middleware('auth')->group(function () {
     // Orang Tua routes
     Route::middleware('role:orang tua')->prefix('orangtua')->name('orangtua.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'orangTuaDashboard'])->name('dashboard');
+        Route::post('/dashboard/reminder/dismiss', [DashboardController::class, 'dismissReminder'])->name('reminder.dismiss');
 
         // Profile routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -101,20 +111,21 @@ Route::middleware('auth')->group(function () {
         // Anak routes
         Route::resource('anak', AnakController::class);
 
-        Route::get('/anak/{id_anak}/rekam-medis-pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadRekamMedisAnak'])->name('rekam-medis.pdf');
-        Route::get('/tindakan/{tindakan}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadTindakanMedis'])->name('tindakan.pdf');
-        Route::get('/imunisasi/{imunisasi}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadImunisasi'])->name('imunisasi.pdf');
+        Route::get('/anak/{id_anak}/rekam-medis-pdf', [PdfExportController::class, 'downloadRekamMedisAnak'])->name('rekam-medis.pdf');
+        Route::get('/tindakan/{tindakan}/pdf', [PdfExportController::class, 'downloadTindakanMedis'])->name('tindakan.pdf');
+        Route::get('/imunisasi/{imunisasi}/pdf', [PdfExportController::class, 'downloadImunisasi'])->name('imunisasi.pdf');
     });
 
     // Dinkes routes
     Route::middleware('role:dinkes')->prefix('dinkes')->name('dinkes.')->group(function () {
-        Route::get('/dashboard', [\App\Http\Controllers\Dinkes\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [App\Http\Controllers\Dinkes\DashboardController::class, 'index'])->name('dashboard');
     });
 
     // Shared Laporan Routes (Bidan & Dinkes)
     Route::middleware('role:bidan,dinkes')->group(function () {
-        Route::get('/laporan', [\App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/laporan/print', [\App\Http\Controllers\LaporanController::class, 'print'])->name('laporan.print');
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
+    Route::get('/laporan/excel', [LaporanController::class, 'excel'])->name('laporan.excel');
+        Route::post('/laporan/submit', [LaporanController::class, 'submitToDinkes'])->name('bidan.laporan.submit');
     });
 });
-

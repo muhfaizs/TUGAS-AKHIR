@@ -66,6 +66,63 @@
         </div>
     </div>
 
+    <!-- Inbox Laporan Section -->
+    <div style="background: #fff; border-radius: 20px; box-shadow: 0 4px 20px rgba(13,148,136,0.04); border: 1px solid rgba(15,23,42,0.06); margin-bottom: 32px; overflow: hidden;">
+        <div style="padding: 24px 28px; border-bottom: 1px solid rgba(15,23,42,0.06);">
+            <h3 style="font-size: 18px; font-weight: 700; color: #0F172A; margin: 0 0 4px;">Inbox Laporan Periodik</h3>
+            <p style="font-size: 14px; color: #64748B; margin: 0;">Daftar laporan rekapitulasi yang dikirimkan oleh Bidan Puskesmas/Posyandu.</p>
+        </div>
+
+        @if($laporanDinkes->isEmpty())
+            <div style="text-align: center; padding: 48px 24px; color: #64748B;">
+                <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; fill: #CBD5E1; margin: 0 auto 12px; display: block;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
+                <p style="font-size: 15px; font-weight: 600; margin: 0 0 4px;">Belum Ada Laporan Masuk</p>
+                <p style="font-size: 13px; margin: 0;">Laporan dari Bidan akan muncul di sini setelah di-submit.</p>
+            </div>
+        @else
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 900px; text-align: left;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Tanggal Submit</th>
+                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Asal Puskesmas / Posyandu</th>
+                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Bidan Pengirim</th>
+                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Periode Laporan</th>
+                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Status</th>
+                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($laporanDinkes as $lap)
+                            <tr style="border-bottom: 1px solid rgba(15,23,42,0.04);">
+                                <td style="padding: 16px 24px; font-size: 14px; color: #0F172A; font-weight: 500;">
+                                    {{ $lap->created_at->format('d M Y H:i') }}
+                                </td>
+                                <td style="padding: 16px 24px; font-size: 14px; font-weight: 600; color: #0D9488;">
+                                    {{ $lap->nama_puskesmas }}
+                                </td>
+                                <td style="padding: 16px 24px; font-size: 14px; color: #475569;">
+                                    {{ $lap->bidan->nama_lengkap ?? 'Bidan' }}
+                                </td>
+                                <td style="padding: 16px 24px; font-size: 14px; color: #475569;">
+                                    {{ \Carbon\Carbon::parse($lap->periode_awal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($lap->periode_akhir)->format('d M Y') }}
+                                </td>
+                                <td style="padding: 16px 24px;">
+                                    <span style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase;">{{ $lap->status }}</span>
+                                </td>
+                                <td style="padding: 16px 24px;">
+                                    <button onclick="alert('Fitur Lihat Detail/Export JSON Laporan ID: {{ $lap->id }}')" style="padding: 6px 12px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                        Lihat Detail Laporan
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>

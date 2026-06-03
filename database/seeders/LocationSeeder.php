@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Kabupaten;
+use Illuminate\Database\Seeder;
 
 class LocationSeeder extends Seeder
 {

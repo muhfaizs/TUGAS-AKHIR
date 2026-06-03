@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Anak;
 use App\Models\Pengukuran;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -93,34 +94,58 @@ class DashboardController extends Controller
                     ->get();
                 $tindakanList = $selectedAnak->tindakanMedis()->orderBy('tanggal_pemeriksaan', 'desc')->get();
                 $imunisasiList = $selectedAnak->imunisasi()->orderBy('tanggal_pemberian', 'desc')->get();
-                    
-                // Pengingat Terjadwal Imunisasi
-                $jadwalVaksin = [
-                    'Hepatitis B0' => 0,
-                    'BCG' => 1,
-                    'Polio 1' => 1,
-                    'DPT-HB-Hib 1' => 2,
-                    'Polio 2' => 2,
-                    'DPT-HB-Hib 2' => 3,
-                    'Polio 3' => 3,
-                    'DPT-HB-Hib 3' => 4,
-                    'Polio 4' => 4,
-                    'Campak / MR' => 9,
+
+                // Jadwal Vaksin By Month Group
+                $jadwalVaksinByBulan = [
+                    0 => ['Hepatitis B0'],
+                    1 => ['BCG', 'Polio 1'],
+                    2 => ['DPT-HB-Hib 1', 'Polio 2'],
+                    3 => ['DPT-HB-Hib 2', 'Polio 3'],
+                    4 => ['DPT-HB-Hib 3', 'Polio 4'],
+                    9 => ['Campak / MR'],
                 ];
-                $riwayatImunisasi = $selectedAnak->imunisasi->pluck('nama_vaksin')->toArray();
-                $tanggalLahir = \Carbon\Carbon::parse($selectedAnak->tanggal_lahir);
                 
-                foreach ($jadwalVaksin as $vaksin => $bulan) {
-                    if (!in_array($vaksin, $riwayatImunisasi)) {
-                        $tanggalJadwal = $tanggalLahir->copy()->addMonths($bulan);
+                $riwayatImunisasi = $selectedAnak->imunisasi->pluck('nama_vaksin')->toArray();
+                $tanggalLahir = Carbon::parse($selectedAnak->tanggal_lahir);
+
+                $lowestMissingMonth = null;
+                $missingVaksinInMonth = [];
+
+                foreach ($jadwalVaksinByBulan as $bulan => $vaksins) {
+                    $missingInThisMonth = [];
+                    foreach ($vaksins as $v) {
+                        if (!in_array($v, $riwayatImunisasi)) {
+                            // Check if this reminder is already dismissed
+                            $notifTitle = "Pengingat Imunisasi: {$v} - {$selectedAnak->nama_anak}";
+                            $isDismissed = \App\Models\Notifikasi::where('id_user', $user->id_user)
+                                ->where('judul', $notifTitle)
+                                ->exists();
+
+                            if (!$isDismissed) {
+                                $missingInThisMonth[] = $v;
+                            }
+                        }
+                    }
+
+                    if (count($missingInThisMonth) > 0) {
+                        $lowestMissingMonth = $bulan;
+                        $missingVaksinInMonth = $missingInThisMonth;
+                        break; // Stop at the first month with active missing vaccines
+                    }
+                }
+
+                if ($lowestMissingMonth !== null) {
+                    foreach ($missingVaksinInMonth as $vaksin) {
+                        $tanggalJadwal = $tanggalLahir->copy()->addMonths($lowestMissingMonth);
                         $selisihHari = now()->diffInDays($tanggalJadwal, false);
-                        
-                        // Show if it's within next 7 days, or missed by up to 30 days
-                        if ($selisihHari <= 7 && $selisihHari >= -30) {
+
+                        // Show if it's within next 7 days, or overdue (selisihHari < 0)
+                        if ($selisihHari <= 7) {
                             $pengingatList[] = [
                                 'vaksin' => $vaksin,
                                 'tanggal' => $tanggalJadwal->format('d M Y'),
-                                'hari' => (int) $selisihHari
+                                'hari' => (int) $selisihHari,
+                                'anak_id' => $selectedAnak->id_anak,
                             ];
                         }
                     }
@@ -129,5 +154,30 @@ class DashboardController extends Controller
         }
 
         return view('dashboard.orangtua.index', compact('anakList', 'selectedAnak', 'pengukuranList', 'pengingatList', 'tindakanList', 'imunisasiList'));
+    }
+
+    public function dismissReminder(Request $request)
+    {
+        $request->validate([
+            'anak_id' => 'required|exists:tb_anak,id_anak',
+            'vaksin' => 'required|string',
+        ]);
+
+        $anak = Anak::findOrFail($request->anak_id);
+
+        if ($anak->id_user !== auth()->user()->id_user) {
+            abort(403);
+        }
+
+        $notifTitle = "Pengingat Imunisasi: {$request->vaksin} - {$anak->nama_anak}";
+        
+        \App\Models\Notifikasi::create([
+            'id_user' => auth()->user()->id_user,
+            'judul' => $notifTitle,
+            'pesan' => "Jadwal Imunisasi {$request->vaksin} untuk anak Anda ({$anak->nama_anak}) sudah dekat. Harap segera membawa anak Anda ke Puskesmas/Posyandu.",
+            'wa_link' => null,
+        ]);
+
+        return back()->with('success', 'Pengingat telah ditandai selesai dan dipindahkan ke notifikasi.');
     }
 }

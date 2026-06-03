@@ -18,6 +18,7 @@ class PengukuranController extends Controller
     {
         // For the form, we need a list of anak to select from.
         $anakList = Anak::orderBy('nama_anak')->get();
+
         return view('dashboard.kader.pengukuran.create', compact('anakList'));
     }
 
@@ -73,7 +74,7 @@ class PengukuranController extends Controller
                 'success' => 'Data pengukuran berhasil disimpan.',
                 'imt_status' => $statusText,
                 'imt_value' => round($imt, 2),
-                'imt_color' => $imtColor
+                'imt_color' => $imtColor,
             ]);
     }
 }

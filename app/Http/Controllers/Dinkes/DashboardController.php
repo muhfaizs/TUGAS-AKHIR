@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Dinkes;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Anak;
-use App\Models\Pengukuran;
 use App\Models\Imunisasi;
+use App\Models\Pengukuran;
+use App\Models\TbLaporanDinkes;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -45,12 +45,15 @@ class DashboardController extends Controller
         // Prepare labels and data for Chart.js
         $chartLabels = array_keys($statusGiziCounts);
         $chartData = array_values($statusGiziCounts);
-        
+
         // Fallback mock data if empty
-        if(empty($chartLabels)) {
+        if (empty($chartLabels)) {
             $chartLabels = ['Gizi Baik', 'Gizi Kurang', 'Gizi Buruk', 'Risiko Lebih'];
             $chartData = [120, 15, 5, 10];
         }
+
+        // 6. Fetch Laporan from Bidan
+        $laporanDinkes = TbLaporanDinkes::with('bidan')->latest()->get();
 
         return view('dashboard.dinkes.index', compact(
             'totalPosyandu',
@@ -58,7 +61,8 @@ class DashboardController extends Controller
             'anakBerisiko',
             'persentaseImunisasi',
             'chartLabels',
-            'chartData'
+            'chartData',
+            'laporanDinkes'
         ));
     }
 }

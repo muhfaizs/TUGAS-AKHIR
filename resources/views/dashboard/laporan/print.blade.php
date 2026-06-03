@@ -87,7 +87,7 @@
 
     <div class="filter-info">
         <strong>Filter Diterapkan:</strong><br>
-        Posyandu: {{ request('posyandu') ?: 'Semua Posyandu' }} <br>
+        Puskesmas: {{ request('puskesmas') ? \App\Models\Puskesmas::find(request('puskesmas'))->nama_puskesmas ?? 'Semua Puskesmas' : 'Semua Puskesmas' }} <br>
         Periode: {{ request('tgl_awal') ? \Carbon\Carbon::parse(request('tgl_awal'))->translatedFormat('d M Y') : 'Awal' }} 
         s/d 
         {{ request('tgl_akhir') ? \Carbon\Carbon::parse(request('tgl_akhir'))->translatedFormat('d M Y') : 'Sekarang' }}
@@ -109,34 +109,44 @@
             @forelse($laporan as $index => $data)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td class="text-center">{{ \Carbon\Carbon::parse($data->tanggal_pengukuran)->translatedFormat('d M Y') }}</td>
+                    <td class="text-center">{{ \Carbon\Carbon::parse($data->tanggal)->translatedFormat('d M Y') }}</td>
                     <td>
                         <strong>{{ $data->anak->nama_anak ?? '-' }}</strong><br>
                         NIK: {{ $data->anak->nik_anak ?? '-' }}
                     </td>
-                    <td>{{ $data->kader->id_posyandu_kader ?? '-' }}</td>
-                    <td class="text-center">{{ $data->berat_badan }} kg / {{ $data->tinggi_badan }} cm</td>
+                    <td>
+                        {{ $data->posyandu }}<br>
+                        @if(count($data->pelaksana) > 0)
+                            <span style="font-size: 10px;">({{ implode(', ', $data->pelaksana) }})</span>
+                        @endif
+                    </td>
                     <td class="text-center">
-                        {{ $data->status_gizi }}<br>
-                        @if(str_contains(strtolower($data->status_stunting), 'stunting'))
-                            ({{ $data->status_stunting }})
+                        @if($data->pengukuran)
+                            {{ $data->pengukuran->berat_badan }} kg / {{ $data->pengukuran->tinggi_badan }} cm
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @if($data->pengukuran)
+                            {{ $data->pengukuran->status_gizi }}<br>
+                            @if(str_contains(strtolower($data->pengukuran->status_stunting), 'stunting'))
+                                ({{ $data->pengukuran->status_stunting }})
+                            @endif
+                        @else
+                            -
                         @endif
                     </td>
                     <td>
-                        @php
-                            $tindakan = $data->anak->tindakanMedis->where('tanggal_pemeriksaan', $data->tanggal_pengukuran)->first();
-                            $imunisasi = $data->anak->imunisasi->where('tanggal_pemberian', $data->tanggal_pengukuran)->first();
-                        @endphp
-                        
-                        @if($imunisasi)
-                            <strong>Vaksin:</strong> {{ $imunisasi->nama_vaksin }}<br>
+                        @if($data->imunisasi)
+                            <strong>Vaksin:</strong> {{ $data->imunisasi->nama_vaksin }}<br>
                         @endif
                         
-                        @if($tindakan)
-                            <strong>Tindakan:</strong> {{ $tindakan->diagnosa }}
+                        @if($data->tindakan)
+                            <strong>Tindakan:</strong> {{ $data->tindakan->diagnosa }}
                         @endif
                         
-                        @if(!$imunisasi && !$tindakan)
+                        @if(!$data->imunisasi && !$data->tindakan)
                             -
                         @endif
                     </td>

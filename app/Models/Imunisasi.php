@@ -21,7 +21,7 @@ class Imunisasi extends Model
         'tanggal_pemberian',
         'catatan',
         'puskesmas_id',
-        'posyandu_id'
+        'posyandu_id',
     ];
 
     protected $casts = [

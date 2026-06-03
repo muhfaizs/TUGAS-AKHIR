@@ -5,6 +5,7 @@ namespace App\Http\Controllers\OrangTua;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -54,18 +55,18 @@ class ProfileController extends Controller
             'username' => $validated['username'],
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 
         if ($request->has('hapus_foto') && $request->hapus_foto == '1') {
-            if ($user->foto_profil && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto_profil)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto_profil);
+            if ($user->foto_profil && Storage::disk('public')->exists($user->foto_profil)) {
+                Storage::disk('public')->delete($user->foto_profil);
             }
             $user->foto_profil = null;
         } elseif ($request->hasFile('foto_profil')) {
-            if ($user->foto_profil && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->foto_profil)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->foto_profil);
+            if ($user->foto_profil && Storage::disk('public')->exists($user->foto_profil)) {
+                Storage::disk('public')->delete($user->foto_profil);
             }
             $user->foto_profil = $request->file('foto_profil')->store('profile_photos', 'public');
         }

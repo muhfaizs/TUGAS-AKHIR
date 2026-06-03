@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kabupaten;
+use App\Models\Posyandu;
+use App\Models\Puskesmas;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -36,9 +39,9 @@ class UserManagementController extends Controller
         }
 
         $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
-        $kabupatenList = \App\Models\Kabupaten::all();
-        $puskesmasList = \App\Models\Puskesmas::all();
-        $posyanduList = \App\Models\Posyandu::with('puskesmas')->get();
+        $kabupatenList = Kabupaten::all();
+        $puskesmasList = Puskesmas::all();
+        $posyanduList = Posyandu::with('puskesmas')->get();
 
         return view('dashboard.users.index', compact('users', 'kabupatenList', 'puskesmasList', 'posyanduList'));
     }
@@ -72,7 +75,7 @@ class UserManagementController extends Controller
             'nik_ortu.size' => 'NIK harus 16 digit.',
         ]);
 
-        if (!isset($validated['is_active'])) {
+        if (! isset($validated['is_active'])) {
             $validated['is_active'] = false;
         }
 
@@ -112,7 +115,7 @@ class UserManagementController extends Controller
             'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
             'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,' . $user->id_user . ',id_user'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
@@ -127,7 +130,7 @@ class UserManagementController extends Controller
             unset($validated['password']);
         }
 
-        if (!isset($validated['is_active'])) {
+        if (! isset($validated['is_active'])) {
             $validated['is_active'] = false;
         }
 

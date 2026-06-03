@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Bidan;
 
 use App\Http\Controllers\Controller;
+use App\Mail\MedicalResultMail;
 use App\Models\Anak;
 use App\Models\Imunisasi;
 use App\Models\Notifikasi;
+use App\Models\Posyandu;
+use App\Models\Puskesmas;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -28,8 +33,8 @@ class ImunisasiController extends Controller
     public function create()
     {
         $anakList = Anak::orderBy('nama_anak')->get();
-        $puskesmasList = \App\Models\Puskesmas::all();
-        $posyanduList = \App\Models\Posyandu::with('puskesmas')->get();
+        $puskesmasList = Puskesmas::all();
+        $posyanduList = Posyandu::with('puskesmas')->get();
 
         return view('dashboard.bidan.imunisasi.create', compact('anakList', 'puskesmasList', 'posyanduList'));
     }
@@ -88,9 +93,9 @@ class ImunisasiController extends Controller
         $anak = Anak::with('orangTua')->find($validated['id_anak']);
         if ($anak && $anak->orangTua) {
             $pesan = "Halo, ini pemberitahuan dari Puskesmas. Anak Anda, {$anak->nama_anak}, baru saja menerima Imunisasi: {$vaksin}.";
-            
+
             // WA Link
-            $waLink = "https://api.whatsapp.com/send?phone=" . preg_replace('/[^0-9]/', '', $anak->orangTua->nomor_kontak) . "&text=" . urlencode($pesan);
+            $waLink = 'https://api.whatsapp.com/send?phone='.preg_replace('/[^0-9]/', '', $anak->orangTua->nomor_kontak).'&text='.urlencode($pesan);
 
             // In-App Notification
             Notifikasi::create([
@@ -100,23 +105,30 @@ class ImunisasiController extends Controller
                 'wa_link' => $waLink,
             ]);
 
-            // Simulated Email
+            // PDF & Email
             if ($anak->orangTua->email) {
-                Mail::raw($pesan, function ($message) use ($anak) {
-                    $message->to($anak->orangTua->email)
-                            ->subject('Laporan Imunisasi - ' . $anak->nama_anak);
-                });
+                try {
+                    $imunisasi->load(['anak.orangTua', 'bidan', 'puskesmas', 'posyandu']);
+                    $pdf = Pdf::loadView('dashboard.pdf.imunisasi', compact('imunisasi'));
+                    $pdfData = $pdf->output();
+
+                    Mail::to($anak->orangTua->email)->send(
+                        new MedicalResultMail($pesan, $pdfData, 'Imunisasi_'.$anak->nama_anak.'.pdf')
+                    );
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send Imunisasi email: '.$e->getMessage());
+                }
             }
         }
 
         // Send Notification to Kader in the selected Posyandu
-        $kaders = \App\Models\User::where('role', 'kader')
-                    ->where('posyandu_id', $validated['posyandu_id'])
-                    ->get();
-        
+        $kaders = User::where('role', 'kader')
+            ->where('id_posyandu_kader', $validated['posyandu_id'])
+            ->get();
+
         foreach ($kaders as $kader) {
             $pesanKader = "Pemberitahuan Kader: Anak {$anak->nama_anak} baru saja mendapatkan imunisasi {$vaksin} di posyandu wilayah Anda.";
-            $waLinkKader = $kader->nomor_kontak ? "https://api.whatsapp.com/send?phone=" . preg_replace('/[^0-9]/', '', $kader->nomor_kontak) . "&text=" . urlencode($pesanKader) : null;
+            $waLinkKader = $kader->nomor_kontak ? 'https://api.whatsapp.com/send?phone='.preg_replace('/[^0-9]/', '', $kader->nomor_kontak).'&text='.urlencode($pesanKader) : null;
             Notifikasi::create([
                 'id_user' => $kader->id_user,
                 'judul' => 'Imunisasi di Wilayah Anda',
@@ -143,8 +155,8 @@ class ImunisasiController extends Controller
     public function edit(Imunisasi $imunisasi)
     {
         $anakList = Anak::orderBy('nama_anak')->get();
-        $puskesmasList = \App\Models\Puskesmas::all();
-        $posyanduList = \App\Models\Posyandu::with('puskesmas')->get();
+        $puskesmasList = Puskesmas::all();
+        $posyanduList = Posyandu::with('puskesmas')->get();
 
         return view('dashboard.bidan.imunisasi.edit', compact('imunisasi', 'anakList', 'puskesmasList', 'posyanduList'));
     }

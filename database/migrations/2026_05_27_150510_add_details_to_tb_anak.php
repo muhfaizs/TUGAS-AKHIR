@@ -33,7 +33,7 @@ return new class extends Migration
                 'golongan_darah',
                 'lingkar_kepala_lahir',
                 'kondisi_lahir',
-                'riwayat_alergi'
+                'riwayat_alergi',
             ]);
         });
     }

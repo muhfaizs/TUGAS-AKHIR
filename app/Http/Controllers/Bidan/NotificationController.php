@@ -17,36 +17,36 @@ class NotificationController extends Controller
     {
         $orangTua = $anak->orangTua;
 
-        if (!$orangTua) {
+        if (! $orangTua) {
             return back()->with('error', 'Data Orang Tua tidak ditemukan untuk anak ini.');
         }
 
         // WhatsApp Number Formatting (The "0 to 62" Fix)
         $waNumber = preg_replace('/[^0-9]/', '', $orangTua->nomor_kontak);
         if (str_starts_with($waNumber, '0')) {
-            $waNumber = '62' . substr($waNumber, 1);
+            $waNumber = '62'.substr($waNumber, 1);
         } elseif (str_starts_with($waNumber, '+62')) {
-            $waNumber = '62' . substr($waNumber, 3);
+            $waNumber = '62'.substr($waNumber, 3);
         }
-        
+
         // Generate Message Based on Context
         // (Assuming checking the latest measurement or medical record for the child)
         $latestPengukuran = $anak->pengukuran()->orderByDesc('tanggal_pengukuran')->first();
         $latestTindakan = $anak->tindakanMedis()->orderByDesc('tanggal_pemeriksaan')->first();
 
         $pesan = "Halo {$orangTua->nama_lengkap}, ini pemberitahuan dari Puskesmas. Anak Anda, {$anak->nama_anak}";
-        
-        if ($latestTindakan && (!$latestPengukuran || $latestTindakan->tanggal_pemeriksaan >= $latestPengukuran->tanggal_pengukuran)) {
-            $pesan .= ", baru saja menerima pemeriksaan medis dengan diagnosa: " . ($latestTindakan->diagnosa ?? 'Pemeriksaan Rutin') . ".";
+
+        if ($latestTindakan && (! $latestPengukuran || $latestTindakan->tanggal_pemeriksaan >= $latestPengukuran->tanggal_pengukuran)) {
+            $pesan .= ', baru saja menerima pemeriksaan medis dengan diagnosa: '.($latestTindakan->diagnosa ?? 'Pemeriksaan Rutin').'.';
         } elseif ($latestPengukuran) {
             $pesan .= ", telah ditimbang dengan BB: {$latestPengukuran->berat_badan}kg, TB: {$latestPengukuran->tinggi_badan}cm. Status Gizi: {$latestPengukuran->status_gizi}.";
         } else {
-            $pesan .= " terdeteksi membutuhkan perhatian medis. Silakan ke Puskesmas.";
+            $pesan .= ' terdeteksi membutuhkan perhatian medis. Silakan ke Puskesmas.';
         }
 
-        $pesan .= " Mohon perhatiannya untuk kesehatan tumbuh kembang anak Anda.";
+        $pesan .= ' Mohon perhatiannya untuk kesehatan tumbuh kembang anak Anda.';
 
-        $waLink = "https://api.whatsapp.com/send?phone={$waNumber}&text=" . urlencode($pesan);
+        $waLink = "https://api.whatsapp.com/send?phone={$waNumber}&text=".urlencode($pesan);
 
         // 1. Create In-App Notification
         Notifikasi::create([
@@ -58,9 +58,9 @@ class NotificationController extends Controller
 
         // 2. Simulated Email with PDF Summary Attachment (Log)
         if ($orangTua->email) {
-            Mail::raw("Terlampir ringkasan rekam medis untuk {$anak->nama_anak}.\n\n" . $pesan, function ($message) use ($orangTua, $anak) {
+            Mail::raw("Terlampir ringkasan rekam medis untuk {$anak->nama_anak}.\n\n".$pesan, function ($message) use ($orangTua, $anak) {
                 $message->to($orangTua->email)
-                        ->subject('Dokumen PDF Laporan Hasil Pemeriksaan - ' . $anak->nama_anak);
+                    ->subject('Dokumen PDF Laporan Hasil Pemeriksaan - '.$anak->nama_anak);
             });
         }
 
@@ -75,7 +75,7 @@ class NotificationController extends Controller
     {
         $orangTua = $anak->orangTua;
 
-        if (!$orangTua) {
+        if (! $orangTua) {
             return back()->with('error', 'Data Orang Tua tidak ditemukan untuk anak ini.');
         }
 
@@ -84,14 +84,14 @@ class NotificationController extends Controller
         $latestTindakan = $anak->tindakanMedis()->orderByDesc('tanggal_pemeriksaan')->first();
 
         $pesan = "Halo {$orangTua->nama_lengkap}, ini PANGGILAN SISTEM dari Puskesmas. Anak Anda, {$anak->nama_anak}";
-        
-        if ($latestTindakan && (!$latestPengukuran || $latestTindakan->tanggal_pemeriksaan >= $latestPengukuran->tanggal_pengukuran)) {
-            $pesan .= ", tercatat memiliki indikasi medis: " . ($latestTindakan->diagnosa ?? 'Pemeriksaan Rutin') . ".";
+
+        if ($latestTindakan && (! $latestPengukuran || $latestTindakan->tanggal_pemeriksaan >= $latestPengukuran->tanggal_pengukuran)) {
+            $pesan .= ', tercatat memiliki indikasi medis: '.($latestTindakan->diagnosa ?? 'Pemeriksaan Rutin').'.';
         } elseif ($latestPengukuran) {
             $pesan .= ", terdeteksi memiliki status gizi: {$latestPengukuran->status_gizi} (BB: {$latestPengukuran->berat_badan}kg).";
         }
 
-        $pesan .= " Mohon SEGERA datang ke Puskesmas untuk pemeriksaan lanjutan.";
+        $pesan .= ' Mohon SEGERA datang ke Puskesmas untuk pemeriksaan lanjutan.';
 
         // 1. Create In-App Notification
         Notifikasi::create([
@@ -102,9 +102,9 @@ class NotificationController extends Controller
 
         // 2. Simulated Email
         if ($orangTua->email) {
-            Mail::raw("PEMBERITAHUAN PENTING\n\n" . $pesan, function ($message) use ($orangTua, $anak) {
+            Mail::raw("PEMBERITAHUAN PENTING\n\n".$pesan, function ($message) use ($orangTua, $anak) {
                 $message->to($orangTua->email)
-                        ->subject('Panggilan Puskesmas - ' . $anak->nama_anak);
+                    ->subject('Panggilan Puskesmas - '.$anak->nama_anak);
             });
         }
 

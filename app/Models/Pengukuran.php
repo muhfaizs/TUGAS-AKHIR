@@ -10,6 +10,7 @@ class Pengukuran extends Model
     use HasFactory;
 
     protected $table = 'tb_pengukuran';
+
     protected $primaryKey = 'id_pengukuran';
 
     protected $fillable = [
@@ -54,6 +55,7 @@ class Pengukuran extends Model
         } elseif ($imt > 19) {
             return 'Gizi Lebih';
         }
+
         return 'Gizi Baik';
     }
 
@@ -64,6 +66,7 @@ class Pengukuran extends Model
         } elseif ($this->imt >= 13.5 && $this->imt < 14.5) {
             return 'Berisiko Stunting';
         }
+
         return 'Normal';
     }
 }
