@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Profil Orang Tua')
-@section('page_title', 'Profil Saya')
-@section('page_subtitle', 'Kelola informasi pribadi dan kata sandi Anda')
+@section('title', 'Manajemen Profil Dinas Kesehatan')
+@section('page_title', 'Profil Pengguna')
+@section('page_subtitle', 'Kelola informasi pribadi dan keamanan akun Anda')
 
 @section('content')
 <div class="profile-container" style="max-width: 600px; margin: 0 auto; background: #fff; padding: 32px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('orangtua.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('dinkes.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -58,12 +58,6 @@
             <div>
                 <label for="nama_lengkap" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nama Lengkap</label>
                 <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
-            </div>
-
-            <!-- NIK (16 Digit) -->
-            <div>
-                <label for="nik_ortu" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">NIK (16 Digit)</label>
-                <input type="text" name="nik_ortu" id="nik_ortu" value="{{ old('nik_ortu', $user->nik_ortu) }}" required maxlength="16" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
             </div>
 
             <!-- Nomor Kontak -->

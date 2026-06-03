@@ -80,6 +80,8 @@ class DashboardController extends Controller
 
         $selectedAnak = null;
         $pengukuranList = collect();
+        $tindakanList = collect();
+        $imunisasiList = collect();
 
         $pengingatList = [];
 

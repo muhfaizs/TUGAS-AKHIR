@@ -119,6 +119,8 @@ Route::middleware('auth')->group(function () {
     // Dinkes routes
     Route::middleware('role:dinkes')->prefix('dinkes')->name('dinkes.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Dinkes\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/profile', [App\Http\Controllers\Dinkes\DinkesProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [App\Http\Controllers\Dinkes\DinkesProfileController::class, 'update'])->name('profile.update');
     });
 
     // Shared Laporan Routes (Bidan & Dinkes)
