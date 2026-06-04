@@ -73,11 +73,11 @@
                 </div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="anak_ke">Anak Ke (opsional)</label>
+                        <label for="anak_ke">Anak Ke</label>
                         <input type="number" id="anak_ke" name="anak_ke" value="{{ old('anak_ke') }}" min="1" class="form-input" placeholder="Contoh: 1">
                     </div>
                     <div class="form-group">
-                        <label for="no_bpjs">Nomor BPJS (opsional)</label>
+                        <label for="no_bpjs">Nomor BPJS</label>
                         <input type="text" id="no_bpjs" name="no_bpjs" value="{{ old('no_bpjs') }}" class="form-input" placeholder="Masukkan Nomor BPJS">
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="golongan_darah">Golongan Darah (opsional)</label>
+                        <label for="golongan_darah">Golongan Darah</label>
                         <select id="golongan_darah" name="golongan_darah" class="form-input" style="appearance: none; background: url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 24 24\" fill=\"%2394A3B8\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>') no-repeat right 12px center; background-color: #fff; background-size: 24px;">
                             <option value="">-- Pilih Golongan Darah --</option>
                             <option value="A" {{ old('golongan_darah') == 'A' ? 'selected' : '' }}>A</option>
@@ -139,11 +139,11 @@
                         <input type="number" step="0.1" id="panjang_lahir" name="panjang_lahir" value="{{ old('panjang_lahir') }}" required class="form-input" placeholder="Contoh: 49.5">
                     </div>
                     <div class="form-group">
-                        <label for="lingkar_kepala_lahir">Lingkar Kepala Lahir (cm) (opsional)</label>
+                        <label for="lingkar_kepala_lahir">Lingkar Kepala Lahir (cm)</label>
                         <input type="number" step="0.1" id="lingkar_kepala_lahir" name="lingkar_kepala_lahir" value="{{ old('lingkar_kepala_lahir') }}" class="form-input" placeholder="Contoh: 34">
                     </div>
                     <div class="form-group">
-                        <label for="kondisi_lahir">Kondisi Lahir (opsional)</label>
+                        <label for="kondisi_lahir">Kondisi Lahir</label>
                         <select id="kondisi_lahir" name="kondisi_lahir" class="form-input" style="appearance: none; background: url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 24 24\" fill=\"%2394A3B8\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>') no-repeat right 12px center; background-color: #fff; background-size: 24px;">
                             <option value="">-- Pilih Kondisi --</option>
                             <option value="Normal" {{ old('kondisi_lahir') == 'Normal' ? 'selected' : '' }}>Normal</option>
@@ -171,11 +171,11 @@
                     </div>
                 </div>
                 <div class="form-group mt-4">
-                    <label for="riwayat_alergi">Riwayat Alergi (opsional)</label>
+                    <label for="riwayat_alergi">Riwayat Alergi</label>
                     <textarea id="riwayat_alergi" name="riwayat_alergi" class="form-input" rows="2" placeholder="Masukkan alergi anak jika ada...">{{ old('riwayat_alergi') }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="catatan">Catatan Tambahan (opsional)</label>
+                    <label for="catatan">Catatan Tambahan</label>
                     <textarea id="catatan" name="catatan" class="form-input" rows="2" placeholder="Tambahkan catatan khusus jika ada...">{{ old('catatan') }}</textarea>
                 </div>
             </div>
@@ -196,10 +196,32 @@ function anakWizard() {
     return {
         step: {{ $errors->any() ? 3 : 1 }},
         nextStep() {
-            if (this.step < 3) this.step++;
+            if (this.step < 3) {
+                if (this.validateStep(this.step)) {
+                    this.step++;
+                } else {
+                    alert('Masih ada bagian wajib yang kosong, silakan dilengkapi terlebih dahulu.');
+                }
+            }
         },
         prevStep() {
             if (this.step > 1) this.step--;
+        },
+        validateStep(stepNumber) {
+            let isValid = true;
+            let currentStepDiv = document.querySelectorAll('.wizard-step')[stepNumber - 1];
+            if (currentStepDiv) {
+                let requiredInputs = currentStepDiv.querySelectorAll('input[required], select[required], textarea[required]');
+                requiredInputs.forEach(input => {
+                    if (input.type === 'radio') {
+                        let radioGroup = currentStepDiv.querySelectorAll(`input[name="${input.name}"]:checked`);
+                        if (radioGroup.length === 0) isValid = false;
+                    } else if (!input.value.trim()) {
+                        isValid = false;
+                    }
+                });
+            }
+            return isValid;
         }
     }
 }

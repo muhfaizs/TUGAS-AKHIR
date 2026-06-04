@@ -51,7 +51,7 @@ class AnakController extends Controller
             'catatan' => ['nullable', 'string'],
             'golongan_darah' => ['nullable', 'in:A,B,AB,O,Tidak Tahu'],
             'anak_ke' => ['nullable', 'integer', 'min:1'],
-            'no_bpjs' => ['nullable', 'string', 'max:20'],
+            'no_bpjs' => ['nullable', 'digits_between:1,20'],
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
@@ -67,6 +67,7 @@ class AnakController extends Controller
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
             'berat_lahir.required' => 'Berat lahir wajib diisi.',
             'panjang_lahir.required' => 'Panjang lahir wajib diisi.',
+            'no_bpjs.digits_between' => 'Nomor BPJS harus berupa angka.',
         ]);
 
         Anak::create($validated);
@@ -150,7 +151,7 @@ class AnakController extends Controller
             'catatan' => ['nullable', 'string'],
             'golongan_darah' => ['nullable', 'in:A,B,AB,O,Tidak Tahu'],
             'anak_ke' => ['nullable', 'integer', 'min:1'],
-            'no_bpjs' => ['nullable', 'string', 'max:20'],
+            'no_bpjs' => ['nullable', 'digits_between:1,20'],
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
@@ -159,6 +160,7 @@ class AnakController extends Controller
             'nik_anak.required' => 'NIK anak wajib diisi.',
             'nik_anak.size' => 'NIK anak harus 16 digit.',
             'nik_anak.unique' => 'NIK anak sudah terdaftar.',
+            'no_bpjs.digits_between' => 'Nomor BPJS harus berupa angka.',
         ]);
 
         $anak->update($validated);

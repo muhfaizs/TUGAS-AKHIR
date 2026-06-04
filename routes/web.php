@@ -83,6 +83,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/tindakan/{tindakan}/pdf', [PdfExportController::class, 'downloadTindakanMedis'])->name('tindakan.pdf');
         Route::get('/imunisasi/{imunisasi}/pdf', [PdfExportController::class, 'downloadImunisasi'])->name('imunisasi.pdf');
 
+        // Kader Management (Bidan can manage Kader)
+        Route::get('/kader', [UserManagementController::class, 'index'])->name('kader.index');
+        Route::post('/kader', [UserManagementController::class, 'store'])->name('kader.store');
+        Route::get('/kader/{user}', [UserManagementController::class, 'show'])->name('kader.show');
+        Route::put('/kader/{user}', [UserManagementController::class, 'update'])->name('kader.update');
+        Route::delete('/kader/{user}', [UserManagementController::class, 'destroy'])->name('kader.destroy');
+
         // Profile routes
         Route::get('/profile', [BidanProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [BidanProfileController::class, 'update'])->name('profile.update');

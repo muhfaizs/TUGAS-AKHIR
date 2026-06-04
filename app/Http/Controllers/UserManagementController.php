@@ -38,6 +38,10 @@ class UserManagementController extends Controller
             $query->where('role', $role);
         }
 
+        if (auth()->user()->isBidan()) {
+            $query->where('role', 'kader');
+        }
+
         $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
         $kabupatenList = Kabupaten::all();
         $puskesmasList = Puskesmas::all();
@@ -57,7 +61,7 @@ class UserManagementController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
-            'nip_bidan' => ['nullable', 'string', 'max:30'],
+            'nip_bidan' => ['nullable', 'digits:18'],
             'nik_ortu' => ['nullable', 'string', 'size:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
             'is_active' => ['nullable', 'boolean'],
@@ -73,15 +77,21 @@ class UserManagementController extends Controller
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'role.required' => 'Role wajib dipilih.',
             'nik_ortu.size' => 'NIK harus 16 digit.',
+            'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
         ]);
 
         if (! isset($validated['is_active'])) {
             $validated['is_active'] = false;
         }
 
+        if (auth()->user()->isBidan() && $validated['role'] !== 'kader') {
+            abort(403, 'Bidan hanya dapat mengelola akun kader.');
+        }
+
         User::create($validated);
 
-        return redirect()->route('admin.users.index')
+        $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+        return redirect()->route($routePrefix . '.index')
             ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
@@ -108,7 +118,7 @@ class UserManagementController extends Controller
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
-            'nip_bidan' => ['nullable', 'string', 'max:30'],
+            'nip_bidan' => ['nullable', 'digits:18'],
             'nik_ortu' => ['nullable', 'string', 'size:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
             'is_active' => ['nullable', 'boolean'],
@@ -123,6 +133,7 @@ class UserManagementController extends Controller
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'role.required' => 'Role wajib dipilih.',
             'nik_ortu.size' => 'NIK harus 16 digit.',
+            'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
         ]);
 
         // Only update password if provided
@@ -134,9 +145,14 @@ class UserManagementController extends Controller
             $validated['is_active'] = false;
         }
 
+        if (auth()->user()->isBidan() && ($validated['role'] !== 'kader' || $user->role !== 'kader')) {
+            abort(403, 'Bidan hanya dapat mengelola akun kader.');
+        }
+
         $user->update($validated);
 
-        return redirect()->route('admin.users.index')
+        $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+        return redirect()->route($routePrefix . '.index')
             ->with('success', 'Data pengguna berhasil diperbarui.');
     }
 
@@ -147,13 +163,19 @@ class UserManagementController extends Controller
     {
         // Prevent deleting yourself
         if ($user->id_user === auth()->id()) {
-            return redirect()->route('admin.users.index')
+            $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+            return redirect()->route($routePrefix . '.index')
                 ->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+
+        if (auth()->user()->isBidan() && $user->role !== 'kader') {
+            abort(403, 'Bidan hanya dapat menghapus akun kader.');
         }
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')
+        $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+        return redirect()->route($routePrefix . '.index')
             ->with('success', 'Pengguna berhasil dihapus.');
     }
 }

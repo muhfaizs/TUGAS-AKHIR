@@ -34,7 +34,7 @@ class BidanProfileController extends Controller
 
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nip_bidan' => ['nullable', 'string', 'max:30'],
+            'nip_bidan' => ['nullable', 'digits:18'],
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
@@ -42,6 +42,7 @@ class BidanProfileController extends Controller
             'puskesmas_id' => ['required', 'exists:puskesmas,id'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email ini sudah digunakan oleh akun lain.',
             'password.min' => 'Password minimal 8 karakter.',

@@ -9,7 +9,7 @@
     <!-- Header Row -->
     <div class="um-header">
         <div class="um-header-left">
-            <form method="GET" action="{{ route('admin.users.index') }}" class="um-search-form" id="search-form">
+            <form method="GET" action="{{ auth()->user()->isBidan() ? route('bidan.kader.index') : route('admin.users.index') }}" class="um-search-form" id="search-form">
                 <div class="um-search-wrap">
                     <svg class="um-search-icon" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, username, NIK..." class="um-search-input" id="search-input">
@@ -87,7 +87,7 @@
                                     <svg viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
                                 </button>
                                 @if ($user->id_user !== auth()->id())
-                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="um-delete-form" onsubmit="return confirm('Yakin ingin menghapus pengguna {{ $user->nama_lengkap }}?')">
+                                    <form method="POST" action="{{ auth()->user()->isBidan() ? route('bidan.kader.destroy', $user) : route('admin.users.destroy', $user) }}" class="um-delete-form" onsubmit="return confirm('Yakin ingin menghapus pengguna {{ $user->nama_lengkap }}?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="um-btn-delete" title="Hapus" id="btn-delete-{{ $user->id_user }}">
@@ -138,7 +138,7 @@
                 </div>
             @endif
 
-            <form :action="isEdit ? '{{ url('admin/users') }}/' + editId : '{{ route('admin.users.store') }}'" method="POST" class="um-modal-form" id="user-form">
+            <form :action="isEdit ? '{{ auth()->user()->isBidan() ? url('bidan/kader') : url('admin/users') }}/' + editId : '{{ auth()->user()->isBidan() ? route('bidan.kader.store') : route('admin.users.store') }}'" method="POST" class="um-modal-form" id="user-form">
                 @csrf
                 <template x-if="isEdit">
                     <input type="hidden" name="_method" value="PUT">
@@ -160,7 +160,7 @@
                     <!-- Email -->
                     <div class="um-field">
                         <label for="modal_email" class="um-label">Alamat Email</label>
-                        <input type="email" name="email" id="modal_email" x-model="form.email" class="um-input" placeholder="contoh@email.com (opsional)">
+                        <input type="email" name="email" id="modal_email" x-model="form.email" class="um-input" placeholder="contoh@email.com">
                     </div>
 
                     <!-- Password -->
@@ -316,7 +316,7 @@ function userManager() {
             this.isEdit = true;
             this.editId = id;
             try {
-                const res = await fetch(`/admin/users/${id}`, {
+                const res = await fetch(`{{ auth()->user()->isBidan() ? '/bidan/kader/' : '/admin/users/' }}${id}`, {
                     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                 });
                 const data = await res.json();

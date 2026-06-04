@@ -36,7 +36,7 @@
                     @endif
                 </div>
                 <div style="flex: 1;">
-                    <label for="foto_profil" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Foto Profil (Opsional)</label>
+                    <label for="foto_profil" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Foto Profil</label>
                     <input type="file" name="foto_profil" id="foto_profil" accept="image/*" style="width: 100%; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s; background: #fff;">
                     @if($user->foto_profil)
                         <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
@@ -68,7 +68,7 @@
 
             <!-- Email -->
             <div>
-                <label for="email" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Alamat Email (Opsional)</label>
+                <label for="email" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Alamat Email</label>
                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="contoh@email.com">
             </div>
 
