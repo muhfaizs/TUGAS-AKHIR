@@ -9,6 +9,25 @@
     $routePrefix = auth()->user()->isOrangTua() ? 'orangtua' : (auth()->user()->isBidan() ? 'bidan' : 'admin');
 @endphp
 <div class="anak-header">
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <form method="GET" action="{{ route($routePrefix . '.anak.index') }}" style="display: flex; gap: 12px; align-items: center; margin: 0; flex-wrap: wrap;">
+            <div style="position: relative;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau NIK anak..." style="padding: 10px 16px 10px 40px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.1); width: 250px; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--kia-primary)'" onblur="this.style.borderColor='rgba(15,23,42,0.1)'">
+                <svg viewBox="0 0 24 24" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: #94A3B8;"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </div>
+            @if(!auth()->user()->isOrangTua())
+                <select name="status" style="padding: 10px 16px; border-radius: 12px; border: 1px solid rgba(15,23,42,0.1); font-size: 14px; outline: none; background: #fff; cursor: pointer; min-width: 150px;" onchange="this.form.submit()" onfocus="this.style.borderColor='var(--kia-primary)'" onblur="this.style.borderColor='rgba(15,23,42,0.1)'">
+                    <option value="">Semua Status</option>
+                    <option value="normal" {{ request('status') === 'normal' ? 'selected' : '' }}>Normal</option>
+                    <option value="berisiko" {{ request('status') === 'berisiko' ? 'selected' : '' }}>Berisiko</option>
+                </select>
+            @endif
+            <button type="submit" style="padding: 10px 16px; background: rgba(15,23,42,0.05); color: #475569; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(15,23,42,0.1)';" onmouseout="this.style.background='rgba(15,23,42,0.05)';">Cari</button>
+            @if(request('search') || request('status'))
+                <a href="{{ route($routePrefix . '.anak.index') }}" style="color: #64748B; font-size: 14px; text-decoration: none; padding: 10px; border-radius: 12px; background: rgba(239,68,68,0.1); color: #DC2626; font-weight: 600;" onmouseover="this.style.background='rgba(239,68,68,0.2)';" onmouseout="this.style.background='rgba(239,68,68,0.1)';">Reset</a>
+            @endif
+        </form>
+    </div>
     <a href="{{ route($routePrefix . '.anak.create') }}" class="btn-add">
         <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
         Daftarkan Anak Baru
@@ -90,7 +109,7 @@
 </div>
 
 <style>
-.anak-header { display: flex; justify-content: flex-end; margin-bottom: 24px; }
+.anak-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
 .btn-add {
     display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px;
     background: var(--kia-primary); color: #fff; border-radius: 12px;

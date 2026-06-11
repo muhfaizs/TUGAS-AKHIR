@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $totalAnak = Anak::count();
 
         // 3. Total Balita Berisiko (Stunting / Gizi Kurang / Buruk)
-        $anakBerisiko = Anak::whereHas('pengukuran', function ($q) {
+        $anakBerisiko = Anak::whereHas('latestPengukuran', function ($q) {
             $q->where('flag_risiko', true);
         })->count();
 

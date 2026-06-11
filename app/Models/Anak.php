@@ -28,6 +28,8 @@ class Anak extends Model
         'nama_ibu',
         'catatan',
         'riwayat_alergi',
+        'alamat_domisili',
+        'nomor_kontak_darurat',
     ];
 
     protected $casts = [
@@ -52,6 +54,14 @@ class Anak extends Model
     public function pengukuran()
     {
         return $this->hasMany(Pengukuran::class, 'id_anak', 'id_anak');
+    }
+
+    /**
+     * Get the latest pengukuran record.
+     */
+    public function latestPengukuran()
+    {
+        return $this->hasOne(Pengukuran::class, 'id_anak', 'id_anak')->latestOfMany('tanggal_pengukuran');
     }
 
     /**

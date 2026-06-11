@@ -42,6 +42,29 @@
     </div>
 </div>
 
+@if($anak->alamat_domisili || $anak->nomor_kontak_darurat)
+<div class="profile-contacts mt-4" style="padding: 16px; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0;">
+    <h4 style="margin: 0 0 12px; font-size: 14px; color: #0F172A; display: flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 20 20" style="width: 16px; height: 16px; fill: #64748B;"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .99-.31 1.91-.83 2.66l-7.11-7.11A5.98 5.98 0 0116 10zm-11.17 2.66A5.98 5.98 0 014 10c0-1.52.57-2.9 1.5-3.95l7.11 7.11A5.98 5.98 0 016.83 12.66z" clip-rule="evenodd"/></svg>
+        Informasi Kontak & Domisili
+    </h4>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+        @if($anak->nomor_kontak_darurat)
+        <div>
+            <span style="font-size: 12px; color: #64748B; display: block; margin-bottom: 2px;">Kontak Darurat</span>
+            <span style="font-size: 14px; font-weight: 600; color: #1E293B;">{{ $anak->nomor_kontak_darurat }}</span>
+        </div>
+        @endif
+        @if($anak->alamat_domisili)
+        <div>
+            <span style="font-size: 12px; color: #64748B; display: block; margin-bottom: 2px;">Alamat Domisili</span>
+            <span style="font-size: 14px; color: #1E293B;">{{ $anak->alamat_domisili }}</span>
+        </div>
+        @endif
+    </div>
+</div>
+@endif
+
 <div class="timeline-container">
     <h3 class="timeline-title">Timeline Rekam Medis</h3>
 

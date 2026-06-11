@@ -69,6 +69,7 @@ class UserManagementController extends Controller
             'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email'],
+            'alamat_domisili' => ['nullable', 'string'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
@@ -104,7 +105,7 @@ class UserManagementController extends Controller
         return response()->json($user->only([
             'id_user', 'username', 'nama_lengkap', 'nomor_kontak',
             'role', 'nip_bidan', 'nik_ortu', 'kode_instansi_dinkes',
-            'is_active', 'kabupaten_id', 'puskesmas_id', 'posyandu_id', 'email',
+            'is_active', 'kabupaten_id', 'puskesmas_id', 'posyandu_id', 'email', 'alamat_domisili',
         ]));
     }
 
@@ -127,6 +128,7 @@ class UserManagementController extends Controller
             'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
+            'alamat_domisili' => ['nullable', 'string'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
@@ -144,6 +146,19 @@ class UserManagementController extends Controller
 
         if (! isset($validated['is_active'])) {
             $validated['is_active'] = false;
+        }
+
+        // Prevent wiping Orang Tua's self-managed posyandu_id
+        if ($validated['role'] === 'orang tua') {
+            unset($validated['posyandu_id']);
+            $validated['kabupaten_id'] = null;
+            $validated['puskesmas_id'] = null;
+        } elseif ($validated['role'] === 'super admin') {
+            $validated['kabupaten_id'] = null;
+            $validated['puskesmas_id'] = null;
+            $validated['posyandu_id'] = null;
+        } elseif ($validated['role'] !== 'kader' && $validated['role'] !== 'bidan' && $validated['role'] !== 'dinkes') {
+             // catch-all for any other roles if added in future
         }
 
         if (auth()->user()->isBidan() && ($validated['role'] !== 'kader' || $user->role !== 'kader')) {

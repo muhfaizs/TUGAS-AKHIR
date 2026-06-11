@@ -313,6 +313,45 @@
                 setTimeout(() => { isAlertShowing = false; }, 100);
             }
         }, true);
+        // Form dirty checking mechanism for edit forms
+        window.markFormState = function(form) {
+            // Ignore search forms, delete forms, or logout forms
+            if (!form || form.id === 'logout-form-dashboard' || form.classList.contains('um-search-form') || form.classList.contains('um-delete-form') || form.classList.contains('inline-form')) {
+                return;
+            }
+            const formData = new FormData(form);
+            const state = new URLSearchParams(formData).toString();
+            form.setAttribute('data-initial-state', state);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('form').forEach(form => {
+                if (!form.classList.contains('um-modal-form')) {
+                    window.markFormState(form);
+                }
+            });
+        });
+
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            
+            // Apply only to forms that are explicitly "edit" operations
+            // Detect edit forms if they have a _method=PUT/PATCH, OR if they are update forms
+            const methodInput = form.querySelector('input[name="_method"]');
+            const isPutOrPatch = methodInput && ['PUT', 'PATCH'].includes(methodInput.value.toUpperCase());
+            const isUpdateAction = form.action && form.action.includes('update');
+            const isEditForm = isPutOrPatch || isUpdateAction;
+            
+            if (isEditForm && form.hasAttribute('data-initial-state')) {
+                const initialState = form.getAttribute('data-initial-state');
+                const currentState = new URLSearchParams(new FormData(form)).toString();
+                
+                if (initialState === currentState) {
+                    e.preventDefault();
+                    alert('Tidak ada data yang dirubah. Silakan rubah data terlebih dahulu atau klik Batal.');
+                }
+            }
+        });
     </script>
 </body>
 </html>

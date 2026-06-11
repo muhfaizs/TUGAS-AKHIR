@@ -127,6 +127,14 @@
                 </div>
             </div>
             <div class="form-group mt-4">
+                <label for="nomor_kontak_darurat">Nomor Kontak Darurat</label>
+                <input type="tel" id="nomor_kontak_darurat" name="nomor_kontak_darurat" value="{{ old('nomor_kontak_darurat', $anak->nomor_kontak_darurat ?? ($anak->orangTua->nomor_kontak ?? '')) }}" class="form-input" placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label for="alamat_domisili">Alamat Domisili Bayi / Orang Tua</label>
+                <textarea id="alamat_domisili" name="alamat_domisili" class="form-input" rows="2" placeholder="Masukkan alamat lengkap domisili...">{{ old('alamat_domisili', $anak->alamat_domisili ?? ($anak->orangTua->alamat_domisili ?? '')) }}</textarea>
+            </div>
+            <div class="form-group mt-4">
                 <label for="riwayat_alergi">Riwayat Alergi</label>
                 <textarea id="riwayat_alergi" name="riwayat_alergi" class="form-input" rows="2">{{ old('riwayat_alergi', $anak->riwayat_alergi) }}</textarea>
             </div>

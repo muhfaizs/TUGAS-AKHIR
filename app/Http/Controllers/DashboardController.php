@@ -23,11 +23,9 @@ class DashboardController extends Controller
         if ($role === 'kader') {
             $totalAnak = Anak::count();
 
-            // Count unique children who had a risky measurement this month
-            $anakBerisiko = Anak::whereHas('pengukuran', function ($query) {
-                $query->where('flag_risiko', 1)
-                    ->whereMonth('tanggal_pengukuran', now()->month)
-                    ->whereYear('tanggal_pengukuran', now()->year);
+            // Count unique children who are currently at risk (based on latest measurement)
+            $anakBerisiko = Anak::whereHas('latestPengukuran', function ($query) {
+                $query->where('flag_risiko', 1);
             })->count();
 
             $jadwalTerdekat = JadwalPosyandu::where('posyandu_id', $request->user()->posyandu_id)
@@ -35,7 +33,16 @@ class DashboardController extends Controller
                 ->orderBy('tanggal', 'asc')
                 ->first();
 
-            return view('dashboard.kader.index', compact('totalAnak', 'anakBerisiko', 'jadwalTerdekat'));
+            // Fetch at-risk children with latest pengukuran for the priority table
+            $pasienPrioritas = Anak::with(['orangTua', 'pengukuran' => function ($query) {
+                $query->orderByDesc('tanggal_pengukuran');
+            }])
+                ->whereHas('latestPengukuran', function ($query) {
+                    $query->where('flag_risiko', 1);
+                })
+                ->get();
+
+            return view('dashboard.kader.index', compact('totalAnak', 'anakBerisiko', 'jadwalTerdekat', 'pasienPrioritas'));
         }
 
         return view('dashboard.admin');
@@ -50,15 +57,15 @@ class DashboardController extends Controller
         $totalPengukuran = Pengukuran::count();
 
         // Children flagged at-risk from their most recent measurement
-        $anakBerisiko = Anak::whereHas('pengukuran', function ($query) {
+        $anakBerisiko = Anak::whereHas('latestPengukuran', function ($query) {
             $query->where('flag_risiko', 1);
         })->count();
 
         // Fetch at-risk children with latest pengukuran for the priority table
         $pasienPrioritas = Anak::with(['orangTua', 'pengukuran' => function ($query) {
-            $query->where('flag_risiko', 1)->orderByDesc('tanggal_pengukuran');
+            $query->orderByDesc('tanggal_pengukuran');
         }])
-            ->whereHas('pengukuran', function ($query) {
+            ->whereHas('latestPengukuran', function ($query) {
                 $query->where('flag_risiko', 1);
             })
             ->get();

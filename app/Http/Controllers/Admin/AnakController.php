@@ -16,8 +16,26 @@ class AnakController extends Controller
      */
     public function index(Request $request): View
     {
-        // Admins, bidan, and kader can see all children
-        $anak = Anak::with('orangTua')->latest()->get();
+        $query = Anak::with('orangTua')->latest();
+
+        if ($request->filled('search')) {
+            $query->where('nama_anak', 'like', '%' . $request->search . '%')
+                  ->orWhere('nik_anak', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'berisiko') {
+                $query->whereHas('latestPengukuran', function ($q) {
+                    $q->where('flag_risiko', 1);
+                });
+            } elseif ($request->status === 'normal') {
+                $query->whereHas('latestPengukuran', function ($q) {
+                    $q->where('flag_risiko', 0);
+                });
+            }
+        }
+
+        $anak = $query->get();
 
         return view('dashboard.orangtua.anak.index', compact('anak'));
     }
@@ -55,6 +73,8 @@ class AnakController extends Controller
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
+            'alamat_domisili' => ['nullable', 'string'],
+            'nomor_kontak_darurat' => ['nullable', 'string', 'max:255'],
         ], [
             'id_user.required' => 'Orang tua wajib dipilih.',
             'nik_anak.required' => 'NIK anak wajib diisi.',
@@ -155,6 +175,8 @@ class AnakController extends Controller
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
+            'alamat_domisili' => ['nullable', 'string'],
+            'nomor_kontak_darurat' => ['nullable', 'string', 'max:255'],
         ], [
             'id_user.required' => 'Orang tua wajib dipilih.',
             'nik_anak.required' => 'NIK anak wajib diisi.',
@@ -164,6 +186,21 @@ class AnakController extends Controller
         ]);
 
         $anak->update($validated);
+
+        // Sync to parent user if needed
+        $user = User::find($validated['id_user']);
+        if ($user) {
+            $userUpdates = [];
+            if (empty($user->alamat_domisili) && ! empty($validated['alamat_domisili'])) {
+                $userUpdates['alamat_domisili'] = $validated['alamat_domisili'];
+            }
+            if (empty($user->nomor_kontak) && ! empty($validated['nomor_kontak_darurat'])) {
+                $userUpdates['nomor_kontak'] = $validated['nomor_kontak_darurat'];
+            }
+            if (! empty($userUpdates)) {
+                $user->update($userUpdates);
+            }
+        }
 
         $routePrefix = $request->user()->isBidan() ? 'bidan' : 'admin';
 

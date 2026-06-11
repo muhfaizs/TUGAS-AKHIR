@@ -218,6 +218,12 @@
                         <input type="text" name="nik_ortu" id="modal_nik_ortu" x-model="form.nik_ortu" class="um-input" placeholder="16 digit NIK" maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
+                    <!-- Alamat Domisili (conditional) -->
+                    <div class="um-field" x-show="form.role === 'orang tua'">
+                        <label for="modal_alamat_domisili" class="um-label">Alamat Domisili Lengkap</label>
+                        <textarea name="alamat_domisili" id="modal_alamat_domisili" x-model="form.alamat_domisili" class="um-input" rows="2" placeholder="Masukkan alamat lengkap domisili..."></textarea>
+                    </div>
+
                     <!-- Kode Instansi Dinkes (conditional) -->
                     <div class="um-field" x-show="form.role === 'dinkes'">
                         <label for="modal_kode_instansi" class="um-label">Kode Instansi Dinkes</label>
@@ -304,6 +310,7 @@ function userManager() {
             puskesmas_id: '{{ old('puskesmas_id', '') }}',
             posyandu_id: '{{ old('posyandu_id', '') }}',
             email: '{{ old('email', '') }}',
+            alamat_domisili: '{{ old('alamat_domisili', '') }}',
         },
 
         get filteredPuskesmas() {
@@ -319,7 +326,7 @@ function userManager() {
         openCreate() {
             this.isEdit = false;
             this.editId = null;
-            this.form = { nama_lengkap: '', username: '', role: '', nomor_kontak: '', nip_bidan: '', nik_ortu: '', kode_instansi_dinkes: '', is_active: true, kabupaten_id: '', puskesmas_id: '', posyandu_id: '', email: '' };
+            this.form = { nama_lengkap: '', username: '', role: '', nomor_kontak: '', nip_bidan: '', nik_ortu: '', kode_instansi_dinkes: '', is_active: true, kabupaten_id: '', puskesmas_id: '', posyandu_id: '', email: '', alamat_domisili: '' };
             this.showModal = true;
         },
 
@@ -352,12 +359,21 @@ function userManager() {
                     puskesmas_id: '',
                     posyandu_id: '',
                     email: data.email || '',
+                    alamat_domisili: data.alamat_domisili || '',
                 };
 
                 this.$nextTick(() => {
                     this.form.puskesmas_id = data.puskesmas_id || '';
                     this.$nextTick(() => {
                         this.form.posyandu_id = data.posyandu_id || '';
+                        
+                        // Mark form state for dirty checking after Alpine has updated the DOM
+                        setTimeout(() => {
+                            const form = document.getElementById('user-form');
+                            if (form && typeof window.markFormState === 'function') {
+                                window.markFormState(form);
+                            }
+                        }, 50);
                     });
                 });
 

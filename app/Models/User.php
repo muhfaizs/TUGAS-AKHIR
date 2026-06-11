@@ -44,6 +44,7 @@ class User extends Authenticatable
         'wilayah_kerja',
         'email',
         'foto_profil',
+        'alamat_domisili',
     ];
 
     /**

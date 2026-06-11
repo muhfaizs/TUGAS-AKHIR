@@ -50,6 +50,8 @@ class AnakController extends Controller
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
+            'alamat_domisili' => ['nullable', 'string'],
+            'nomor_kontak_darurat' => ['nullable', 'string', 'max:255'],
         ], [
             'nik_anak.required' => 'NIK anak wajib diisi.',
             'nik_anak.digits' => 'NIK anak harus 16 digit angka.',
@@ -158,6 +160,8 @@ class AnakController extends Controller
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
+            'alamat_domisili' => ['nullable', 'string'],
+            'nomor_kontak_darurat' => ['nullable', 'string', 'max:255'],
         ], [
             'nik_anak.required' => 'NIK anak wajib diisi.',
             'nik_anak.digits' => 'NIK anak harus 16 digit angka.',
@@ -166,6 +170,19 @@ class AnakController extends Controller
         ]);
 
         $anak->update($validated);
+
+        // Sync to parent user if needed
+        $user = $request->user();
+        $userUpdates = [];
+        if (empty($user->alamat_domisili) && ! empty($validated['alamat_domisili'])) {
+            $userUpdates['alamat_domisili'] = $validated['alamat_domisili'];
+        }
+        if (empty($user->nomor_kontak) && ! empty($validated['nomor_kontak_darurat'])) {
+            $userUpdates['nomor_kontak'] = $validated['nomor_kontak_darurat'];
+        }
+        if (! empty($userUpdates)) {
+            $user->update($userUpdates);
+        }
 
         return redirect()->route('orangtua.anak.index')
             ->with('success', 'Data anak berhasil diperbarui.');

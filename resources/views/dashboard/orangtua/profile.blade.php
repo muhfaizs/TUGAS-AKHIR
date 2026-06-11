@@ -72,6 +72,12 @@
                 <input type="tel" name="nomor_kontak" id="nomor_kontak" value="{{ old('nomor_kontak', $user->nomor_kontak) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
             </div>
 
+            <!-- Alamat Domisili -->
+            <div>
+                <label for="alamat_domisili" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Alamat Domisili Lengkap</label>
+                <textarea name="alamat_domisili" id="alamat_domisili" rows="3" placeholder="Masukkan alamat lengkap Anda..." style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s; resize: vertical;">{{ old('alamat_domisili', $user->alamat_domisili) }}</textarea>
+            </div>
+
             <!-- Posyandu Domisili -->
             <div>
                 <label for="posyandu_id" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Posyandu Domisili (Pilih untuk melihat jadwal)</label>

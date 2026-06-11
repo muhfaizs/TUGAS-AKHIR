@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OrangTua;
 
 use App\Http\Controllers\Controller;
+use App\Models\Posyandu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,8 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        $posyandus = \App\Models\Posyandu::all();
+        $posyandus = Posyandu::all();
+
         return view('dashboard.orangtua.profile', [
             'user' => $request->user(),
             'posyandus' => $posyandus,
@@ -39,6 +41,7 @@ class ProfileController extends Controller
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'alamat_domisili' => ['nullable', 'string'],
         ], [
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'nomor_kontak.required' => 'Nomor kontak wajib diisi.',
@@ -56,6 +59,7 @@ class ProfileController extends Controller
             'nik_ortu' => $validated['nik_ortu'],
             'posyandu_id' => $validated['posyandu_id'] ?? null,
             'email' => $validated['email'] ?? null,
+            'alamat_domisili' => $validated['alamat_domisili'] ?? null,
         ]);
 
         if (! empty($validated['password'])) {
