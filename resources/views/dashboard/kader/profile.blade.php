@@ -106,6 +106,8 @@
                 <input type="tel" name="nomor_kontak" id="nomor_kontak" value="{{ old('nomor_kontak', $user->nomor_kontak) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
             </div>
 
+
+
             <!-- Email -->
             <div>
                 <label for="email" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Alamat Email</label>

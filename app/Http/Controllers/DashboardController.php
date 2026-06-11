@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Anak;
+use App\Models\JadwalPosyandu;
+use App\Models\Notifikasi;
 use App\Models\Pengukuran;
 use App\Models\User;
 use Carbon\Carbon;
@@ -28,7 +30,12 @@ class DashboardController extends Controller
                     ->whereYear('tanggal_pengukuran', now()->year);
             })->count();
 
-            return view('dashboard.kader.index', compact('totalAnak', 'anakBerisiko'));
+            $jadwalTerdekat = JadwalPosyandu::where('posyandu_id', $request->user()->posyandu_id)
+                ->whereDate('tanggal', '>=', now()->toDateString())
+                ->orderBy('tanggal', 'asc')
+                ->first();
+
+            return view('dashboard.kader.index', compact('totalAnak', 'anakBerisiko', 'jadwalTerdekat'));
         }
 
         return view('dashboard.admin');
@@ -84,6 +91,7 @@ class DashboardController extends Controller
         $imunisasiList = collect();
 
         $pengingatList = [];
+        $jadwalTerdekat = null;
 
         if ($anakList->isNotEmpty()) {
             // For simplicity, default to the first child or handle query param `?anak_id=`
@@ -106,7 +114,7 @@ class DashboardController extends Controller
                     4 => ['DPT-HB-Hib 3', 'Polio 4'],
                     9 => ['Campak / MR'],
                 ];
-                
+
                 $riwayatImunisasi = $selectedAnak->imunisasi->pluck('nama_vaksin')->toArray();
                 $tanggalLahir = Carbon::parse($selectedAnak->tanggal_lahir);
 
@@ -116,14 +124,14 @@ class DashboardController extends Controller
                 foreach ($jadwalVaksinByBulan as $bulan => $vaksins) {
                     $missingInThisMonth = [];
                     foreach ($vaksins as $v) {
-                        if (!in_array($v, $riwayatImunisasi)) {
+                        if (! in_array($v, $riwayatImunisasi)) {
                             // Check if this reminder is already dismissed
                             $notifTitle = "Pengingat Imunisasi: {$v} - {$selectedAnak->nama_anak}";
-                            $isDismissed = \App\Models\Notifikasi::where('id_user', $user->id_user)
+                            $isDismissed = Notifikasi::where('id_user', $user->id_user)
                                 ->where('judul', $notifTitle)
                                 ->exists();
 
-                            if (!$isDismissed) {
+                            if (! $isDismissed) {
                                 $missingInThisMonth[] = $v;
                             }
                         }
@@ -152,10 +160,15 @@ class DashboardController extends Controller
                         }
                     }
                 }
+
+                $jadwalTerdekat = JadwalPosyandu::where('posyandu_id', $request->user()->posyandu_id)
+                    ->whereDate('tanggal', '>=', now()->toDateString())
+                    ->orderBy('tanggal', 'asc')
+                    ->first();
             }
         }
 
-        return view('dashboard.orangtua.index', compact('anakList', 'selectedAnak', 'pengukuranList', 'pengingatList', 'tindakanList', 'imunisasiList'));
+        return view('dashboard.orangtua.index', compact('anakList', 'selectedAnak', 'pengukuranList', 'pengingatList', 'tindakanList', 'imunisasiList', 'jadwalTerdekat'));
     }
 
     public function dismissReminder(Request $request)
@@ -172,8 +185,8 @@ class DashboardController extends Controller
         }
 
         $notifTitle = "Pengingat Imunisasi: {$request->vaksin} - {$anak->nama_anak}";
-        
-        \App\Models\Notifikasi::create([
+
+        Notifikasi::create([
             'id_user' => auth()->user()->id_user,
             'judul' => $notifTitle,
             'pesan' => "Jadwal Imunisasi {$request->vaksin} untuk anak Anda ({$anak->nama_anak}) sudah dekat. Harap segera membawa anak Anda ke Puskesmas/Posyandu.",

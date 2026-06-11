@@ -109,6 +109,11 @@
                         Input Pengukuran
                     </a>
 
+                    <a href="{{ route('kader.jadwal.index') }}" class="sidebar-link {{ request()->routeIs('kader.jadwal.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-jadwal">
+                        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+                        Jadwal Posyandu
+                    </a>
+
                     <a href="{{ route('kader.profile.edit') }}" class="sidebar-link {{ request()->routeIs('kader.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Profil Saya
@@ -282,7 +287,28 @@
             e.preventDefault();
             if (!isAlertShowing) {
                 isAlertShowing = true;
-                alert('Masih ada bagian wajib yang kosong atau belum sesuai, silakan dilengkapi terlebih dahulu.');
+                
+                // Set custom validation messages based on attributes
+                let msg = e.target.validationMessage;
+                if (e.target.validity.valueMissing) {
+                    msg = 'Bagian ini wajib diisi, silakan dilengkapi terlebih dahulu.';
+                } else if (e.target.type === 'email' && e.target.validity.typeMismatch) {
+                    msg = 'Email tidak sesuai, silakan perbaiki.';
+                } else if (e.target.name === 'nik_anak' || e.target.name === 'nik_ortu' || e.target.name === 'nik') {
+                    if (e.target.validity.patternMismatch || e.target.validity.tooShort || e.target.validity.tooLong) {
+                        msg = 'NIK harus terdiri dari tepat 16 digit angka.';
+                    }
+                } else if (e.target.name === 'no_bpjs') {
+                    if (e.target.validity.patternMismatch || e.target.validity.tooShort || e.target.validity.tooLong) {
+                        msg = 'Nomor BPJS harus terdiri dari tepat 13 digit angka jika diisi.';
+                    }
+                } else if (e.target.name === 'no_telp' && e.target.validity.patternMismatch) {
+                    msg = 'Nomor telepon tidak valid, hanya menerima angka.';
+                } else if ((e.target.type === 'number' || e.target.inputMode === 'numeric') && (e.target.validity.badInput || e.target.validity.stepMismatch)) {
+                    msg = 'Hanya menerima input numerik.';
+                }
+
+                alert(msg || 'Masih ada bagian wajib yang kosong atau belum sesuai.');
                 e.target.focus();
                 setTimeout(() => { isAlertShowing = false; }, 100);
             }

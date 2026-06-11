@@ -62,7 +62,7 @@ class UserManagementController extends Controller
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
             'nip_bidan' => ['nullable', 'digits:18'],
-            'nik_ortu' => ['nullable', 'string', 'size:16'],
+            'nik_ortu' => ['nullable', 'digits:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
             'is_active' => ['nullable', 'boolean'],
             'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
@@ -76,7 +76,7 @@ class UserManagementController extends Controller
             'password.min' => 'Password minimal 8 karakter.',
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'role.required' => 'Role wajib dipilih.',
-            'nik_ortu.size' => 'NIK harus 16 digit.',
+            'nik_ortu.digits' => 'NIK harus 16 digit angka.',
             'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
         ]);
 
@@ -91,7 +91,8 @@ class UserManagementController extends Controller
         User::create($validated);
 
         $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
-        return redirect()->route($routePrefix . '.index')
+
+        return redirect()->route($routePrefix.'.index')
             ->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
@@ -119,7 +120,7 @@ class UserManagementController extends Controller
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
             'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
             'nip_bidan' => ['nullable', 'digits:18'],
-            'nik_ortu' => ['nullable', 'string', 'size:16'],
+            'nik_ortu' => ['nullable', 'digits:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
             'is_active' => ['nullable', 'boolean'],
             'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
@@ -132,7 +133,7 @@ class UserManagementController extends Controller
             'password.min' => 'Password minimal 8 karakter.',
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'role.required' => 'Role wajib dipilih.',
-            'nik_ortu.size' => 'NIK harus 16 digit.',
+            'nik_ortu.digits' => 'NIK harus 16 digit angka.',
             'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
         ]);
 
@@ -152,7 +153,8 @@ class UserManagementController extends Controller
         $user->update($validated);
 
         $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
-        return redirect()->route($routePrefix . '.index')
+
+        return redirect()->route($routePrefix.'.index')
             ->with('success', 'Data pengguna berhasil diperbarui.');
     }
 
@@ -164,7 +166,8 @@ class UserManagementController extends Controller
         // Prevent deleting yourself
         if ($user->id_user === auth()->id()) {
             $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
-            return redirect()->route($routePrefix . '.index')
+
+            return redirect()->route($routePrefix.'.index')
                 ->with('error', 'Anda tidak dapat menghapus akun sendiri.');
         }
 
@@ -175,7 +178,8 @@ class UserManagementController extends Controller
         $user->delete();
 
         $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
-        return redirect()->route($routePrefix . '.index')
+
+        return redirect()->route($routePrefix.'.index')
             ->with('success', 'Pengguna berhasil dihapus.');
     }
 }

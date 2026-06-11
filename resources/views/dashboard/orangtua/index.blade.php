@@ -66,6 +66,23 @@
             </div>
         </div>
 
+        @if(isset($jadwalTerdekat))
+            <div class="no-print" style="margin-bottom: 24px;">
+                <div style="background: rgba(13, 148, 136, 0.1); border-left: 4px solid #0D9488; padding: 16px; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(13, 148, 136, 0.2); display: grid; place-items: center; flex-shrink: 0; color: #0D9488;">
+                        <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; fill: currentColor;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0F766E;">Jadwal Posyandu Terdekat: {{ $jadwalTerdekat->tanggal->format('d M Y') }}</h4>
+                        <p style="margin: 4px 0 0 0; font-size: 14px; color: #115E59;">
+                            Waktu: {{ \Carbon\Carbon::parse($jadwalTerdekat->waktu_mulai)->format('H:i') }} WIB | Lokasi: {{ $jadwalTerdekat->lokasi }}
+                            @if($jadwalTerdekat->keterangan) <br><small>Catatan: {{ $jadwalTerdekat->keterangan }}</small> @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if(!empty($pengingatList))
             <div class="no-print" style="margin-bottom: 24px;">
                 @foreach($pengingatList as $pengingat)

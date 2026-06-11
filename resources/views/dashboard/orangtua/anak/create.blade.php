@@ -65,7 +65,7 @@
 
                 <div class="form-group">
                     <label for="nik_anak">NIK Anak <span class="required">*</span></label>
-                    <input type="text" id="nik_anak" name="nik_anak" value="{{ old('nik_anak') }}" required maxlength="16" minlength="16" class="form-input" placeholder="Masukkan 16 digit NIK">
+                    <input type="text" id="nik_anak" name="nik_anak" value="{{ old('nik_anak') }}" required maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" class="form-input" placeholder="Masukkan 16 digit NIK" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
                 <div class="form-group">
                     <label for="nama_anak">Nama Lengkap Anak <span class="required">*</span></label>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="form-group">
                         <label for="no_bpjs">Nomor BPJS</label>
-                        <input type="text" id="no_bpjs" name="no_bpjs" value="{{ old('no_bpjs') }}" class="form-input" placeholder="Masukkan Nomor BPJS">
+                        <input type="text" id="no_bpjs" name="no_bpjs" value="{{ old('no_bpjs') }}" class="form-input" placeholder="Masukkan 13 digit Nomor BPJS" maxlength="13" minlength="13" pattern="[0-9]{13}" title="Nomor BPJS harus 13 digit angka" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
                 </div>
                 <div class="form-grid">
@@ -197,10 +197,11 @@ function anakWizard() {
         step: {{ $errors->any() ? 3 : 1 }},
         nextStep() {
             if (this.step < 3) {
-                if (this.validateStep(this.step)) {
+                let validation = this.validateStep(this.step);
+                if (validation === true) {
                     this.step++;
                 } else {
-                    alert('Masih ada bagian wajib yang kosong, silakan dilengkapi terlebih dahulu.');
+                    alert(validation);
                 }
             }
         },
@@ -208,20 +209,32 @@ function anakWizard() {
             if (this.step > 1) this.step--;
         },
         validateStep(stepNumber) {
-            let isValid = true;
             let currentStepDiv = document.querySelectorAll('.wizard-step')[stepNumber - 1];
             if (currentStepDiv) {
                 let requiredInputs = currentStepDiv.querySelectorAll('input[required], select[required], textarea[required]');
-                requiredInputs.forEach(input => {
+                for (let input of requiredInputs) {
                     if (input.type === 'radio') {
                         let radioGroup = currentStepDiv.querySelectorAll(`input[name="${input.name}"]:checked`);
-                        if (radioGroup.length === 0) isValid = false;
+                        if (radioGroup.length === 0) return 'Masih ada bagian wajib yang kosong, silakan dilengkapi terlebih dahulu.';
                     } else if (!input.value.trim()) {
-                        isValid = false;
+                        return 'Masih ada bagian wajib yang kosong, silakan dilengkapi terlebih dahulu.';
+                    } else if (input.id === 'nik_anak') {
+                        if (!/^\d{16}$/.test(input.value.trim())) {
+                            return 'NIK anak harus terdiri dari tepat 16 digit angka.';
+                        }
                     }
-                });
+                }
+                
+                let optionalInputs = currentStepDiv.querySelectorAll('input:not([required])');
+                for (let input of optionalInputs) {
+                    if (input.id === 'no_bpjs' && input.value.trim() !== '') {
+                        if (!/^\d{13}$/.test(input.value.trim())) {
+                            return 'Nomor BPJS harus terdiri dari tepat 13 digit angka jika diisi.';
+                        }
+                    }
+                }
             }
-            return isValid;
+            return true;
         }
     }
 }

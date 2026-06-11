@@ -23,7 +23,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('orangtua.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('orangtua.profile.update') }}" x-data="{ showPassword: false }" enctype="multipart/form-data" onsubmit="return validateProfileForm()">
         @csrf
         @method('PUT')
 
@@ -63,13 +63,28 @@
             <!-- NIK (16 Digit) -->
             <div>
                 <label for="nik_ortu" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">NIK (16 Digit)</label>
-                <input type="text" name="nik_ortu" id="nik_ortu" value="{{ old('nik_ortu', $user->nik_ortu) }}" required maxlength="16" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
+                <input type="text" name="nik_ortu" id="nik_ortu" value="{{ old('nik_ortu', $user->nik_ortu) }}" required maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <!-- Nomor Kontak -->
             <div>
                 <label for="nomor_kontak" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nomor Kontak</label>
                 <input type="tel" name="nomor_kontak" id="nomor_kontak" value="{{ old('nomor_kontak', $user->nomor_kontak) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
+            </div>
+
+            <!-- Posyandu Domisili -->
+            <div>
+                <label for="posyandu_id" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Posyandu Domisili (Pilih untuk melihat jadwal)</label>
+                <select name="posyandu_id" id="posyandu_id" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 14px; appearance: none; background: url('data:image/svg+xml;utf8,<svg viewBox=\&quot;0 0 24 24\&quot; fill=\&quot;%2394A3B8\&quot; xmlns=\&quot;http://www.w3.org/2000/svg\&quot;><path d=\&quot;M7 10l5 5 5-5z\&quot;/></svg>') no-repeat right 12px center; background-color: #fff; background-size: 24px;">
+                    <option value="">-- Pilih Posyandu (Opsional) --</option>
+                    @if(isset($posyandus))
+                        @foreach($posyandus as $posyandu)
+                            <option value="{{ $posyandu->id }}" {{ old('posyandu_id', $user->posyandu_id) == $posyandu->id ? 'selected' : '' }}>
+                                {{ $posyandu->nama_posyandu }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
             </div>
 
             <!-- Email -->
@@ -100,4 +115,16 @@
         </div>
     </form>
 </div>
+<script>
+function validateProfileForm() {
+    let nikInput = document.getElementById('nik_ortu');
+    if (nikInput) {
+        if (!/^\d{16}$/.test(nikInput.value.trim())) {
+            alert('NIK harus terdiri dari tepat 16 digit angka.');
+            return false;
+        }
+    }
+    return true;
+}
+</script>
 @endsection

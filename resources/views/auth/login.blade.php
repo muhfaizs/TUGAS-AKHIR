@@ -51,35 +51,23 @@
                     Selamat Datang<br>Kembali 👋
                 </h1>
                 <p class="login-brand-desc">
-                    Masuk untuk melanjutkan pengelolaan layanan KB, pemantauan kehamilan, dan tumbuh kembang bayi di wilayah kerja Anda.
+                    Platform terpadu untuk pengelolaan layanan kesehatan, pemantauan tumbuh kembang bayi, dan rekam medis digital secara menyeluruh.
                 </p>
             </div>
 
-            <div class="login-brand-features">
-                <div class="login-feature-pill">
-                    <span class="login-feature-pill-icon">🔒</span>
-                    Aman & Terenkripsi
-                </div>
-                <div class="login-feature-pill">
-                    <span class="login-feature-pill-icon">📱</span>
-                    Akses Mudah
-                </div>
-                <div class="login-feature-pill">
-                    <span class="login-feature-pill-icon">📊</span>
-                    Realtime
-                </div>
-            </div>
+
         </div>
 
         <!-- Right Form Panel -->
         <div class="login-form-panel">
             <!-- Tab Switcher -->
-            <div class="auth-tabs" id="auth-tabs">
+            <div style="position: sticky; top: -36px; z-index: 10; background: var(--kia-surface, #fff); padding-top: 36px; padding-bottom: 10px; margin-top: -36px; margin-bottom: 14px;">
+            <div class="auth-tabs" id="auth-tabs" style="margin-bottom: 0;">
                 <button
                     type="button"
                     class="auth-tab"
                     :class="{ 'auth-tab--active': activeTab === 'login' }"
-                    @click="activeTab = 'login'"
+                    @click="activeTab = 'login'; document.querySelector('.login-form-panel').scrollTop = 0;"
                     id="tab-login"
                 >
                     Masuk
@@ -88,12 +76,13 @@
                     type="button"
                     class="auth-tab"
                     :class="{ 'auth-tab--active': activeTab === 'register' }"
-                    @click="activeTab = 'register'"
+                    @click="activeTab = 'register'; document.querySelector('.login-form-panel').scrollTop = 0;"
                     id="tab-register"
                 >
                     Daftar Orang Tua
                 </button>
                 <div class="auth-tab-slider" :style="activeTab === 'login' ? 'left: 4px; width: calc(50% - 4px)' : 'left: 50%; width: calc(50% - 4px)'"></div>
+            </div>
             </div>
 
             <!-- ==================== LOGIN FORM ==================== -->
@@ -189,9 +178,7 @@
                     </button>
                 </form>
 
-                <p class="login-footer-text">
-                    Belum punya akun? <button type="button" class="login-footer-link" @click="activeTab = 'register'; document.querySelector('.login-form-panel').scrollTop = 0;">Daftar sekarang</button>
-                </p>
+
             </div>
 
             <!-- ==================== REGISTER FORM ==================== -->
@@ -346,13 +333,10 @@
                     <!-- Submit -->
                     <button type="submit" class="login-submit login-submit--register" id="btn-register">
                         <span>Daftar Sekarang</span>
-                        <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>
                     </button>
                 </form>
 
-                <p class="login-footer-text">
-                    Sudah punya akun? <button type="button" class="login-footer-link" @click="activeTab = 'login'; document.querySelector('.login-form-panel').scrollTop = 0;">Masuk di sini</button>
-                </p>
+
             </div>
         </div>
     </div>

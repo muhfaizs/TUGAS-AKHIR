@@ -31,8 +31,16 @@
                     <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
                 </div>
             </div>
-            <div class="dash-card-value">Belum Ada</div>
-            <div class="dash-card-label">Jadwal Posyandu Terdekat</div>
+            @if($jadwalTerdekat)
+                <div class="dash-card-value" style="font-size: 1.5rem; margin-bottom: 4px;">{{ $jadwalTerdekat->tanggal->format('d M Y') }}</div>
+                <div class="dash-card-label" style="line-height: 1.4;">
+                    Pukul: {{ \Carbon\Carbon::parse($jadwalTerdekat->waktu_mulai)->format('H:i') }} WIB <br>
+                    Lokasi: {{ $jadwalTerdekat->lokasi }}
+                </div>
+            @else
+                <div class="dash-card-value">Belum Ada</div>
+                <div class="dash-card-label">Jadwal Posyandu Terdekat</div>
+            @endif
         </div>
         
         <div class="dash-card dash-card--amber" id="card-risiko">

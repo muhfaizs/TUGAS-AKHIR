@@ -81,20 +81,20 @@
                 <!-- Berat Badan -->
                 <div>
                     <label for="berat_badan" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Berat Badan (kg) <span style="color: #EF4444;">*</span></label>
-                    <input type="number" step="0.01" name="berat_badan" id="berat_badan" value="{{ old('berat_badan') }}" required placeholder="Contoh: 12.5" style="width: 100%; padding: 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 20px; text-align: center; font-weight: 700; color: #0F172A;">
+                    <input type="number" step="0.01" name="berat_badan" id="berat_badan" value="{{ old('berat_badan') }}" required placeholder="Contoh: 12.5" onkeydown="if(['e', 'E', '+', '-'].includes(event.key)) event.preventDefault();" style="width: 100%; padding: 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 20px; text-align: center; font-weight: 700; color: #0F172A;">
                 </div>
 
                 <!-- Tinggi Badan -->
                 <div>
                     <label for="tinggi_badan" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Tinggi/Panjang (cm) <span style="color: #EF4444;">*</span></label>
-                    <input type="number" step="0.1" name="tinggi_badan" id="tinggi_badan" value="{{ old('tinggi_badan') }}" required placeholder="Contoh: 85.0" style="width: 100%; padding: 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 20px; text-align: center; font-weight: 700; color: #0F172A;">
+                    <input type="number" step="0.1" name="tinggi_badan" id="tinggi_badan" value="{{ old('tinggi_badan') }}" required placeholder="Contoh: 85.0" onkeydown="if(['e', 'E', '+', '-'].includes(event.key)) event.preventDefault();" style="width: 100%; padding: 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 20px; text-align: center; font-weight: 700; color: #0F172A;">
                 </div>
             </div>
 
             <!-- Lingkar Kepala -->
             <div>
                 <label for="lingkar_kepala" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Lingkar Kepala (cm)</label>
-                <input type="number" step="0.1" name="lingkar_kepala" id="lingkar_kepala" value="{{ old('lingkar_kepala') }}" placeholder="Opsional, Contoh: 45.0" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px;">
+                <input type="number" step="0.1" name="lingkar_kepala" id="lingkar_kepala" value="{{ old('lingkar_kepala') }}" placeholder="Opsional, Contoh: 45.0" onkeydown="if(['e', 'E', '+', '-'].includes(event.key)) event.preventDefault();" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; font-size: 15px;">
             </div>
 
             <div style="margin-top: 16px;">

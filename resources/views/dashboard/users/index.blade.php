@@ -138,7 +138,7 @@
                 </div>
             @endif
 
-            <form :action="isEdit ? '{{ auth()->user()->isBidan() ? url('bidan/kader') : url('admin/users') }}/' + editId : '{{ auth()->user()->isBidan() ? route('bidan.kader.store') : route('admin.users.store') }}'" method="POST" class="um-modal-form" id="user-form">
+            <form :action="isEdit ? '{{ auth()->user()->isBidan() ? url('bidan/kader') : url('admin/users') }}/' + editId : '{{ auth()->user()->isBidan() ? route('bidan.kader.store') : route('admin.users.store') }}'" method="POST" class="um-modal-form" id="user-form" onsubmit="return validateUserForm()">
                 @csrf
                 <template x-if="isEdit">
                     <input type="hidden" name="_method" value="PUT">
@@ -162,7 +162,6 @@
                         <label for="modal_email" class="um-label">Alamat Email</label>
                         <input type="email" name="email" id="modal_email" x-model="form.email" class="um-input" placeholder="contoh@email.com">
                     </div>
-
                     <!-- Password -->
                     <div class="um-field">
                         <label for="modal_password" class="um-label">
@@ -216,7 +215,7 @@
                     <!-- NIK Ortu (conditional) -->
                     <div class="um-field" x-show="form.role === 'orang tua'">
                         <label for="modal_nik_ortu" class="um-label">NIK Orang Tua</label>
-                        <input type="text" name="nik_ortu" id="modal_nik_ortu" x-model="form.nik_ortu" class="um-input" placeholder="16 digit NIK" maxlength="16">
+                        <input type="text" name="nik_ortu" id="modal_nik_ortu" x-model="form.nik_ortu" class="um-input" placeholder="16 digit NIK" maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
                     <!-- Kode Instansi Dinkes (conditional) -->
@@ -271,6 +270,18 @@
 </div>
 
 <script>
+function validateUserForm() {
+    let roleSelect = document.getElementById('modal_role');
+    let nikInput = document.getElementById('modal_nik_ortu');
+    if (roleSelect && roleSelect.value === 'orang tua' && nikInput) {
+        if (!/^\d{16}$/.test(nikInput.value.trim())) {
+            alert('NIK Orang Tua harus terdiri dari tepat 16 digit angka.');
+            return false;
+        }
+    }
+    return true;
+}
+
 function userManager() {
     return {
         showModal: {{ $errors->any() ? 'true' : 'false' }},

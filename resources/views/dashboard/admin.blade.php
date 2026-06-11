@@ -65,16 +65,6 @@
             <div class="dash-card-label">Total Petugas Dinkes</div>
         </div>
 
-        <div class="dash-card dash-card--indigo" id="card-status">
-            <div class="dash-card-header">
-                <div class="dash-card-icon dash-card-icon--indigo">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                </div>
-            </div>
-            <div class="dash-card-value">
-                <span class="status-pill status-pill--active">Aktif</span>
-            </div>
-            <div class="dash-card-label">Status Sistem</div>
-        </div>
+
     </div>
 @endsection

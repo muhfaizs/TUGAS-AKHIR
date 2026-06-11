@@ -20,7 +20,7 @@
     @endif
 
     <div class="wizard-card">
-        <form method="POST" action="{{ route($routePrefix . '.anak.update', $anak) }}">
+        <form method="POST" action="{{ route($routePrefix . '.anak.update', $anak) }}" onsubmit="return validateForm()">
             @csrf
             @method('PUT')
 
@@ -40,7 +40,7 @@
             @endif
             <div class="form-group mt-4">
                 <label for="nik_anak">NIK Anak <span class="required">*</span></label>
-                <input type="text" id="nik_anak" name="nik_anak" value="{{ old('nik_anak', $anak->nik_anak) }}" required maxlength="16" minlength="16" class="form-input">
+                <input type="text" id="nik_anak" name="nik_anak" value="{{ old('nik_anak', $anak->nik_anak) }}" required maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" class="form-input" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="form-group">
                 <label for="nama_anak">Nama Lengkap Anak <span class="required">*</span></label>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <label for="no_bpjs">Nomor BPJS</label>
-                    <input type="text" id="no_bpjs" name="no_bpjs" value="{{ old('no_bpjs', $anak->no_bpjs) }}" class="form-input">
+                    <input type="text" id="no_bpjs" name="no_bpjs" value="{{ old('no_bpjs', $anak->no_bpjs) }}" class="form-input" placeholder="Masukkan 13 digit Nomor BPJS" maxlength="13" minlength="13" pattern="[0-9]{13}" title="Nomor BPJS harus 13 digit angka" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
             </div>
 
@@ -143,6 +143,27 @@
         </form>
     </div>
 </div>
+
+<script>
+function validateForm() {
+    let nikInput = document.getElementById('nik_anak');
+    if (nikInput) {
+        if (!/^\d{16}$/.test(nikInput.value.trim())) {
+            alert('NIK anak harus terdiri dari tepat 16 digit angka.');
+            return false;
+        }
+    }
+    
+    let bpjsInput = document.getElementById('no_bpjs');
+    if (bpjsInput && bpjsInput.value.trim() !== '') {
+        if (!/^\d{13}$/.test(bpjsInput.value.trim())) {
+            alert('Nomor BPJS harus terdiri dari tepat 13 digit angka jika diisi.');
+            return false;
+        }
+    }
+    return true;
+}
+</script>
 
 <style>
 .wizard-container { max-width: 700px; margin: 0 auto; }

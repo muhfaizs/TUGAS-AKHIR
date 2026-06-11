@@ -8,6 +8,8 @@ use App\Http\Controllers\Bidan\ImunisasiController;
 use App\Http\Controllers\Bidan\NotificationController;
 use App\Http\Controllers\Bidan\TindakanMedisController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Dinkes\DinkesProfileController;
+use App\Http\Controllers\Kader\JadwalPosyanduController;
 use App\Http\Controllers\Kader\KaderProfileController;
 use App\Http\Controllers\Kader\PengukuranController;
 use App\Http\Controllers\LaporanController;
@@ -104,6 +106,9 @@ Route::middleware('auth')->group(function () {
         // Pengukuran routes
         Route::get('/pengukuran/create', [PengukuranController::class, 'create'])->name('pengukuran.create');
         Route::post('/pengukuran', [PengukuranController::class, 'store'])->name('pengukuran.store');
+
+        // Jadwal Posyandu routes
+        Route::resource('jadwal', JadwalPosyanduController::class);
     });
 
     // Orang Tua routes
@@ -126,15 +131,15 @@ Route::middleware('auth')->group(function () {
     // Dinkes routes
     Route::middleware('role:dinkes')->prefix('dinkes')->name('dinkes.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Dinkes\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/profile', [App\Http\Controllers\Dinkes\DinkesProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/profile', [App\Http\Controllers\Dinkes\DinkesProfileController::class, 'update'])->name('profile.update');
+        Route::get('/profile', [DinkesProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [DinkesProfileController::class, 'update'])->name('profile.update');
     });
 
     // Shared Laporan Routes (Bidan & Dinkes)
     Route::middleware('role:bidan,dinkes')->group(function () {
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
-    Route::get('/laporan/excel', [LaporanController::class, 'excel'])->name('laporan.excel');
+        Route::get('/laporan/excel', [LaporanController::class, 'excel'])->name('laporan.excel');
         Route::post('/laporan/submit', [LaporanController::class, 'submitToDinkes'])->name('bidan.laporan.submit');
     });
 });

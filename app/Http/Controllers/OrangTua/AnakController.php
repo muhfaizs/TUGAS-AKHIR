@@ -34,7 +34,7 @@ class AnakController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak'],
+            'nik_anak' => ['required', 'digits:16', 'unique:tb_anak,nik_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date', 'before_or_equal:today'],
@@ -46,13 +46,13 @@ class AnakController extends Controller
             'catatan' => ['nullable', 'string'],
             'golongan_darah' => ['nullable', 'in:A,B,AB,O,Tidak Tahu'],
             'anak_ke' => ['nullable', 'integer', 'min:1'],
-            'no_bpjs' => ['nullable', 'digits_between:1,20'],
+            'no_bpjs' => ['nullable', 'digits:13'],
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
         ], [
             'nik_anak.required' => 'NIK anak wajib diisi.',
-            'nik_anak.size' => 'NIK anak harus 16 digit.',
+            'nik_anak.digits' => 'NIK anak harus 16 digit angka.',
             'nik_anak.unique' => 'NIK anak sudah terdaftar.',
             'nama_anak.required' => 'Nama anak wajib diisi.',
             'tempat_lahir.required' => 'Tempat lahir wajib diisi.',
@@ -61,7 +61,7 @@ class AnakController extends Controller
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
             'berat_lahir.required' => 'Berat lahir wajib diisi.',
             'panjang_lahir.required' => 'Panjang lahir wajib diisi.',
-            'no_bpjs.digits_between' => 'Nomor BPJS harus berupa angka.',
+            'no_bpjs.digits' => 'Nomor BPJS harus 13 digit angka.',
         ]);
 
         $request->user()->anak()->create($validated);
@@ -142,7 +142,7 @@ class AnakController extends Controller
         }
 
         $validated = $request->validate([
-            'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak,'.$anak->id_anak.',id_anak'],
+            'nik_anak' => ['required', 'digits:16', 'unique:tb_anak,nik_anak,'.$anak->id_anak.',id_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date', 'before_or_equal:today'],
@@ -154,15 +154,15 @@ class AnakController extends Controller
             'catatan' => ['nullable', 'string'],
             'golongan_darah' => ['nullable', 'in:A,B,AB,O,Tidak Tahu'],
             'anak_ke' => ['nullable', 'integer', 'min:1'],
-            'no_bpjs' => ['nullable', 'digits_between:1,20'],
+            'no_bpjs' => ['nullable', 'digits:13'],
             'riwayat_alergi' => ['nullable', 'string'],
             'lingkar_kepala_lahir' => ['nullable', 'numeric', 'min:0', 'max:50'],
             'kondisi_lahir' => ['nullable', 'string', 'max:255'],
         ], [
             'nik_anak.required' => 'NIK anak wajib diisi.',
-            'nik_anak.size' => 'NIK anak harus 16 digit.',
+            'nik_anak.digits' => 'NIK anak harus 16 digit angka.',
             'nik_anak.unique' => 'NIK anak sudah terdaftar.',
-            'no_bpjs.digits_between' => 'Nomor BPJS harus berupa angka.',
+            'no_bpjs.digits' => 'Nomor BPJS harus 13 digit angka.',
         ]);
 
         $anak->update($validated);
