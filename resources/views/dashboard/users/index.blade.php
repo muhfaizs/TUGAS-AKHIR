@@ -209,13 +209,13 @@
                     <!-- NIP Bidan (conditional) -->
                     <div class="um-field" x-show="form.role === 'bidan'">
                         <label for="modal_nip_bidan" class="um-label">NIP Bidan</label>
-                        <input type="text" name="nip_bidan" id="modal_nip_bidan" x-model="form.nip_bidan" class="um-input" placeholder="Masukkan NIP">
+                        <input type="text" name="nip_bidan" id="modal_nip_bidan" x-model="form.nip_bidan" class="um-input" placeholder="18 digit NIP" maxlength="18" pattern="[0-9]{18}" title="NIP Bidan harus 18 digit angka" oninvalid="this.setCustomValidity('NIP Bidan harus terdiri dari 18 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
                     <!-- NIK Ortu (conditional) -->
                     <div class="um-field" x-show="form.role === 'orang tua'">
                         <label for="modal_nik_ortu" class="um-label">NIK Orang Tua</label>
-                        <input type="text" name="nik_ortu" id="modal_nik_ortu" x-model="form.nik_ortu" class="um-input" placeholder="16 digit NIK" maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input type="text" name="nik_ortu" id="modal_nik_ortu" x-model="form.nik_ortu" class="um-input" placeholder="16 digit NIK" maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" oninvalid="this.setCustomValidity('NIK Orang Tua harus terdiri dari 16 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
                     <!-- Alamat Domisili (conditional) -->

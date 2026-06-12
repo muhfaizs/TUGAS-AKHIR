@@ -111,9 +111,9 @@
                                     <span style="background: rgba(16, 185, 129, 0.1); color: #059669; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase;">{{ $lap->status }}</span>
                                 </td>
                                 <td style="padding: 16px 24px;">
-                                    <button onclick="alert('Fitur Lihat Detail/Export JSON Laporan ID: {{ $lap->id }}')" style="padding: 6px 12px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                    <a href="{{ route('dinkes.laporan.show', $lap->id) }}" style="padding: 6px 12px; background: #F1F5F9; color: #334155; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block;">
                                         Lihat Detail Laporan
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

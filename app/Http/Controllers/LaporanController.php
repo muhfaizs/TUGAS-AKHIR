@@ -190,7 +190,7 @@ class LaporanController extends Controller
         }
 
         if (! $request->has('selected_laporan') || empty($request->selected_laporan)) {
-            return back()->with('error', 'Silakan pilih minimal satu laporan untuk dikirim ke Dinkes.');
+            return back()->with('error', 'Anda belum memilih laporan, silakan centang laporan terlebih dahulu untuk mengirim.');
         }
 
         $allLaporan = $this->getUnifiedLaporan($request);
@@ -226,5 +226,25 @@ class LaporanController extends Controller
         }
 
         return back()->with('success', 'Laporan berhasil disubmit ke Dinas Kesehatan.');
+    }
+
+    public function showDinkes($id)
+    {
+        if (! auth()->user()->isDinkes()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $laporanDinkes = TbLaporanDinkes::with('bidan')->findOrFail($id);
+        
+        $data = $laporanDinkes->data_serialized;
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+        
+        $laporan = collect($data)->map(function ($item) {
+            return json_decode(json_encode($item));
+        });
+
+        return view('dashboard.dinkes.laporan_detail', compact('laporanDinkes', 'laporan'));
     }
 }

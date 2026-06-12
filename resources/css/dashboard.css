@@ -295,6 +295,17 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
+.toast-error {
+    padding: 14px 20px; border-radius: 14px;
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+    color: #B91C1C;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 500;
+    margin-bottom: 24px;
+    animation: toast-in 0.5s ease forwards;
+}
+.toast-error svg { width: 20px; height: 20px; fill: #EF4444; flex-shrink: 0; }
+
 /* ===== Status Pill ===== */
 .status-pill {
     display: inline-flex; align-items: center; gap: 6px;

@@ -133,6 +133,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Dinkes\DashboardController::class, 'index'])->name('dashboard');
         Route::get('/profile', [DinkesProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [DinkesProfileController::class, 'update'])->name('profile.update');
+        Route::get('/laporan/{id}', [LaporanController::class, 'showDinkes'])->name('laporan.show');
     });
 
     // Shared Laporan Routes (Bidan & Dinkes)

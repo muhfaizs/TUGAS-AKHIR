@@ -105,6 +105,10 @@ class DashboardController extends Controller
             $anakId = $request->query('anak_id', $anakList->first()->id_anak);
             $selectedAnak = $anakList->where('id_anak', $anakId)->first();
 
+            if (!$selectedAnak) {
+                abort(403, 'Akses Ditolak: Data anak tidak ditemukan atau bukan milik Anda.');
+            }
+
             if ($selectedAnak) {
                 $pengukuranList = Pengukuran::where('id_anak', $selectedAnak->id_anak)
                     ->orderBy('tanggal_pengukuran', 'asc')
@@ -129,9 +133,12 @@ class DashboardController extends Controller
                 $missingVaksinInMonth = [];
 
                 foreach ($jadwalVaksinByBulan as $bulan => $vaksins) {
-                    $missingInThisMonth = [];
+                    $hasMissingInThisMonth = false;
+                    
                     foreach ($vaksins as $v) {
                         if (! in_array($v, $riwayatImunisasi)) {
+                            $hasMissingInThisMonth = true;
+                            
                             // Check if this reminder is already dismissed
                             $notifTitle = "Pengingat Imunisasi: {$v} - {$selectedAnak->nama_anak}";
                             $isDismissed = Notifikasi::where('id_user', $user->id_user)
@@ -139,15 +146,14 @@ class DashboardController extends Controller
                                 ->exists();
 
                             if (! $isDismissed) {
-                                $missingInThisMonth[] = $v;
+                                $missingVaksinInMonth[] = $v;
                             }
                         }
                     }
 
-                    if (count($missingInThisMonth) > 0) {
+                    if ($hasMissingInThisMonth) {
                         $lowestMissingMonth = $bulan;
-                        $missingVaksinInMonth = $missingInThisMonth;
-                        break; // Stop at the first month with active missing vaccines
+                        break; // Stop at the first month with active missing vaccines, even if dismissed
                     }
                 }
 

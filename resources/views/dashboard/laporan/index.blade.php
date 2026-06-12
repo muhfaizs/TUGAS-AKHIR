@@ -56,21 +56,23 @@
                 </div>
                 
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    <a href="{{ route('laporan.print', request()->all()) }}" target="_blank" class="btn-primary" style="padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; background: #0F172A; color: #fff; text-decoration: none; border-radius: 8px;">
-                        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
-                        Export PDF
-                    </a>
+                    @if(!$laporan->isEmpty())
+                        <a href="{{ route('laporan.print', request()->all()) }}" target="_blank" class="btn-primary" style="padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; background: #0F172A; color: #fff; text-decoration: none; border-radius: 8px;">
+                            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+                            Export PDF
+                        </a>
 
-                    <a href="{{ route('laporan.excel', request()->all()) }}" target="_blank" class="btn-primary" style="padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; background: #16A34A; color: #fff; text-decoration: none; border-radius: 8px;">
-                        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M21.17 3.25Q21.5 3.25 21.76 3.5 22 3.74 22 4.08V19.92Q22 20.26 21.76 20.5 21.5 20.75 21.17 20.75H7.83Q7.5 20.75 7.24 20.5 7 20.26 7 19.92V17H2.83Q2.5 17 2.24 16.76 2 16.5 2 16.17V7.83Q2 7.5 2.24 7.24 2.5 7 2.83 7H7V4.08Q7 3.74 7.24 3.5 7.5 3.25 7.83 3.25M7 13.06L8.18 15.28H9.97L8 12.06L9.93 8.89H8.22L7.13 10.9L6.04 8.89H4.26L6.19 12.06L4.25 15.28H6.04ZM17 15.5V13H11V15.5ZM17 11.5V9H11V11.5ZM17 7.5V5H11V7.5Z"/></svg>
-                        Export Excel
-                    </a>
+                        <a href="{{ route('laporan.excel', request()->all()) }}" target="_blank" class="btn-primary" style="padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; background: #16A34A; color: #fff; text-decoration: none; border-radius: 8px;">
+                            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M21.17 3.25Q21.5 3.25 21.76 3.5 22 3.74 22 4.08V19.92Q22 20.26 21.76 20.5 21.5 20.75 21.17 20.75H7.83Q7.5 20.75 7.24 20.5 7 20.26 7 19.92V17H2.83Q2.5 17 2.24 16.76 2 16.5 2 16.17V7.83Q2 7.5 2.24 7.24 2.5 7 2.83 7H7V4.08Q7 3.74 7.24 3.5 7.5 3.25 7.83 3.25M7 13.06L8.18 15.28H9.97L8 12.06L9.93 8.89H8.22L7.13 10.9L6.04 8.89H4.26L6.19 12.06L4.25 15.28H6.04ZM17 15.5V13H11V15.5ZM17 11.5V9H11V11.5ZM17 7.5V5H11V7.5Z"/></svg>
+                            Export Excel
+                        </a>
 
-                    @if (auth()->user()->isBidan())
-                        <button type="submit" class="btn-primary" style="padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; background: #0D9488; color: #fff; border: none; border-radius: 8px; cursor: pointer;">
-                            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                            Submit ke Dinkes
-                        </button>
+                        @if (auth()->user()->isBidan())
+                            <button type="submit" class="btn-primary" style="padding: 10px 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; background: #0D9488; color: #fff; border: none; border-radius: 8px; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                                Submit ke Dinkes
+                            </button>
+                        @endif
                     @endif
                 </div>
             </div>

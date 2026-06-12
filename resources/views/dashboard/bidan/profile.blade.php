@@ -76,7 +76,7 @@
             <!-- NIP Bidan -->
             <div>
                 <label for="nip_bidan" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">NIP (Nomor Induk Pegawai)</label>
-                <input type="text" name="nip_bidan" id="nip_bidan" value="{{ old('nip_bidan', $user->nip_bidan) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="Masukkan NIP Anda">
+                <input type="text" name="nip_bidan" id="nip_bidan" value="{{ old('nip_bidan', $user->nip_bidan) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" placeholder="18 digit NIP" maxlength="18" pattern="[0-9]{18}" title="NIP Bidan harus 18 digit angka" oninvalid="this.setCustomValidity('NIP Bidan harus terdiri dari 18 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <!-- Username (Readonly) -->
