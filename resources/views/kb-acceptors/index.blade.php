@@ -270,6 +270,14 @@
         </select>
     </form>
 
+    @if(auth()->check() && in_array(auth()->user()->role, ['kader', 'bidan', 'admin', 'super_admin']))
+    <a href="{{ route('kb-acceptors.create') }}" class="btn-primary">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        Tambah Pasien
+    </a>
+    @endif
 </div>
 
 <!-- Table Card -->

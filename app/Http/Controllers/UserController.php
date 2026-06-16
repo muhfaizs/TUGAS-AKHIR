@@ -77,7 +77,6 @@ class UserController extends Controller
             'super_admin' => 'Super Admin',
             'bidan' => 'Bidan',
             'kader' => 'Kader',
-            'upt_kb' => 'UPT KB',
             'dinas_kesehatan' => 'Dinas Kesehatan',
             'patient' => 'Pasien',
         ];
@@ -113,7 +112,7 @@ class UserController extends Controller
             'nik' => 'required|string|min:16|max:18|unique:users,nik',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:super_admin,bidan,kader,upt_kb,dinas_kesehatan,patient',
+            'role' => 'required|in:super_admin,bidan,kader,dinas_kesehatan,patient',
             'status' => 'required|in:active,inactive,verified',
             'puskesmas_id' => 'nullable|exists:puskesmas,id',
         ]);
@@ -141,7 +140,6 @@ class UserController extends Controller
             'super_admin' => 'Super Admin',
             'bidan' => 'Bidan',
             'kader' => 'Kader',
-            'upt_kb' => 'UPT KB',
             'dinas_kesehatan' => 'Dinas Kesehatan',
             'patient' => 'Pasien',
         ];
@@ -178,7 +176,7 @@ class UserController extends Controller
             'nik' => ['required', 'string', 'min:16', 'max:18', Rule::unique('users', 'nik')->ignore($user->id)],
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:6|confirmed',
-            'role' => 'required|in:super_admin,bidan,kader,upt_kb,dinas_kesehatan,patient',
+            'role' => 'required|in:super_admin,bidan,kader,dinas_kesehatan,patient',
             'status' => 'required|in:active,inactive,verified',
             'puskesmas_id' => 'nullable|exists:puskesmas,id',
         ]);
