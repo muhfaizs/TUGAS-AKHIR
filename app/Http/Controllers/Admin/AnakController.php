@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -45,7 +45,7 @@ class AnakController extends Controller
      */
     public function create(): View
     {
-        $orangTuaList = User::where('role', 'orang tua')->orderBy('nama_lengkap')->get();
+        $orangTuaList = User::where('role', 'ortu')->orderBy('name')->get();
 
         return view('dashboard.orangtua.anak.create', compact('orangTuaList'));
     }
@@ -114,7 +114,7 @@ class AnakController extends Controller
                 'type' => 'pengukuran',
                 'date' => $p->tanggal_pengukuran,
                 'data' => $p,
-                'actor' => $p->kader->nama_lengkap ?? 'Kader',
+                'actor' => $p->kader->name ?? 'Kader',
             ]);
         }
 
@@ -123,7 +123,7 @@ class AnakController extends Controller
                 'type' => 'tindakan',
                 'date' => $t->tanggal_pemeriksaan,
                 'data' => $t,
-                'actor' => $t->bidan->nama_lengkap ?? 'Bidan',
+                'actor' => $t->bidan->name ?? 'Bidan',
             ]);
         }
 
@@ -132,7 +132,7 @@ class AnakController extends Controller
                 'type' => 'imunisasi',
                 'date' => $i->tanggal_pemberian,
                 'data' => $i,
-                'actor' => $i->bidan->nama_lengkap ?? 'Bidan',
+                'actor' => $i->bidan->name ?? 'Bidan',
             ]);
         }
 
@@ -147,7 +147,7 @@ class AnakController extends Controller
      */
     public function edit(Request $request, Anak $anak): View
     {
-        $orangTuaList = User::where('role', 'orang tua')->orderBy('nama_lengkap')->get();
+        $orangTuaList = User::where('role', 'ortu')->orderBy('name')->get();
 
         return view('dashboard.orangtua.anak.edit', compact('anak', 'orangTuaList'));
     }

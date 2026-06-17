@@ -110,8 +110,18 @@
                     </a>
 
                     <a href="{{ route('kader.jadwal.index') }}" class="sidebar-link {{ request()->routeIs('kader.jadwal.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-jadwal">
-                        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
                         Jadwal Posyandu
+                    </a>
+
+                    <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-acceptors">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Akseptor KB
+                    </a>
+
+                    <a href="{{ route('kb-services.index') }}" class="sidebar-link {{ request()->routeIs('kb-services.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-services">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Pelayanan KB
                     </a>
 
                     <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-profile">
@@ -131,9 +141,14 @@
                         Profil Saya
                     </a>
 
-                    <a href="{{ route('orangtua.anak.index') }}" class="sidebar-link {{ request()->routeIs('orangtua.anak.*') ? 'sidebar-link--active' : '' }}" id="nav-ot-anak">
+                    <a href="{{ route('orangtua.anak.index') }}" class="sidebar-link {{ request()->routeIs('orangtua.anak*') ? 'sidebar-link--active' : '' }}" id="nav-ot-anak">
                         <svg viewBox="0 0 24 24"><path d="M13 2v8h8c0-4.42-3.58-8-8-8zm6.32 13.89C20.37 14.54 21 12.84 21 11H6.44l-.95-2H2v2h2.22s1.89 4.07 2.12 4.42C5.24 16.01 4.5 17.17 4.5 18.5 4.5 20.43 6.07 22 8 22c1.76 0 3.22-1.3 3.46-3h2.08c.24 1.7 1.7 3 3.46 3 1.93 0 3.5-1.57 3.5-3.5 0-1.04-.46-1.97-1.18-2.61zM8 20c-.83 0-1.5-.67-1.5-1.5S7.17 17 8 17s1.5.67 1.5 1.5S8.83 20 8 20zm9 0c-.83 0-1.5-.67-1.5-1.5S16.17 17 17 17s1.5.67 1.5 1.5S17.83 20 17 20z"/></svg>
                         Data Anak
+                    </a>
+
+                    <a href="{{ route('ortu.pemeriksaan') }}" class="sidebar-link {{ request()->routeIs('ortu.pemeriksaan*') ? 'sidebar-link--active' : '' }}" id="nav-ot-pemeriksaan">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Data Pemeriksaan
                     </a>
                 @endif
 
