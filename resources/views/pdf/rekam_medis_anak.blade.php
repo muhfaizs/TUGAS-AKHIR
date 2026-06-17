@@ -26,7 +26,7 @@
         <tr><th>Nama Anak</th><td>: {{ $anak->nama_anak }}</td></tr>
         <tr><th>NIK Anak</th><td>: {{ $anak->nik_anak ?? '-' }}</td></tr>
         <tr><th>Tanggal Lahir</th><td>: {{ \Carbon\Carbon::parse($anak->tanggal_lahir)->format('d F Y') }}</td></tr>
-        <tr><th>Nama Orang Tua</th><td>: {{ $anak->orangTua->nama_lengkap ?? '-' }}</td></tr>
+        <tr><th>Nama Orang Tua</th><td>: {{ $anak->orangTua->name ?? '-' }}</td></tr>
     </table>
 
     <div class="section-title">Riwayat Tindakan Medis</div>
@@ -49,7 +49,7 @@
                         <td>{{ $tindakan->diagnosa }}</td>
                         <td>{{ $tindakan->resep_obat }}</td>
                         <td>{{ $tindakan->catatan_pemeriksaan }}</td>
-                        <td>{{ $tindakan->bidan->nama_lengkap ?? '-' }}</td>
+                        <td>{{ $tindakan->bidan->name ?? '-' }}</td>
                         <td>
                             @if($tindakan->puskesmas)
                                 {{ $tindakan->puskesmas->nama_puskesmas }}
@@ -87,7 +87,7 @@
                         <td>{{ $imunisasi->nama_vaksin }}</td>
                         <td>{{ $imunisasi->suhu_tubuh }} °C</td>
                         <td>{{ $imunisasi->catatan }}</td>
-                        <td>{{ $imunisasi->bidan->nama_lengkap ?? '-' }}</td>
+                        <td>{{ $imunisasi->bidan->name ?? '-' }}</td>
                         <td>
                             @if($imunisasi->puskesmas)
                                 {{ $imunisasi->puskesmas->nama_puskesmas }}

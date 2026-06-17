@@ -38,7 +38,7 @@ class UserManagementController extends Controller
             $query->where('role', $role);
         }
 
-        if (auth()->user()->isBidan()) {
+        if (auth()->user()->isBidanOnly()) {
             $query->where('role', 'kader');
         }
 
@@ -87,13 +87,13 @@ class UserManagementController extends Controller
             $validated['status'] = $validated['status'] ? 'active' : 'inactive';
         }
 
-        if (auth()->user()->isBidan() && $validated['role'] !== 'kader') {
+        if (auth()->user()->isBidanOnly() && $validated['role'] !== 'kader') {
             abort(403, 'Bidan hanya dapat mengelola akun kader.');
         }
 
         User::create($validated);
 
-        $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+        $routePrefix = auth()->user()->isBidanOnly() ? 'bidan.kader' : 'admin.users';
 
         return redirect()->route($routePrefix.'.index')
             ->with('success', 'Pengguna berhasil ditambahkan.');
@@ -162,16 +162,16 @@ class UserManagementController extends Controller
             $validated['puskesmas_id'] = null;
             $validated['posyandu_id'] = null;
         } elseif ($validated['role'] !== 'kader' && $validated['role'] !== 'bidan' && $validated['role'] !== 'dinkes') {
-             // catch-all for any other roles if added in future
+            // catch-all for any other roles if added in future
         }
 
-        if (auth()->user()->isBidan() && ($validated['role'] !== 'kader' || $user->role !== 'kader')) {
+        if (auth()->user()->isBidanOnly() && ($validated['role'] !== 'kader' || $user->role !== 'kader')) {
             abort(403, 'Bidan hanya dapat mengelola akun kader.');
         }
 
         $user->update($validated);
 
-        $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+        $routePrefix = auth()->user()->isBidanOnly() ? 'bidan.kader' : 'admin.users';
 
         return redirect()->route($routePrefix.'.index')
             ->with('success', 'Data pengguna berhasil diperbarui.');
@@ -184,19 +184,19 @@ class UserManagementController extends Controller
     {
         // Prevent deleting yourself
         if ($user->id === auth()->id()) {
-            $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+            $routePrefix = auth()->user()->isBidanOnly() ? 'bidan.kader' : 'admin.users';
 
             return redirect()->route($routePrefix.'.index')
                 ->with('error', 'Anda tidak dapat menghapus akun sendiri.');
         }
 
-        if (auth()->user()->isBidan() && $user->role !== 'kader') {
+        if (auth()->user()->isBidanOnly() && $user->role !== 'kader') {
             abort(403, 'Bidan hanya dapat menghapus akun kader.');
         }
 
         $user->delete();
 
-        $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
+        $routePrefix = auth()->user()->isBidanOnly() ? 'bidan.kader' : 'admin.users';
 
         return redirect()->route($routePrefix.'.index')
             ->with('success', 'Pengguna berhasil dihapus.');

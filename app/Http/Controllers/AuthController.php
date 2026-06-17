@@ -61,8 +61,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
-            if (in_array($user->role, ['bidan', 'dinkes']) && $user->status !== 'aktif') {
+            if (in_array($user->role, ['bidan', 'dinkes']) && ! in_array(strtolower($user->status), ['aktif', 'active'])) {
                 Auth::logout();
+
                 return back()->with('error', 'Akun Anda telah dinonaktifkan. Silakan hubungi Super Administrator.')->onlyInput('username');
             }
 

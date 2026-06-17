@@ -27,7 +27,7 @@
 
     <!-- Welcome Banner -->
     <div class="welcome-banner" style="background: linear-gradient(135deg, #0D9488, #0F766E); color: #fff; padding: 24px; border-radius: 20px; box-shadow: 0 10px 25px rgba(13,148,136,0.2); margin-bottom: 24px;">
-        <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 8px;">Halo, {{ auth()->user()->nama_lengkap }}! 👋</h2>
+        <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 8px;">Halo, {{ auth()->user()->name }}! 👋</h2>
         <p style="font-size: 15px; opacity: 0.9; margin: 0;">Berikut adalah KMS Digital (Kartu Menuju Sehat) untuk memantau tumbuh kembang anak Anda.</p>
     </div>
 
@@ -94,11 +94,13 @@
                             <div>
                                 <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #92400E;">Pengingat Terjadwal: Imunisasi {{ $pengingat['vaksin'] }}</h4>
                                 <p style="margin: 4px 0 0 0; font-size: 14px; color: #B45309;">
-                                    Peringatan: Jadwal Imunisasi <strong>{{ $pengingat['vaksin'] }}</strong> Anak Anda adalah {{ $pengingat['hari'] == 0 ? 'hari ini!' : ($pengingat['hari'] > 0 ? $pengingat['hari'] . ' hari lagi ('. $pengingat['tanggal'] .')' : abs($pengingat['hari']) . ' hari yang lalu ('. $pengingat['tanggal'] .')') }}. Harap segera ke Puskesmas.
+                                    Info Jadwal: Imunisasi <strong>{{ $pengingat['vaksin'] }}</strong> selanjutnya dijadwalkan pada <strong>{{ $pengingat['tanggal'] }}</strong>
+                                    ({{ $pengingat['hari'] == 0 ? 'hari ini' : ($pengingat['hari'] > 0 ? $pengingat['hari'] . ' hari lagi' : abs($pengingat['hari']) . ' hari yang lalu') }}). 
+                                    @if($pengingat['hari'] <= 7) Harap segera ke Posyandu/Puskesmas. @else Persiapkan kunjungan Anda pada tanggal tersebut. @endif
                                 </p>
                             </div>
                         </div>
-                        <form method="GET" action="#" onsubmit="alert('Fitur pengingat sedang dalam pembaruan'); return false;" style="margin: 0;">
+                        <form method="GET" action="{{ route('ortu.dismiss-pengingat') }}" style="margin: 0;">
                             @csrf
                             <input type="hidden" name="anak_id" value="{{ $pengingat['anak_id'] }}">
                             <input type="hidden" name="vaksin" value="{{ $pengingat['vaksin'] }}">
@@ -189,9 +191,9 @@
                                         <div style="margin-bottom: 4px;"><strong>Resep:</strong> {{ $tindakan->resep_obat ?? '-' }}</div>
                                         <div><strong>Catatan:</strong> {{ $tindakan->catatan_pemeriksaan }}</div>
                                     </td>
-                                    <td style="padding: 16px 24px; font-size: 14px; color: #475569;">{{ $tindakan->bidan->nama_lengkap ?? '-' }}</td>
+                                    <td style="padding: 16px 24px; font-size: 14px; color: #475569;">{{ $tindakan->bidan->name ?? '-' }}</td>
                                     <td style="padding: 16px 24px; text-align: center;">
-                                        <a href="#" onclick="alert('Fitur cetak PDF sedang disesuaikan'); return false;" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
+                                        <a href="{{ route('orangtua.tindakan.pdf', $tindakan) }}" target="_blank" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -228,9 +230,9 @@
                                         <div style="margin-bottom: 4px;"><strong>Lokasi:</strong> {{ $imunisasi->lokasi_suntikan ?? '-' }}</div>
                                         <div><strong>Catatan:</strong> {{ $imunisasi->catatan ?? '-' }}</div>
                                     </td>
-                                    <td style="padding: 16px 24px; font-size: 14px; color: #475569;">{{ $imunisasi->bidan->nama_lengkap ?? '-' }}</td>
+                                    <td style="padding: 16px 24px; font-size: 14px; color: #475569;">{{ $imunisasi->bidan->name ?? '-' }}</td>
                                     <td style="padding: 16px 24px; text-align: center;">
-                                        <a href="#" onclick="alert('Fitur cetak PDF sedang disesuaikan'); return false;" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
+                                        <a href="{{ route('orangtua.imunisasi.pdf', $imunisasi) }}" target="_blank" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
                                     </td>
                                 </tr>
                             @endforeach

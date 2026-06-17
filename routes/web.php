@@ -1,19 +1,29 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Bidan\ImunisasiController;
+use App\Http\Controllers\Bidan\TindakanMedisController;
 use App\Http\Controllers\BidanController;
 use App\Http\Controllers\BidanReportController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DinkesController;
 use App\Http\Controllers\IbuHamilController;
+use App\Http\Controllers\Kader\JadwalPosyanduController;
+use App\Http\Controllers\Kader\PengukuranController;
+use App\Http\Controllers\KBAcceptorController;
+use App\Http\Controllers\KBServiceController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotifikasiController;
+use App\Http\Controllers\OrangTua\AnakController;
 use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\PdfExportController;
 use App\Http\Controllers\PemeriksaanAncController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RujukanController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Middleware\BidanOnlyMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
-use App\Http\Controllers\UserManagementController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -41,29 +51,36 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name(
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead'])->name('notifikasi.read-all');
     Route::get('/dashboard/download-rekap', [OrtuController::class, 'downloadRekap'])->name('ortu.download-rekap');
     Route::get('/data-pemeriksaan', [OrtuController::class, 'pemeriksaan'])->name('ortu.pemeriksaan');
     Route::get('/data-pemeriksaan/{id}', [OrtuController::class, 'pemeriksaanDetail'])->name('ortu.pemeriksaan.show');
+    Route::get('/dashboard/dismiss-pengingat', [OrtuController::class, 'dismissPengingat'])->name('ortu.dismiss-pengingat');
 
     // Modul Keluarga Berencana (KB)
-    Route::get('/kb-acceptors/search', [\App\Http\Controllers\KBAcceptorController::class, 'search'])->name('kb-acceptors.search');
-    Route::post('/kb-acceptors/{kb_acceptor}/submit', [\App\Http\Controllers\KBAcceptorController::class, 'submitForVerification'])->name('kb-acceptors.submit');
-    Route::post('/kb-acceptors/{kb_acceptor}/verify', [\App\Http\Controllers\KBAcceptorController::class, 'verify'])->name('kb-acceptors.verify');
-    Route::resource('kb-acceptors', \App\Http\Controllers\KBAcceptorController::class);
-    Route::resource('kb-services', \App\Http\Controllers\KBServiceController::class);
+    Route::get('/kb-acceptors/search', [KBAcceptorController::class, 'search'])->name('kb-acceptors.search');
+    Route::post('/kb-acceptors/{kb_acceptor}/submit', [KBAcceptorController::class, 'submitForVerification'])->name('kb-acceptors.submit');
+    Route::post('/kb-acceptors/{kb_acceptor}/verify', [KBAcceptorController::class, 'verify'])->name('kb-acceptors.verify');
+    Route::resource('kb-acceptors', KBAcceptorController::class);
+    Route::resource('kb-services', KBServiceController::class);
 
     // Modul Data Anak (Orang Tua)
-    Route::resource('orangtua/anak', \App\Http\Controllers\OrangTua\AnakController::class)->names('orangtua.anak');
-    Route::get('/orangtua/anak/{id_anak}/rekam-medis-pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadRekamMedisAnak'])->name('orangtua.rekam-medis.pdf');
-    Route::get('/orangtua/tindakan/{tindakan}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadTindakanMedis'])->name('orangtua.tindakan.pdf');
-    Route::get('/orangtua/imunisasi/{imunisasi}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadImunisasi'])->name('orangtua.imunisasi.pdf');
+    Route::resource('orangtua/anak', AnakController::class)->names('orangtua.anak');
+    Route::get('/orangtua/anak/{id_anak}/rekam-medis-pdf', [PdfExportController::class, 'downloadRekamMedisAnak'])->name('orangtua.rekam-medis.pdf');
+    Route::get('/orangtua/tindakan/{tindakan}/pdf', [PdfExportController::class, 'downloadTindakanMedis'])->name('orangtua.tindakan.pdf');
+    Route::get('/orangtua/imunisasi/{imunisasi}/pdf', [PdfExportController::class, 'downloadImunisasi'])->name('orangtua.imunisasi.pdf');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/dinkes/export-pdf', [DinkesController::class, 'exportPdf'])->name('dinkes.export-pdf');
     Route::get('/dinkes/export-excel', [DinkesController::class, 'exportExcel'])->name('dinkes.export-excel');
+    Route::get('/dinkes/export-bayi-pdf', [DinkesController::class, 'exportBayiPdf'])->name('dinkes.export-bayi-pdf');
+    Route::get('/dinkes/export-bayi-excel', [DinkesController::class, 'exportBayiExcel'])->name('dinkes.export-bayi-excel');
+    Route::get('/dinkes/export-kb-pdf', [DinkesController::class, 'exportKbPdf'])->name('dinkes.export-kb-pdf');
+    Route::get('/dinkes/export-kb-excel', [DinkesController::class, 'exportKbExcel'])->name('dinkes.export-kb-excel');
     Route::get('/laporan-rekapitulasi', [DinkesController::class, 'laporan'])->name('dinkes.laporan');
+    Route::get('/laporan-rekapitulasi/{id}', [App\Http\Controllers\LaporanController::class, 'showDinkes'])->name('dinkes.laporan.show');
 
     Route::get('/notifications/{id}/read', function ($id) {
         $notification = Auth::user()->notifications()->find($id);
@@ -74,13 +91,7 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('dinkes.laporan');
     })->name('notifications.read');
 
-    // Kelola Pengguna: Hanya untuk Super Administrator
-    Route::middleware(SuperAdminMiddleware::class)->group(function () {
-        Route::resource('admin/users', UserManagementController::class)->names('admin.users');
-        Route::resource('bidan', BidanController::class);
-        Route::resource('dinkes', DinkesController::class);
-        Route::resource('ortu', OrtuController::class);
-    });
+
 
     // Data Ibu Hamil: Hanya untuk Bidan (Bukan Super Admin)
     Route::middleware(BidanOnlyMiddleware::class)->group(function () {
@@ -114,19 +125,42 @@ Route::middleware('auth')->group(function () {
         Route::post('laporan-dinkes/kirim', [BidanReportController::class, 'kirim'])->name('bidan.laporan-kirim');
 
         // Data Anak (Bidan)
-        Route::resource('anak', \App\Http\Controllers\Admin\AnakController::class)->names('bidan.anak');
+        Route::post('anak/{anak}/send-system', [App\Http\Controllers\Bidan\NotificationController::class, 'sendSystem'])->name('bidan.anak.send-system');
+        Route::post('anak/{anak}/send-notification', [App\Http\Controllers\Bidan\NotificationController::class, 'send'])->name('bidan.anak.send-notification');
+        Route::resource('anak', App\Http\Controllers\Admin\AnakController::class)->names('bidan.anak');
+
+        // Tindakan Medis (Bidan)
+        Route::get('bidan/tindakan/{tindakan}/pdf', [App\Http\Controllers\PdfExportController::class, 'downloadTindakanMedis'])->name('bidan.tindakan.pdf');
+        Route::resource('bidan/tindakan', TindakanMedisController::class)->names('bidan.tindakan');
+
+        // Imunisasi (Bidan)
+        Route::get('bidan/imunisasi/{imunisasi}/pdf', [App\Http\Controllers\PdfExportController::class, 'downloadImunisasi'])->name('bidan.imunisasi.pdf');
+        Route::resource('bidan/imunisasi', ImunisasiController::class)->names('bidan.imunisasi');
+
+        // Laporan Periodik (alias untuk backward compatibility)
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
+        Route::get('/laporan/excel', [LaporanController::class, 'excel'])->name('laporan.excel');
+        Route::post('/laporan/submit', [LaporanController::class, 'submitToDinkes'])->name('bidan.laporan.submit');
+    });
+
+    // Kelola Pengguna: Hanya untuk Super Administrator
+    Route::middleware(SuperAdminMiddleware::class)->group(function () {
+        Route::resource('admin/users', UserManagementController::class)->names('admin.users');
+        Route::resource('bidan', BidanController::class);
+        Route::resource('dinkes', DinkesController::class);
+        Route::resource('ortu', OrtuController::class);
     });
 
     // Modul Khusus Admin & Kader
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::resource('anak', \App\Http\Controllers\Admin\AnakController::class);
+        Route::resource('anak', App\Http\Controllers\Admin\AnakController::class);
     });
 
     // Modul Pengukuran (Kader)
     Route::prefix('kader')->name('kader.')->group(function () {
-        Route::get('/pengukuran/create', [\App\Http\Controllers\Kader\PengukuranController::class, 'create'])->name('pengukuran.create');
-        Route::post('/pengukuran', [\App\Http\Controllers\Kader\PengukuranController::class, 'store'])->name('pengukuran.store');
-        Route::resource('jadwal', \App\Http\Controllers\Kader\JadwalPosyanduController::class);
+        Route::get('/pengukuran/create', [PengukuranController::class, 'create'])->name('pengukuran.create');
+        Route::post('/pengukuran', [PengukuranController::class, 'store'])->name('pengukuran.store');
+        Route::resource('jadwal', JadwalPosyanduController::class);
     });
 });
-

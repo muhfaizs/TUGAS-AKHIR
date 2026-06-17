@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\OrangTua;
 
@@ -34,29 +34,29 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nomor_kontak' => ['required', 'string', 'max:15'],
-            'nik_ortu' => ['required', 'digits:16', Rule::unique('users')->ignore($user->id_user, 'id_user')],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:15'],
+            'nik' => ['required', 'digits:16', Rule::unique('users')->ignore($user->id)],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id_user.',id_user'],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'alamat_domisili' => ['nullable', 'string'],
         ], [
-            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
-            'nomor_kontak.required' => 'Nomor kontak wajib diisi.',
-            'nik_ortu.required' => 'NIK wajib diisi.',
-            'nik_ortu.digits' => 'NIK harus 16 digit angka.',
-            'nik_ortu.unique' => 'NIK sudah digunakan akun lain.',
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'phone.required' => 'Nomor kontak wajib diisi.',
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.digits' => 'NIK harus 16 digit angka.',
+            'nik.unique' => 'NIK sudah digunakan akun lain.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email ini sudah digunakan oleh akun lain.',
             'password.min' => 'Password minimal 8 karakter.',
         ]);
 
         $user->fill([
-            'nama_lengkap' => $validated['nama_lengkap'],
-            'nomor_kontak' => $validated['nomor_kontak'],
-            'nik_ortu' => $validated['nik_ortu'],
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'nik' => $validated['nik'],
             'posyandu_id' => $validated['posyandu_id'] ?? null,
             'email' => $validated['email'] ?? null,
             'alamat_domisili' => $validated['alamat_domisili'] ?? null,
@@ -83,4 +83,3 @@ class ProfileController extends Controller
         return redirect()->route('orangtua.profile.edit')->with('success', 'Profil berhasil diperbarui.');
     }
 }
-

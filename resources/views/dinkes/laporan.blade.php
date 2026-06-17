@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Laporan Rekapitulasi Dinkes - SatuKIA')
 @section('page_title', 'Laporan Rekapitulasi')
@@ -30,7 +30,7 @@
             </div>
             
             <div class="flex gap-3 mt-4 md:mt-0">
-                <button type="button" class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition-colors shadow-sm shadow-teal-500/20 flex items-center gap-2">
+                <button type="submit" class="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition-colors shadow-sm shadow-teal-500/20 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                     </svg>
@@ -45,8 +45,10 @@
 
     <!-- Summary Cards -->
     <div class="mb-8">
-        <h3 class="text-xl font-bold text-slate-800 mb-4">Ringkasan Indikator (Berdasarkan Filter)</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <h3 class="text-xl font-bold text-slate-800 mb-4">Ringkasan Indikator Layanan KIA (Ibu Hamil, Bayi & KB)</h3>
+
+        <h4 class="text-md font-bold text-slate-700 mb-3 border-b pb-2">Kesehatan Ibu Hamil</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             
             <!-- K1 -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
@@ -148,14 +150,75 @@
             </div>
 
         </div>
+
+        <h4 class="text-md font-bold text-slate-700 mt-6 mb-3 border-b pb-2">Kesehatan Bayi & Cakupan Imunisasi</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Total Bayi -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 border-l-4 border-l-emerald-400">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Bayi</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $totalAnak ?? 0 }}</p>
+                </div>
+            </div>
+
+            <!-- Bayi Berisiko -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 border-l-4 border-l-orange-400">
+                <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Berisiko Stunting</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $anakBerisiko ?? 0 }}</p>
+                </div>
+            </div>
+
+            <!-- Total Imunisasi -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 border-l-4 border-l-blue-400">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11 2v4h2V2h-2zm0 14h2v6h-2v-6zm3-11v2h2v2h-2v2h2v2h-2v2h2v2h-2v2h4V5h-4zm-8 4v2h2V9H6zm0 4v2h2v-2H6z"/></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Imunisasi</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $totalImunisasi ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="text-md font-bold text-slate-700 mt-6 mb-3 border-b pb-2">Keluarga Berencana (KB)</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Total KB -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 border-l-4 border-l-purple-400">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Akseptor</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $totalKb ?? 0 }}</p>
+                </div>
+            </div>
+
+            <!-- KB Aktif -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 border-l-4 border-l-pink-400">
+                <div class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600 shrink-0">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Akseptor Aktif</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $kbAktif ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Results Section -->
     <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b pb-4">
             <div>
-                <h3 class="text-xl font-bold text-slate-800">Hasil Laporan</h3>
-                <p class="text-sm text-slate-500 mt-1">Menampilkan {{ $ibuHamils->count() }} data pemeriksaan</p>
+                <h3 class="text-xl font-bold text-slate-800">Detail Pasien Ibu Hamil</h3>
+                <p class="text-sm text-slate-500 mt-1">Menampilkan {{ $ibuHamils->count() }} data pemeriksaan ibu hamil</p>
             </div>
             <div class="flex gap-3">
                 @if($ibuHamils->count() > 0)
@@ -265,6 +328,190 @@
                     <tr>
                         <td colspan="8" class="py-8 text-center text-slate-500">
                             Belum ada data pemeriksaan ibu hamil yang masuk.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Detail Pasien Anak -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 mt-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b pb-4">
+            <div>
+                <h3 class="text-xl font-bold text-slate-800">Detail Layanan Bayi & Imunisasi</h3>
+                <p class="text-sm text-slate-500 mt-1">Menampilkan {{ $anaks->count() }} data layanan bayi</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{{ route('dinkes.export-bayi-pdf') }}" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export PDF
+                </a>
+                
+                <a href="{{ route('dinkes.export-bayi-excel') }}" class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2 shadow-sm shadow-green-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Excel
+                </a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[800px]">
+                <thead>
+                    <tr>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Posyandu/Puskesmas</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Nama Bayi</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Orang Tua</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">BB/TB Terakhir</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Status Stunting</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Tindakan & Imunisasi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    @forelse($anaks as $anak)
+                    @php 
+                        $latest = $anak->latestPengukuran;
+                        
+                        $lokasiUtama = '-';
+                        if(isset($anak->orangTua->posyandu)) {
+                            $lokasiUtama = $anak->orangTua->posyandu->nama_posyandu;
+                        } elseif(isset($anak->orangTua->puskesmas)) {
+                            $lokasiUtama = $anak->orangTua->puskesmas->name ?? $anak->orangTua->puskesmas->nama_puskesmas ?? 'Puskesmas';
+                        } elseif($latest && isset($latest->kader->posyandu)) {
+                            $lokasiUtama = $latest->kader->posyandu->nama_posyandu;
+                        } elseif($anak->tindakanMedis->count() > 0) {
+                            $lastTindakan = $anak->tindakanMedis->last();
+                            $lokasiUtama = $lastTindakan->bidan->puskesmas->name ?? $lastTindakan->bidan->puskesmas->nama_puskesmas ?? $lastTindakan->puskesmas->name ?? $lastTindakan->puskesmas->nama_puskesmas ?? $lastTindakan->posyandu->nama_posyandu ?? 'Faskes';
+                        } elseif($anak->imunisasi->count() > 0) {
+                            $lastImun = $anak->imunisasi->last();
+                            $lokasiUtama = $lastImun->bidan->puskesmas->name ?? $lastImun->bidan->puskesmas->nama_puskesmas ?? $lastImun->puskesmas->name ?? $lastImun->puskesmas->nama_puskesmas ?? $lastImun->posyandu->nama_posyandu ?? 'Faskes';
+                        }
+                    @endphp
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">
+                            <span class="font-bold text-slate-800">{{ $lokasiUtama }}</span>
+                        </td>
+                        <td class="py-4 px-4">
+                            <p class="font-bold text-slate-800">{{ $anak->nama_anak }}</p>
+                            <p class="text-[10px] text-slate-500">NIK: {{ $anak->nik_anak }}</p>
+                        </td>
+                        <td class="py-4 px-4">
+                            <p class="font-bold text-slate-800 whitespace-nowrap">{{ $anak->nama_ibu }}</p>
+                        </td>
+                        <td class="py-4 px-4">
+                            @if($latest)
+                                <span class="font-semibold">{{ $latest->berat_badan }} kg</span> / <span class="font-semibold">{{ $latest->tinggi_badan }} cm</span>
+                            @else
+                                <span class="text-slate-400">-</span>
+                            @endif
+                        </td>
+                        <td class="py-4 px-4">
+                            @if($latest)
+                                @if($latest->flag_risiko)
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">Beresiko</span>
+                                    <div class="text-[10px] text-slate-500 mt-1">{{ $latest->status_stunting }} / {{ $latest->status_gizi }}</div>
+                                @elseif($latest->status_stunting == 'Stunting')
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">{{ $latest->status_stunting }}</span>
+                                @elseif($latest->status_stunting == 'Berisiko Stunting')
+                                    <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-md text-xs font-bold">{{ $latest->status_stunting }}</span>
+                                @else
+                                    <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold">{{ $latest->status_stunting }}</span>
+                                @endif
+                            @else
+                                <span class="text-slate-400">-</span>
+                            @endif
+                        </td>
+                        <td class="py-4 px-4">
+                            <div class="space-y-1">
+                                @if($anak->imunisasi && $anak->imunisasi->count() > 0)
+                                    @foreach($anak->imunisasi as $imun)
+                                        @php $lokasi = $imun->bidan->puskesmas->name ?? $imun->bidan->puskesmas->nama_puskesmas ?? $imun->puskesmas->name ?? $imun->puskesmas->nama_puskesmas ?? $imun->posyandu->nama_posyandu ?? 'Faskes'; @endphp
+                                        <div class="text-[11px] text-blue-600 bg-blue-50 px-2 py-1 rounded-md mb-1"><span class="font-bold">Imunisasi:</span> {{ $imun->nama_vaksin }} <span class="text-slate-500">({{ $imun->tanggal_imunisasi ? $imun->tanggal_imunisasi->format('d/m/y') : '' }} - {{ $imun->bidan->name ?? 'Bidan' }} @ {{ $lokasi }})</span></div>
+                                    @endforeach
+                                @endif
+                                @if($anak->tindakanMedis && $anak->tindakanMedis->count() > 0)
+                                    @foreach($anak->tindakanMedis as $tind)
+                                        @php $lokasi = $tind->bidan->puskesmas->name ?? $tind->bidan->puskesmas->nama_puskesmas ?? $tind->puskesmas->name ?? $tind->puskesmas->nama_puskesmas ?? $tind->posyandu->nama_posyandu ?? 'Faskes'; @endphp
+                                        <div class="text-[11px] text-red-600 bg-red-50 px-2 py-1 rounded-md mb-1"><span class="font-bold">Tindakan:</span> {{ \Illuminate\Support\Str::limit($tind->diagnosa, 20) }} <span class="text-slate-500">({{ $tind->tanggal_pemeriksaan ? $tind->tanggal_pemeriksaan->format('d/m/y') : '' }} - {{ $tind->bidan->name ?? 'Bidan' }} @ {{ $lokasi }})</span></div>
+                                    @endforeach
+                                @endif
+                                @if((!$anak->imunisasi || $anak->imunisasi->count() == 0) && (!$anak->tindakanMedis || $anak->tindakanMedis->count() == 0))
+                                    <span class="text-slate-400">-</span>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-slate-500">
+                            Belum ada data bayi yang masuk.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Detail KB -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 mt-8 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b pb-4">
+            <div>
+                <h3 class="text-xl font-bold text-slate-800">Detail Layanan KB</h3>
+                <p class="text-sm text-slate-500 mt-1">Menampilkan {{ $kbAkseptors->count() }} data layanan KB</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{{ route('dinkes.export-kb-pdf') }}" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export PDF
+                </a>
+                
+                <a href="{{ route('dinkes.export-kb-excel') }}" class="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2 shadow-sm shadow-green-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Export Excel
+                </a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[800px]">
+                <thead>
+                    <tr>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Nama Akseptor</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">No JKN</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Metode KB</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Tujuan</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    @forelse($kbAkseptors as $kb)
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->name }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->no_jkn ?? '-' }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->metode_kb ?? '-' }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->tujuan ?? '-' }}</td>
+                        <td class="py-4 px-4">
+                            @if($kb->status == 'active')
+                                <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold uppercase">Aktif</span>
+                            @else
+                                <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-bold uppercase">{{ $kb->status }}</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="py-8 text-center text-slate-500">
+                            Belum ada data akseptor KB yang masuk.
                         </td>
                     </tr>
                     @endforelse

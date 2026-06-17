@@ -32,7 +32,7 @@
             <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 8px;">
                 <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--kia-primary, #0D9488), #064E3B); display: grid; place-items: center; color: #fff; font-size: 20px; font-weight: 800; overflow: hidden; {{ $user->foto_profil ? 'background-image: url(' . asset('storage/' . $user->foto_profil) . '); background-size: cover; background-position: center;' : '' }}">
                     @if(!$user->foto_profil)
-                        {{ strtoupper(substr($user->nama_lengkap, 0, 2)) }}
+                        {{ strtoupper(substr($user->name, 0, 2)) }}
                     @endif
                 </div>
                 <div style="flex: 1;">
@@ -56,20 +56,20 @@
 
             <!-- Nama Lengkap -->
             <div>
-                <label for="nama_lengkap" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nama Lengkap</label>
-                <input type="text" name="nama_lengkap" id="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
+                <label for="name" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nama Lengkap</label>
+                <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
             </div>
 
             <!-- NIK (16 Digit) -->
             <div>
-                <label for="nik_ortu" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">NIK (16 Digit)</label>
-                <input type="text" name="nik_ortu" id="nik_ortu" value="{{ old('nik_ortu', $user->nik_ortu) }}" required maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <label for="nik" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">NIK (16 Digit)</label>
+                <input type="text" name="nik" id="nik" value="{{ old('nik', $user->nik) }}" required maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <!-- Nomor Kontak -->
             <div>
-                <label for="nomor_kontak" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nomor Kontak</label>
-                <input type="tel" name="nomor_kontak" id="nomor_kontak" value="{{ old('nomor_kontak', $user->nomor_kontak) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
+                <label for="phone" style="display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 8px;">Nomor Kontak</label>
+                <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" style="width: 100%; padding: 12px 16px; border: 1px solid #CBD5E1; border-radius: 12px; font-family: inherit; transition: all 0.2s;">
             </div>
 
             <!-- Alamat Domisili -->
@@ -123,7 +123,7 @@
 </div>
 <script>
 function validateProfileForm() {
-    let nikInput = document.getElementById('nik_ortu');
+    let nikInput = document.getElementById('nik');
     if (nikInput) {
         if (!/^\d{16}$/.test(nikInput.value.trim())) {
             alert('NIK harus terdiri dari tepat 16 digit angka.');

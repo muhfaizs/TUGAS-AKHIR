@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models;
 
@@ -28,4 +28,3 @@ class TbLaporanDinkes extends Model
         return $this->belongsTo(User::class, 'id_bidan', 'id');
     }
 }
-

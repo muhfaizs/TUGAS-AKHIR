@@ -24,7 +24,7 @@
         <tr><th>Nama Anak</th><td>{{ $tindakan->anak->nama_anak }}</td></tr>
         <tr><th>NIK Anak</th><td>{{ $tindakan->anak->nik_anak ?? '-' }}</td></tr>
         <tr><th>Tanggal Lahir</th><td>{{ \Carbon\Carbon::parse($tindakan->anak->tanggal_lahir)->format('d F Y') }}</td></tr>
-        <tr><th>Nama Orang Tua</th><td>{{ $tindakan->anak->orangTua->nama_lengkap ?? '-' }}</td></tr>
+        <tr><th>Nama Orang Tua</th><td>{{ $tindakan->anak->orangTua->name ?? '-' }}</td></tr>
     </table>
 
     <div class="section-title">Detail Pemeriksaan / Tindakan</div>
@@ -38,7 +38,7 @@
 
     <div class="section-title">Informasi Petugas</div>
     <table class="info-table">
-        <tr><th>Bidan Pemeriksa</th><td>{{ $tindakan->bidan->nama_lengkap ?? '-' }} (NIP: {{ $tindakan->bidan->nip_bidan ?? '-' }})</td></tr>
+        <tr><th>Bidan Pemeriksa</th><td>{{ $tindakan->bidan->name ?? '-' }} (NIP: {{ $tindakan->bidan->nip ?? '-' }})</td></tr>
         <tr><th>Puskesmas / Posyandu</th><td>
             @if($tindakan->puskesmas)
                 {{ $tindakan->puskesmas->nama_puskesmas }}

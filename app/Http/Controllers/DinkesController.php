@@ -105,7 +105,21 @@ class DinkesController extends Controller
         $ibuHamils = $query->get();
         $metrics = $this->calculateMetrics($ibuHamils);
 
-        return view('dinkes.laporan', compact('ibuHamils', 'metrics'));
+        // Metrics Anak
+        $anaks = \App\Models\Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->get();
+        $totalAnak = $anaks->count();
+        $anakBerisiko = $anaks->filter(function($a) {
+            $latest = $a->latestPengukuran;
+            return $latest && $latest->flag_risiko;
+        })->count();
+        $totalImunisasi = \App\Models\Imunisasi::count();
+
+        // Metrics KB
+        $kbAkseptors = \App\Models\KbAcceptor::get();
+        $totalKb = $kbAkseptors->count();
+        $kbAktif = $kbAkseptors->where('status', 'active')->count();
+
+        return view('dinkes.laporan', compact('ibuHamils', 'metrics', 'totalAnak', 'anakBerisiko', 'totalImunisasi', 'totalKb', 'kbAktif', 'anaks', 'kbAkseptors'));
     }
 
     /**
@@ -132,7 +146,37 @@ class DinkesController extends Controller
 
         return response()->view('dinkes.exports.excel', compact('ibuHamils', 'metrics'))
             ->header('Content-Type', 'application/vnd.ms-excel')
-            ->header('Content-Disposition', 'attachment; filename="Laporan_KIA_'.date('Ymd').'.xls"');
+            ->header('Content-Disposition', 'attachment; filename="Laporan_IbuHamil_'.date('Ymd').'.xls"');
+    }
+
+    public function exportBayiPdf()
+    {
+        $anaks = \App\Models\Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->orderBy('created_at', 'desc')->get();
+        $pdf = Pdf::loadView('dinkes.exports.pdf_bayi', compact('anaks'))->setPaper('a4', 'landscape');
+        return $pdf->download('Laporan_Bayi_'.date('Ymd').'.pdf');
+    }
+
+    public function exportBayiExcel()
+    {
+        $anaks = \App\Models\Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->orderBy('created_at', 'desc')->get();
+        return response()->view('dinkes.exports.excel_bayi', compact('anaks'))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="Laporan_Bayi_'.date('Ymd').'.xls"');
+    }
+
+    public function exportKbPdf()
+    {
+        $akseptors = \App\Models\KbAcceptor::with(['user', 'puskesmas', 'kader', 'activeServices'])->orderBy('created_at', 'desc')->get();
+        $pdf = Pdf::loadView('dinkes.exports.pdf_kb', compact('akseptors'))->setPaper('a4', 'landscape');
+        return $pdf->download('Laporan_KB_'.date('Ymd').'.pdf');
+    }
+
+    public function exportKbExcel()
+    {
+        $akseptors = \App\Models\KbAcceptor::with(['user', 'puskesmas', 'kader', 'activeServices'])->orderBy('created_at', 'desc')->get();
+        return response()->view('dinkes.exports.excel_kb', compact('akseptors'))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="Laporan_KB_'.date('Ymd').'.xls"');
     }
 
     /**
