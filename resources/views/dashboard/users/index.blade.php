@@ -137,7 +137,7 @@
                 </div>
             @endif
 
-            <form :action="isEdit ? '{{ auth()->user()->isBidan() ? url('bidan/kader') : url('admin/users') }}/' + editId : '{{ auth()->user()->isBidan() ? route('bidan.kader.store') : route('admin.users.store') }}'" method="POST" class="um-modal-form" id="user-form" onsubmit="return validateUserForm()">
+            <form :action="isEdit ? '{{ auth()->user()->isBidanOnly() ? url('bidan/kader') : url('admin/users') }}/' + editId : '{{ auth()->user()->isBidanOnly() ? route('bidan.kader.store') : route('admin.users.store') }}'" method="POST" class="um-modal-form" id="user-form" onsubmit="return validateUserForm()">
                 @csrf
                 <template x-if="isEdit">
                     <input type="hidden" name="_method" value="PUT">
@@ -182,11 +182,16 @@
                         <label for="modal_role" class="um-label">Role <span class="um-required">*</span></label>
                         <select name="role" id="modal_role" x-model="form.role" class="um-input um-select" required>
                             <option value="">Pilih Role</option>
-                            <option value="super_admin">Super Admin</option>
-                            <option value="bidan">Bidan</option>
-                            <option value="kader">Kader</option>
-                            <option value="ortu">Orang Tua</option>
-                            <option value="dinkes">Dinas Kesehatan</option>
+                            @if(auth()->user()->isBidanOnly())
+                                <option value="kader">Kader</option>
+                            @else
+                                <option value="super_admin">Super Admin</option>
+                                <option value="bidan">Bidan</option>
+                                <option value="kader">Kader</option>
+                                <option value="ortu">Orang Tua</option>
+                                <option value="pasien_kb">Pasien KB</option>
+                                <option value="dinkes">Dinas Kesehatan</option>
+                            @endif
                         </select>
                     </div>
 

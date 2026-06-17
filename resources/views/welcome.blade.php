@@ -34,13 +34,7 @@
                 @if (Route::has('login'))
                     @auth
                         @php
-                            $dashboardUrl = match(auth()->user()->role) {
-                                'super admin', 'kader' => route('admin.dashboard'),
-                                'bidan' => route('bidan.dashboard'),
-                                'orang tua' => route('orangtua.dashboard'),
-                                'dinkes' => route('dinkes.dashboard'),
-                                default => '/'
-                            };
+                            $dashboardUrl = route('dashboard');
                         @endphp
                         <a href="{{ $dashboardUrl }}" class="lp-nav-link lp-nav-link--solid">Dashboard</a>
                     @else

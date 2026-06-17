@@ -315,6 +315,21 @@
                         </div>
                     </div>
 
+                    <!-- Role Pendaftar -->
+                    <div class="login-field-group">
+                        <label for="role" class="login-label">Daftar Sebagai</label>
+                        <div class="login-input-wrap">
+                            <span class="login-input-icon">
+                                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                            </span>
+                            <select name="role" id="role" class="login-input" required style="appearance: none; background: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 24 24\' fill=\'%2394A3B8\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>') no-repeat right 12px center; background-size: 24px;">
+                                <option value="">-- Pilih Identitas Anda --</option>
+                                <option value="ortu">Orang Tua Bayi/Balita</option>
+                                <option value="pasien_kb">Pasien Keluarga Berencana (KB)</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Submit -->
                     <button type="submit" class="login-submit login-submit--register" id="btn-register">
                         <span>Daftar Sekarang</span>

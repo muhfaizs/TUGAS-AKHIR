@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Daftar Pasien KB - SatuKIA')
 @section('page_title', 'Daftar Pasien KB')
@@ -233,6 +233,30 @@
         color: #fff;
     }
     .alert-ok-icon svg { width: 13px; height: 13px; }
+
+    /* Modal styles */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: none; align-items: center; justify-content: center;
+        z-index: 1000;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal-card {
+        background: #fff; width: 400px; padding: 24px; border-radius: 16px;
+        text-align: center;
+    }
+    .modal-icon {
+        width: 48px; height: 48px; background: #fee2e2; color: #ef4444;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 16px;
+    }
+    .modal-icon svg { width: 24px; height: 24px; }
+    .modal-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+    .modal-desc { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+    .modal-btns { display: flex; gap: 12px; }
+    .modal-btn-cancel { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; background: #fff; color: #374151; font-weight: 600; cursor: pointer; }
+    .modal-btn-confirm { flex: 1; padding: 10px; border-radius: 8px; border: none; background: #ef4444; color: #fff; font-weight: 600; cursor: pointer; }
 </style>
 
 @if (session('success'))
@@ -367,7 +391,7 @@
                             Lihat
                         </a>
 
-                        @if(auth()->check() && auth()->user()->role === 'kader' && $acceptor->registered_by === auth()->id())
+                        @if(auth()->check() && in_array(auth()->user()->role, ['kader', 'bidan', 'admin', 'super_admin']))
                         <a href="{{ route('kb-acceptors.edit', $acceptor) }}" class="btn-icon btn-edit">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -376,7 +400,7 @@
                         </a>
                         @endif
 
-                        @if(auth()->check() && auth()->user()->role === 'kader' && $acceptor->registered_by === auth()->id() && !$acceptor->verification_requested_at && !$acceptor->is_verified)
+                        @if(auth()->check() && in_array(auth()->user()->role, ['kader', 'bidan', 'admin', 'super_admin']) && !$acceptor->verification_requested_at && !$acceptor->is_verified)
                         <form action="{{ route('kb-acceptors.submit', $acceptor) }}" method="POST" class="inline">
                             @csrf
                             <button type="submit" class="btn-icon btn-send">
@@ -388,7 +412,7 @@
                         </form>
                         @endif
 
-        @if(auth()->check() && auth()->user()->role === 'kader' && $acceptor->registered_by === auth()->id())
+                        @if(auth()->check() && in_array(auth()->user()->role, ['kader', 'bidan', 'admin', 'super_admin']))
                         <button type="button" class="btn-icon btn-delete" onclick="showDeleteModal('{{ route('kb-acceptors.destroy', $acceptor) }}')">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>

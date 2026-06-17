@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Auth;
 
@@ -22,6 +22,7 @@ class RegisterController extends Controller
             'nomor_kontak' => ['required', 'string', 'max:15'],
             'reg_username' => ['required', 'string', 'max:50', 'unique:users,username'],
             'reg_password' => ['required', 'string', 'min:8', Password::defaults(), 'confirmed'],
+            'role' => ['required', 'in:ortu,pasien_kb'],
         ], [
             'nik_ortu.required' => 'NIK wajib diisi.',
             'nik_ortu.size' => 'NIK harus 16 digit.',
@@ -33,21 +34,22 @@ class RegisterController extends Controller
             'reg_password.required' => 'Password wajib diisi.',
             'reg_password.min' => 'Password minimal 8 karakter.',
             'reg_password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'role.required' => 'Peran (Orang Tua / Pasien KB) wajib dipilih.',
+            'role.in' => 'Peran yang dipilih tidak valid.',
         ]);
 
         $user = User::create([
-            'nik_ortu' => $validated['nik_ortu'],
-            'nama_lengkap' => $validated['nama_lengkap'],
-            'nomor_kontak' => $validated['nomor_kontak'],
+            'nik' => $validated['nik_ortu'],
+            'name' => $validated['nama_lengkap'],
+            'phone' => $validated['nomor_kontak'],
             'username' => $validated['reg_username'],
             'password' => $validated['reg_password'],
-            'role' => 'orang tua',
+            'role' => $validated['role'],
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('orangtua.dashboard')
-            ->with('success', 'Registrasi berhasil! Selamat datang, '.$user->nama_lengkap.'.');
+        return redirect('/dashboard')
+            ->with('success', 'Registrasi berhasil! Selamat datang, '.$user->name.'.');
     }
 }
-

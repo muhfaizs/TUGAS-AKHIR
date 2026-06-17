@@ -68,14 +68,15 @@
                     </a>
 
                     <a href="{{ route('bidan.tindakan.index') }}" class="sidebar-link {{ request()->routeIs('bidan.tindakan.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-tindakan">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.5 13H9v-2.5H6.5v-2H9V9h1.5v2.5H13v2h-2.5V16zM18 16h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
                         Tindakan Medis
                     </a>
 
                     <a href="{{ route('bidan.imunisasi.index') }}" class="sidebar-link {{ request()->routeIs('bidan.imunisasi.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-imunisasi">
-                        <svg viewBox="0 0 24 24"><path d="M11 2v4h2V2h-2zm0 14h2v6h-2v-6zm3-11v2h2v2h-2v2h2v2h-2v2h2v2h-2v2h4V5h-4zm-8 4v2h2V9H6zm0 4v2h2v-2H6z"/></svg>
-                        Imunisasi Anak
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Imunisasi Bayi
                     </a>
+
 
                     <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -87,9 +88,34 @@
                         Kelola Akun Kader
                     </a>
 
-                    <a href="{{ route('laporan.index') }}" class="sidebar-link {{ request()->routeIs('laporan.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan">
+                    <a href="{{ route('ibu-hamil.index') }}" class="sidebar-link {{ request()->routeIs('ibu-hamil.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-ibu-hamil">
+                        <svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11c0-4.97-4.03-9-9-9zm0 2c3.86 0 7 3.14 7 7 0 2.38-1.19 4.47-3 5.74V17h-2v-1.5h-4V17H8v-1.26C6.19 14.47 5 12.38 5 11c0-3.86 3.14-7 7-7z"/></svg>
+                        Kelola Pasien Ibu Hamil
+                    </a>
+
+                    <a href="{{ route('rujukan.index') }}" class="sidebar-link {{ request()->routeIs('rujukan.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-rujukan">
+                        <svg viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-4 5h18l-7-9z"/></svg>
+                        Manajemen Rujukan
+                    </a>
+
+                    <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-acceptors">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Akseptor KB
+                    </a>
+
+                    <a href="{{ route('kb-services.index') }}" class="sidebar-link {{ request()->routeIs('kb-services.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-services">
                         <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                        Laporan Periodik
+                        Pelayanan KB
+                    </a>
+
+                    <a href="{{ route('bidan.laporan-bulanan') }}" class="sidebar-link {{ request()->routeIs('bidan.laporan-*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-ibu-hamil">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Laporan Ibu Hamil
+                    </a>
+
+                    <a href="{{ route('laporan.index') }}" class="sidebar-link {{ request()->routeIs('laporan.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-anak">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Laporan Anak
                     </a>
                 @endif
 
@@ -114,15 +140,7 @@
                         Jadwal Posyandu
                     </a>
 
-                    <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-acceptors">
-                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                        Akseptor KB
-                    </a>
 
-                    <a href="{{ route('kb-services.index') }}" class="sidebar-link {{ request()->routeIs('kb-services.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-services">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                        Pelayanan KB
-                    </a>
 
                     <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -147,8 +165,8 @@
                     </a>
 
                     <a href="{{ route('ortu.pemeriksaan') }}" class="sidebar-link {{ request()->routeIs('ortu.pemeriksaan*') ? 'sidebar-link--active' : '' }}" id="nav-ot-pemeriksaan">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                        Data Pemeriksaan
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                        Riwayat Kehamilan (ANC)
                     </a>
                 @endif
 
@@ -158,7 +176,7 @@
                         Dashboard Eksekutif
                     </a>
 
-                    <a href="{{ route('laporan.index') }}" class="sidebar-link {{ request()->routeIs('laporan.*') ? 'sidebar-link--active' : '' }}" id="nav-dinkes-laporan">
+                    <a href="{{ route('dinkes.laporan') }}" class="sidebar-link {{ request()->routeIs('dinkes.laporan*') ? 'sidebar-link--active' : '' }}" id="nav-dinkes-laporan">
                         <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
                         Laporan Rekapitulasi
                     </a>
@@ -373,5 +391,7 @@
             }
         });
     </script>
+    
+    @stack('scripts')
 </body>
 </html>

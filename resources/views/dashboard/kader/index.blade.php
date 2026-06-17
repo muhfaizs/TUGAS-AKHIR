@@ -111,7 +111,7 @@
                                     </div>
                                 </td>
                                 <td style="padding: 16px 24px; vertical-align: middle; border-bottom: 1px solid rgba(15,23,42,0.04); font-size: 14px; color: #475569;">
-                                    {{ $anak->orangTua ? $anak->orangTua->nama_lengkap : '-' }}
+                                    {{ $anak->orangTua ? $anak->orangTua->name : '-' }}
                                 </td>
                                 <td style="padding: 16px 24px; vertical-align: middle; border-bottom: 1px solid rgba(15,23,42,0.04); font-size: 14px; color: #475569;">
                                     {{ $usiaText }}

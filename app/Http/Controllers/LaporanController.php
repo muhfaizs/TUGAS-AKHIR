@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Imunisasi;
 use App\Models\Notifikasi;
 use App\Models\Pengukuran;
+use App\Models\Puskesmas;
 use App\Models\TbLaporanDinkes;
 use App\Models\TindakanMedis;
 use App\Models\User;
@@ -73,7 +74,7 @@ class LaporanController extends Controller
         $visits = [];
 
         foreach ($pengukurans as $p) {
-            if (!$p->anak) {
+            if (! $p->anak) {
                 continue;
             }
             $date = $p->tanggal_pengukuran->format('Y-m-d');
@@ -92,12 +93,12 @@ class LaporanController extends Controller
             }
             $visits[$key]['pengukuran'] = $p;
             if ($p->kader) {
-                $visits[$key]['pelaksana'][] = 'Kader: '.$p->kader->nama_lengkap;
+                $visits[$key]['pelaksana'][] = 'Kader: '.$p->kader->name;
             }
         }
 
         foreach ($tindakans as $t) {
-            if (!$t->anak) {
+            if (! $t->anak) {
                 continue;
             }
             $date = $t->tanggal_pemeriksaan->format('Y-m-d');
@@ -118,12 +119,12 @@ class LaporanController extends Controller
             }
             $visits[$key]['tindakan'] = $t;
             if ($t->bidan) {
-                $visits[$key]['pelaksana'][] = 'Bidan: '.$t->bidan->nama_lengkap;
+                $visits[$key]['pelaksana'][] = 'Bidan: '.$t->bidan->name;
             }
         }
 
         foreach ($imunisasais as $i) {
-            if (!$i->anak) {
+            if (! $i->anak) {
                 continue;
             }
             $date = $i->tanggal_pemberian->format('Y-m-d');
@@ -144,7 +145,7 @@ class LaporanController extends Controller
             }
             $visits[$key]['imunisasi'] = $i;
             if ($i->bidan) {
-                $visits[$key]['pelaksana'][] = 'Bidan: '.$i->bidan->nama_lengkap;
+                $visits[$key]['pelaksana'][] = 'Bidan: '.$i->bidan->name;
             }
         }
 
@@ -158,7 +159,7 @@ class LaporanController extends Controller
     public function index(Request $request)
     {
         // Dropdown List
-        $puskesmasList = \App\Models\Puskesmas::all();
+        $puskesmasList = Puskesmas::all();
         $posyanduList = collect(); // Keep for backward compatibility if needed
 
         $laporan = $this->getUnifiedLaporan($request)->sortByDesc('tanggal')->values();
@@ -190,7 +191,7 @@ class LaporanController extends Controller
         }
 
         if (! $request->has('selected_laporan') || empty($request->selected_laporan)) {
-            return back()->with('error', 'Anda belum memilih laporan, silakan centang laporan terlebih dahulu untuk mengirim.');
+            return redirect()->route('laporan.index')->with('error', 'Anda belum memilih laporan, silakan centang laporan terlebih dahulu untuk mengirim.');
         }
 
         $allLaporan = $this->getUnifiedLaporan($request);
@@ -201,7 +202,7 @@ class LaporanController extends Controller
         })->sortByDesc('tanggal')->values();
 
         if ($laporan->isEmpty()) {
-            return back()->with('error', 'Tidak ada data laporan yang valid untuk dikirim.');
+            return redirect()->route('laporan.index')->with('error', 'Tidak ada data laporan yang valid untuk dikirim.');
         }
 
         // Store to tb_laporan_dinkes
@@ -218,14 +219,14 @@ class LaporanController extends Controller
         $dinkesUsers = User::where('role', 'dinkes')->get();
         foreach ($dinkesUsers as $dinkes) {
             Notifikasi::create([
-                'id_user' => $dinkes->id_user,
+                'id_user' => $dinkes->id,
                 'judul' => 'Laporan Periodik Baru',
-                'pesan' => 'Ada laporan periodik baru dari '.($laporanDinkes->nama_puskesmas).' oleh Bidan '.auth()->user()->nama_lengkap.'.',
+                'pesan' => 'Ada laporan periodik baru dari '.($laporanDinkes->nama_puskesmas).' oleh Bidan '.auth()->user()->name.'.',
                 'wa_link' => null,
             ]);
         }
 
-        return back()->with('success', 'Laporan berhasil disubmit ke Dinas Kesehatan.');
+        return redirect()->route('laporan.index')->with('success', 'Laporan berhasil disubmit ke Dinas Kesehatan.');
     }
 
     public function showDinkes($id)
@@ -235,12 +236,12 @@ class LaporanController extends Controller
         }
 
         $laporanDinkes = TbLaporanDinkes::with('bidan')->findOrFail($id);
-        
+
         $data = $laporanDinkes->data_serialized;
         if (is_string($data)) {
             $data = json_decode($data, true);
         }
-        
+
         $laporan = collect($data)->map(function ($item) {
             return json_decode(json_encode($item));
         });

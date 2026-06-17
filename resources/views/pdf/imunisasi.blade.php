@@ -24,7 +24,7 @@
         <tr><th>Nama Anak</th><td>{{ $imunisasi->anak->nama_anak }}</td></tr>
         <tr><th>NIK Anak</th><td>{{ $imunisasi->anak->nik_anak ?? '-' }}</td></tr>
         <tr><th>Tanggal Lahir</th><td>{{ \Carbon\Carbon::parse($imunisasi->anak->tanggal_lahir)->format('d F Y') }}</td></tr>
-        <tr><th>Nama Orang Tua</th><td>{{ $imunisasi->anak->orangTua->nama_lengkap ?? '-' }}</td></tr>
+        <tr><th>Nama Orang Tua</th><td>{{ $imunisasi->anak->orangTua->name ?? '-' }}</td></tr>
     </table>
 
     <div class="section-title">Detail Imunisasi</div>
@@ -39,7 +39,7 @@
 
     <div class="section-title">Informasi Petugas</div>
     <table class="info-table">
-        <tr><th>Bidan Pemeriksa</th><td>{{ $imunisasi->bidan->nama_lengkap ?? '-' }} (NIP: {{ $imunisasi->bidan->nip_bidan ?? '-' }})</td></tr>
+        <tr><th>Bidan Pemeriksa</th><td>{{ $imunisasi->bidan->name ?? '-' }} (NIP: {{ $imunisasi->bidan->nip ?? '-' }})</td></tr>
         <tr><th>Puskesmas / Posyandu</th><td>
             @if($imunisasi->puskesmas)
                 {{ $imunisasi->puskesmas->nama_puskesmas }}

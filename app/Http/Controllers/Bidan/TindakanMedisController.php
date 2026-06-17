@@ -64,7 +64,7 @@ class TindakanMedisController extends Controller
             $pesan = "Halo, ini pemberitahuan dari Puskesmas. Anak Anda, {$anak->nama_anak}, baru saja menerima tindakan medis dengan diagnosa: ".($validated['diagnosa'] ?? 'Pemeriksaan Rutin').'.';
 
             // WA Link
-            $waLink = 'https://api.whatsapp.com/send?phone='.preg_replace('/[^0-9]/', '', $anak->orangTua->nomor_kontak).'&text='.urlencode($pesan);
+            $waLink = 'https://api.whatsapp.com/send?phone='.preg_replace('/[^0-9]/', '', $anak->orangTua->phone).'&text='.urlencode($pesan);
 
             // In-App Notification
             Notifikasi::create([
@@ -97,7 +97,7 @@ class TindakanMedisController extends Controller
 
         foreach ($kaders as $kader) {
             $pesanKader = "Pemberitahuan Kader: Anak {$anak->nama_anak} baru saja mendapatkan tindakan medis di posyandu wilayah Anda.";
-            $waLinkKader = $kader->nomor_kontak ? 'https://api.whatsapp.com/send?phone='.preg_replace('/[^0-9]/', '', $kader->nomor_kontak).'&text='.urlencode($pesanKader) : null;
+            $waLinkKader = $kader->phone ? 'https://api.whatsapp.com/send?phone='.preg_replace('/[^0-9]/', '', $kader->phone).'&text='.urlencode($pesanKader) : null;
             Notifikasi::create([
                 'id_user' => $kader->id_user,
                 'judul' => 'Tindakan Medis di Wilayah Anda',

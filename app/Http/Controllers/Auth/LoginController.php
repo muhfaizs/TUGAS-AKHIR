@@ -53,7 +53,7 @@ class LoginController extends Controller
                 'bidan' => redirect()->intended(route('bidan.dashboard')),
                 'kader' => redirect()->intended(route('admin.dashboard')),
                 'orang tua' => redirect()->intended(route('orangtua.dashboard')),
-                'dinkes' => redirect()->intended(route('dinkes.dashboard')),
+                'dinkes' => redirect()->intended(route('dashboard')),
                 default => redirect()->intended('/'),
             };
         }

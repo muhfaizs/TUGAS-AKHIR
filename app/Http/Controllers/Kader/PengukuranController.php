@@ -60,7 +60,7 @@ class PengukuranController extends Controller
 
         Pengukuran::create([
             'id_anak' => $validated['id_anak'],
-            'id_kader' => $request->user()->id_user,
+            'id_kader' => $request->user()->id,
             'tanggal_pengukuran' => $validated['tanggal_pengukuran'],
             'berat_badan' => $validated['berat_badan'],
             'tinggi_badan' => $validated['tinggi_badan'],
@@ -68,6 +68,22 @@ class PengukuranController extends Controller
             'imt' => round($imt, 2),
             'flag_risiko' => $flagRisiko,
         ]);
+
+        if ($flagRisiko) {
+            $anak = \App\Models\Anak::find($validated['id_anak']);
+            $kader = $request->user();
+            $bidans = \App\Models\User::where('role', 'bidan')
+                ->where('puskesmas_id', $kader->puskesmas_id)
+                ->get();
+                
+            foreach ($bidans as $bidan) {
+                \App\Models\Notifikasi::create([
+                    'id_user' => $bidan->id,
+                    'judul' => 'Peringatan: Bayi Beresiko Stunting',
+                    'pesan' => "Kader {$kader->name} melaporkan bahwa anak {$anak->nama_anak} berisiko (IMT: " . round($imt, 2) . ").",
+                ]);
+            }
+        }
 
         return redirect()->route('kader.pengukuran.create')
             ->with([

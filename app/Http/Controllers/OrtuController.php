@@ -132,4 +132,23 @@ class OrtuController extends Controller
 
         return view('ortu.pemeriksaan-detail', compact('anc'));
     }
+
+    public function dismissPengingat(Request $request)
+    {
+        $user = Auth::user();
+        $anakId = $request->input('anak_id');
+        $vaksin = $request->input('vaksin');
+
+        $anak = \App\Models\Anak::where('id_anak', $anakId)->where('id_user', $user->id)->firstOrFail();
+
+        $notifTitle = "Pengingat Imunisasi: {$vaksin} - {$anak->nama_anak}";
+
+        \App\Models\Notifikasi::create([
+            'id_user' => $user->id,
+            'judul' => $notifTitle,
+            'pesan' => "Anda telah membaca jadwal imunisasi {$vaksin} untuk {$anak->nama_anak}.",
+        ]);
+
+        return back()->with('success', 'Jadwal imunisasi telah ditandai dibaca.');
+    }
 }

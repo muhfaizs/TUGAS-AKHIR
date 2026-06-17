@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Dinkes;
 
@@ -7,6 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class DinkesProfileController extends Controller
@@ -29,13 +30,13 @@ class DinkesProfileController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nomor_kontak' => ['nullable', 'string', 'max:15'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id_user.',id_user'],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:15'],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ], [
-            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'name.required' => 'Nama lengkap wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email ini sudah digunakan oleh akun lain.',
             'password.min' => 'Password minimal 8 karakter.',
@@ -63,4 +64,3 @@ class DinkesProfileController extends Controller
             ->with('success', 'Profil berhasil diperbarui.');
     }
 }
-

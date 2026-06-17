@@ -18,7 +18,7 @@ class PdfExportController extends Controller
             ->findOrFail($id_anak);
 
         // Security check
-        if (auth()->user()->role === 'orang tua' && auth()->id() !== $anak->id_user) {
+        if (auth()->user()->isOrtu() && auth()->id() !== $anak->id_user) {
             abort(403, 'Unauthorized access.');
         }
 
@@ -34,7 +34,7 @@ class PdfExportController extends Controller
     {
         $tindakan->load(['anak.orangTua', 'bidan', 'puskesmas', 'posyandu']);
 
-        if (auth()->user()->role === 'orang tua' && auth()->id() !== $tindakan->anak->id_user) {
+        if (auth()->user()->isOrtu() && auth()->id() !== $tindakan->anak->id_user) {
             abort(403, 'Unauthorized access.');
         }
 
@@ -50,7 +50,7 @@ class PdfExportController extends Controller
     {
         $imunisasi->load(['anak.orangTua', 'bidan', 'puskesmas', 'posyandu']);
 
-        if (auth()->user()->role === 'orang tua' && auth()->id() !== $imunisasi->anak->id_user) {
+        if (auth()->user()->isOrtu() && auth()->id() !== $imunisasi->anak->id_user) {
             abort(403, 'Unauthorized access.');
         }
 
