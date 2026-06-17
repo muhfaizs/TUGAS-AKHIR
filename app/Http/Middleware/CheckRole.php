@@ -10,15 +10,20 @@ class CheckRole
 {
     /**
      * Handle an incoming request.
-     *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string ...$roles): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (! $request->user() || ! in_array($request->user()->role, $roles)) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        if (!auth()->check()) {
+            return redirect()->route('login');
         }
 
-        return $next($request);
+        $userRole = auth()->user()->role;
+
+        if (in_array($userRole, $roles)) {
+            return $next($request);
+        }
+
+        abort(403, 'Unauthorized access. Your role does not have permission to access this resource.');
     }
 }
