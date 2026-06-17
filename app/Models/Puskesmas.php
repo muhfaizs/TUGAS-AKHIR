@@ -24,14 +24,16 @@ class Puskesmas extends Model
         'email',
         'head_of_puskesmas',
         'status',
+        'kabupaten_id', 
+        'nama_puskesmas'
     ];
 
     /**
      * Get all users in this puskesmas
      */
-    public function users(): HasMany
+public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'puskesmas_id');
     }
 
     /**
@@ -56,6 +58,16 @@ class Puskesmas extends Model
     public function getTotalAcceptorsAttribute(): int
     {
         return $this->kbAcceptors()->count();
+    }
+  
+    public function kabupaten()
+    {
+        return $this->belongsTo(Kabupaten::class, 'kabupaten_id');
+    }
+
+    public function posyandus()
+    {
+        return $this->hasMany(Posyandu::class, 'puskesmas_id');
     }
 
     /**
