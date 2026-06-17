@@ -45,6 +45,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/data-pemeriksaan', [OrtuController::class, 'pemeriksaan'])->name('ortu.pemeriksaan');
     Route::get('/data-pemeriksaan/{id}', [OrtuController::class, 'pemeriksaanDetail'])->name('ortu.pemeriksaan.show');
 
+    // Modul Keluarga Berencana (KB)
+    Route::get('/kb-acceptors/search', [\App\Http\Controllers\KBAcceptorController::class, 'search'])->name('kb-acceptors.search');
+    Route::post('/kb-acceptors/{kb_acceptor}/submit', [\App\Http\Controllers\KBAcceptorController::class, 'submitForVerification'])->name('kb-acceptors.submit');
+    Route::post('/kb-acceptors/{kb_acceptor}/verify', [\App\Http\Controllers\KBAcceptorController::class, 'verify'])->name('kb-acceptors.verify');
+    Route::resource('kb-acceptors', \App\Http\Controllers\KBAcceptorController::class);
+    Route::resource('kb-services', \App\Http\Controllers\KBServiceController::class);
+
+    // Modul Data Anak (Orang Tua)
+    Route::resource('orangtua/anak', \App\Http\Controllers\OrangTua\AnakController::class)->names('orangtua.anak');
+    Route::get('/orangtua/anak/{id_anak}/rekam-medis-pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadRekamMedisAnak'])->name('orangtua.rekam-medis.pdf');
+    Route::get('/orangtua/tindakan/{tindakan}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadTindakanMedis'])->name('orangtua.tindakan.pdf');
+    Route::get('/orangtua/imunisasi/{imunisasi}/pdf', [\App\Http\Controllers\PdfExportController::class, 'downloadImunisasi'])->name('orangtua.imunisasi.pdf');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
@@ -99,5 +112,21 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan-dinkes/tahunan', [BidanReportController::class, 'tahunan'])->name('bidan.laporan-tahunan');
         Route::get('laporan-dinkes/export', [BidanReportController::class, 'export'])->name('bidan.laporan-export');
         Route::post('laporan-dinkes/kirim', [BidanReportController::class, 'kirim'])->name('bidan.laporan-kirim');
+
+        // Data Anak (Bidan)
+        Route::resource('anak', \App\Http\Controllers\Admin\AnakController::class)->names('bidan.anak');
+    });
+
+    // Modul Khusus Admin & Kader
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('anak', \App\Http\Controllers\Admin\AnakController::class);
+    });
+
+    // Modul Pengukuran (Kader)
+    Route::prefix('kader')->name('kader.')->group(function () {
+        Route::get('/pengukuran/create', [\App\Http\Controllers\Kader\PengukuranController::class, 'create'])->name('pengukuran.create');
+        Route::post('/pengukuran', [\App\Http\Controllers\Kader\PengukuranController::class, 'store'])->name('pengukuran.store');
+        Route::resource('jadwal', \App\Http\Controllers\Kader\JadwalPosyanduController::class);
     });
 });
+

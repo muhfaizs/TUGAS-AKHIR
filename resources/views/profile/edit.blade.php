@@ -47,7 +47,7 @@
                     <input type="text" name="name" value="{{ old('name', $user->name) }}" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-teal-500 focus:border-teal-500 bg-slate-50 focus:bg-white transition-colors" required>
                 </div>
 
-                @if(Auth::user()->isSuperAdmin() || Auth::user()->isBidanOnly() || Auth::user()->isDinkes())
+                @if(Auth::user()->isSuperAdmin() || Auth::user()->isBidanOnly() || Auth::user()->isDinkes() || Auth::user()->isKader())
                 <!-- NIP -->
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">NIP (Nomor Induk Pegawai)</label>

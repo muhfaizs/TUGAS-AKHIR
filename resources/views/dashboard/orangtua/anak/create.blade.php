@@ -55,8 +55,8 @@
                     <select id="id_user" name="id_user" required class="form-input" style="appearance: none; background: url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 24 24\" fill=\"%2394A3B8\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>') no-repeat right 12px center; background-color: #fff; background-size: 24px;">
                         <option value="">-- Pilih Orang Tua --</option>
                         @foreach($orangTuaList as $ortu)
-                            <option value="{{ $ortu->id_user }}" {{ old('id_user') == $ortu->id_user ? 'selected' : '' }}>
-                                {{ $ortu->nama_lengkap }} (NIK: {{ $ortu->nik_ortu ?? '-' }})
+                            <option value="{{ $ortu->id }}" {{ old('id_user') == $ortu->id ? 'selected' : '' }}>
+                                {{ $ortu->name }} (NIK: {{ $ortu->nik ?? '-' }})
                             </option>
                         @endforeach
                     </select>

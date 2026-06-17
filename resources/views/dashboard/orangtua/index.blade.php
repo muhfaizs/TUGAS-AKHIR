@@ -47,7 +47,7 @@
                 <label for="select-anak" style="font-weight: 600; color: #475569;">Pilih Anak:</label>
                 <select id="select-anak" onchange="window.location.href=this.value" style="padding: 10px 16px; border-radius: 12px; border: 1px solid #E2E8F0; font-size: 14px; font-weight: 600; color: #0F172A; background-color: #fff; outline: none; min-width: 200px; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg viewBox=\"0 0 24 24\" fill=\"%2364748B\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 12px center; background-size: 20px;">
                     @foreach ($anakList as $anak)
-                        <option value="{{ route('orangtua.dashboard', ['anak_id' => $anak->id_anak]) }}" {{ $selectedAnak->id_anak === $anak->id_anak ? 'selected' : '' }}>
+                        <option value="{{ route('dashboard', ['anak_id' => $anak->id_anak]) }}" {{ $selectedAnak->id_anak === $anak->id_anak ? 'selected' : '' }}>
                             {{ $anak->nama_anak }}
                         </option>
                     @endforeach
@@ -98,7 +98,7 @@
                                 </p>
                             </div>
                         </div>
-                        <form method="POST" action="{{ route('orangtua.reminder.dismiss') }}" style="margin: 0;">
+                        <form method="GET" action="#" onsubmit="alert('Fitur pengingat sedang dalam pembaruan'); return false;" style="margin: 0;">
                             @csrf
                             <input type="hidden" name="anak_id" value="{{ $pengingat['anak_id'] }}">
                             <input type="hidden" name="vaksin" value="{{ $pengingat['vaksin'] }}">
@@ -191,7 +191,7 @@
                                     </td>
                                     <td style="padding: 16px 24px; font-size: 14px; color: #475569;">{{ $tindakan->bidan->nama_lengkap ?? '-' }}</td>
                                     <td style="padding: 16px 24px; text-align: center;">
-                                        <a href="{{ route('orangtua.tindakan.pdf', $tindakan->id_tindakan) }}" target="_blank" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
+                                        <a href="#" onclick="alert('Fitur cetak PDF sedang disesuaikan'); return false;" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -230,7 +230,7 @@
                                     </td>
                                     <td style="padding: 16px 24px; font-size: 14px; color: #475569;">{{ $imunisasi->bidan->nama_lengkap ?? '-' }}</td>
                                     <td style="padding: 16px 24px; text-align: center;">
-                                        <a href="{{ route('orangtua.imunisasi.pdf', $imunisasi->id_imunisasi) }}" target="_blank" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
+                                        <a href="#" onclick="alert('Fitur cetak PDF sedang disesuaikan'); return false;" style="display: inline-block; padding: 6px 12px; background: #F1F5F9; color: #334155; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;">Download PDF</a>
                                     </td>
                                 </tr>
                             @endforeach

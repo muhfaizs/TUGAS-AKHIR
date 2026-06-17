@@ -7,7 +7,7 @@
 @section('content')
     <!-- Welcome Banner -->
     <div class="welcome-banner" id="welcome-banner">
-        <h2 class="welcome-title">Selamat Datang, Kader {{ auth()->user()->nama_lengkap }}! 👋</h2>
+        <h2 class="welcome-title">Selamat Datang, Kader {{ auth()->user()->name }}! 👋</h2>
         <p class="welcome-text">
             Pantau jadwal posyandu dan kelola data pengukuran tumbuh kembang anak di wilayah kerja Anda.
         </p>
