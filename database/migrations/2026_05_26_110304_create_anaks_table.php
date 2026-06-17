@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->text('catatan')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_user')->references('id_user')->on('tb_user')->onDelete('cascade');
+            $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -38,3 +38,4 @@ return new class extends Migration
         Schema::dropIfExists('tb_anak');
     }
 };
+

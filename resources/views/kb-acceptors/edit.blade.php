@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Edit Akseptor KB - ' . $kbAcceptor->full_name)
-@section('header_title', 'Edit Akseptor KB')
-@section('header_subtitle', 'Perbarui data akseptor ' . $kbAcceptor->full_name)
+@section('page_title', 'Edit Akseptor KB')
+@section('page_subtitle', 'Perbarui data akseptor ' . $kbAcceptor->full_name)
 
 @section('content')
 <style>
@@ -279,3 +279,4 @@
     });
 </script>
 @endsection
+

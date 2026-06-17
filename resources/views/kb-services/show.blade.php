@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Detail Layanan KB')
 
@@ -194,3 +194,4 @@
     </div>
 </div>
 @endsection
+

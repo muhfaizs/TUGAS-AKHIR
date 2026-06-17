@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @php
     $role = request('role', old('role', 'patient'));
@@ -36,8 +36,8 @@
 @endphp
 
 @section('title', $title . ' - SatuKIA')
-@section('header_title', $title)
-@section('header_subtitle', $subtitle)
+@section('page_title', $title)
+@section('page_subtitle', $subtitle)
 
 @section('content')
 <style>
@@ -176,3 +176,4 @@
     });
 </script>
 @endsection
+

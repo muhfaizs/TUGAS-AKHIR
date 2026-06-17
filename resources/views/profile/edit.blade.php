@@ -1,13 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Profil Saya - SatuKIA')
-@section('header_title', 'Profil Saya')
-@section('header_subtitle', 'Kelola informasi profil Anda')
+@section('page_title', 'Profil Saya')
+@section('page_subtitle', 'Kelola informasi profil Anda')
 
 @section('content')
-<div class="max-w-3xl">
+<div class="max-w-3xl mx-auto">
     <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
-        <form action="{{ route('profile.update') }}" method="POST" class="p-8">
+        <form action="{{ route('profile.update') }}" method="POST" class="p-8" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
             
@@ -25,6 +25,21 @@
                 Informasi Akun
             </h3>
             
+            <!-- Foto Profil -->
+            <div class="mb-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div class="relative shrink-0 group">
+                    <img id="profile-preview" src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=0f766e&background=ccfbf1' }}" alt="Profile Photo" class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg bg-teal-50">
+                    <label for="profile_photo" class="absolute -bottom-2 -right-2 bg-teal-600 hover:bg-teal-700 text-white p-2 rounded-xl cursor-pointer shadow-lg transition-colors ring-2 ring-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </label>
+                    <input type="file" id="profile_photo" name="profile_photo" class="hidden" accept="image/jpeg, image/png, image/jpg, image/gif" onchange="if(this.files[0]) document.getElementById('profile-preview').src = window.URL.createObjectURL(this.files[0])">
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800">Foto Profil</h4>
+                    <p class="text-sm text-slate-500 mt-1">Format JPG, PNG atau GIF. Maksimal ukuran 2MB.</p>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <!-- Nama Lengkap -->
                 <div class="md:col-span-2">
@@ -85,3 +100,4 @@
     </div>
 </div>
 @endsection
+

@@ -16,10 +16,10 @@
                 </div>
                 <select name="role" onchange="this.form.submit()" class="um-filter-select" id="filter-role">
                     <option value="">Semua Role</option>
-                    <option value="super admin" {{ request('role') === 'super admin' ? 'selected' : '' }}>Super Admin</option>
+                    <option value="super_admin" {{ request('role') === 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                     <option value="bidan" {{ request('role') === 'bidan' ? 'selected' : '' }}>Bidan</option>
                     <option value="kader" {{ request('role') === 'kader' ? 'selected' : '' }}>Kader</option>
-                    <option value="orang tua" {{ request('role') === 'orang tua' ? 'selected' : '' }}>Orang Tua</option>
+                    <option value="ortu" {{ request('role') === 'ortu' ? 'selected' : '' }}>Orang Tua</option>
                     <option value="dinkes" {{ request('role') === 'dinkes' ? 'selected' : '' }}>Dinas Kesehatan</option>
                 </select>
             </form>
@@ -49,16 +49,15 @@
                     <tr>
                         <td>
                             <div class="um-user-cell">
-                                <div class="um-user-avatar" style="background: linear-gradient(135deg,
-                                    {{ $user->role === 'super admin' ? '#6366F1,#8B5CF6' : ($user->role === 'bidan' ? '#0D9488,#06B6D4' : ($user->role === 'kader' ? '#F97316,#EAB308' : ($user->role === 'dinkes' ? '#EC4899,#F43F5E' : '#64748B,#94A3B8'))) }});">
-                                    {{ strtoupper(substr($user->nama_lengkap, 0, 2)) }}
+                                <div class="um-user-avatar" style="{{ $user->profile_photo_path ? 'background-image: url(' . asset('storage/' . $user->profile_photo_path) . '); background-size: cover; background-position: center; color: transparent;' : 'background: linear-gradient(135deg, ' . ($user->role === 'super_admin' ? '#6366F1,#8B5CF6' : ($user->role === 'bidan' ? '#0D9488,#06B6D4' : ($user->role === 'kader' ? '#F97316,#EAB308' : ($user->role === 'dinkes' ? '#EC4899,#F43F5E' : '#64748B,#94A3B8')))) . ');' }}">
+                                    {{ $user->profile_photo_path ? '' : strtoupper(substr($user->name, 0, 2)) }}
                                 </div>
                                 <div>
-                                    <div class="um-user-name">{{ $user->nama_lengkap }}</div>
-                                    @if ($user->nik_ortu)
-                                        <div class="um-user-nik">NIK: {{ $user->nik_ortu }}</div>
-                                    @elseif ($user->nip_bidan)
-                                        <div class="um-user-nik">NIP: {{ $user->nip_bidan }}</div>
+                                    <div class="um-user-name">{{ $user->name }}</div>
+                                    @if ($user->nik)
+                                        <div class="um-user-nik">NIK: {{ $user->nik }}</div>
+                                    @elseif ($user->nip)
+                                        <div class="um-user-nik">NIP: {{ $user->nip }}</div>
                                     @endif
                                     @if ($user->email)
                                         <div class="um-user-nik" style="color: #64748B; margin-top: 2px;">{{ $user->email }}</div>
@@ -68,13 +67,13 @@
                         </td>
                         <td><code class="um-username">{{ $user->username }}</code></td>
                         <td>
-                            <span class="um-role-badge um-role-badge--{{ str_replace(' ', '-', $user->role) }}">
-                                {{ $user->role === 'dinkes' ? 'Dinas Kesehatan' : ucwords($user->role) }}
+                            <span class="um-role-badge um-role-badge--{{ str_replace('_', '-', $user->role) }}">
+                                {{ $user->role === 'dinkes' ? 'Dinas Kesehatan' : ($user->role === 'ortu' ? 'Orang Tua' : ucwords(str_replace('_', ' ', $user->role))) }}
                             </span>
                         </td>
-                        <td class="um-contact">{{ $user->nomor_kontak ?? '-' }}</td>
+                        <td class="um-contact">{{ $user->phone ?? '-' }}</td>
                         <td>
-                            @if($user->is_active)
+                            @if($user->status === 'active')
                                 <span style="background: rgba(16,185,129,0.1); color: #10B981; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">Aktif</span>
                             @else
                                 <span style="background: rgba(239,68,68,0.1); color: #EF4444; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">Non-Aktif</span>
@@ -83,14 +82,14 @@
                         <td class="um-date">{{ $user->created_at->format('d M Y') }}</td>
                         <td>
                             <div class="um-actions">
-                                <button type="button" class="um-btn-edit" @click="openEdit({{ $user->id_user }})" title="Edit" id="btn-edit-{{ $user->id_user }}">
+                                <button type="button" class="um-btn-edit" @click="openEdit({{ $user->id }})" title="Edit" id="btn-edit-{{ $user->id }}">
                                     <svg viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
                                 </button>
-                                @if ($user->id_user !== auth()->id())
-                                    <form method="POST" action="{{ auth()->user()->isBidan() ? route('bidan.kader.destroy', $user) : route('admin.users.destroy', $user) }}" class="um-delete-form" onsubmit="return confirm('Yakin ingin menghapus pengguna {{ $user->nama_lengkap }}?')">
+                                @if ($user->id !== auth()->id())
+                                    <form method="POST" action="{{ auth()->user()->isBidan() ? route('bidan.kader.destroy', $user) : route('admin.users.destroy', $user) }}" class="um-delete-form" onsubmit="return confirm('Yakin ingin menghapus pengguna {{ $user->name }}?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="um-btn-delete" title="Hapus" id="btn-delete-{{ $user->id_user }}">
+                                        <button type="submit" class="um-btn-delete" title="Hapus" id="btn-delete-{{ $user->id }}">
                                             <svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                                         </button>
                                     </form>
@@ -147,8 +146,8 @@
                 <div class="um-form-grid">
                     <!-- Nama Lengkap -->
                     <div class="um-field">
-                        <label for="modal_nama_lengkap" class="um-label">Nama Lengkap <span class="um-required">*</span></label>
-                        <input type="text" name="nama_lengkap" id="modal_nama_lengkap" x-model="form.nama_lengkap" class="um-input" placeholder="Masukkan nama lengkap" required>
+                        <label for="modal_name" class="um-label">Nama Lengkap <span class="um-required">*</span></label>
+                        <input type="text" name="name" id="modal_name" x-model="form.name" class="um-input" placeholder="Masukkan nama lengkap" required>
                     </div>
 
                     <!-- Username -->
@@ -183,10 +182,10 @@
                         <label for="modal_role" class="um-label">Role <span class="um-required">*</span></label>
                         <select name="role" id="modal_role" x-model="form.role" class="um-input um-select" required>
                             <option value="">Pilih Role</option>
-                            <option value="super admin">Super Admin</option>
+                            <option value="super_admin">Super Admin</option>
                             <option value="bidan">Bidan</option>
                             <option value="kader">Kader</option>
-                            <option value="orang tua">Orang Tua</option>
+                            <option value="ortu">Orang Tua</option>
                             <option value="dinkes">Dinas Kesehatan</option>
                         </select>
                     </div>
@@ -194,7 +193,7 @@
                     <!-- Status Aktif (Edit Only) -->
                     <div class="um-field" x-show="isEdit">
                         <label for="modal_is_active" class="um-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                            <input type="checkbox" name="is_active" id="modal_is_active" x-model="form.is_active" value="1" style="width: 18px; height: 18px; cursor: pointer; accent-color: #10B981;">
+                            <input type="checkbox" name="status" id="modal_is_active" x-model="form.status" value="1" style="width: 18px; height: 18px; cursor: pointer; accent-color: #10B981;">
                             <span style="font-weight: 600;">Status Akun Aktif</span>
                         </label>
                         <p style="font-size: 12px; color: #64748B; margin-top: 4px; margin-left: 26px;">Jika tidak aktif, pengguna ini tidak akan bisa login.</p>
@@ -202,26 +201,26 @@
 
                     <!-- Nomor Kontak -->
                     <div class="um-field">
-                        <label for="modal_nomor_kontak" class="um-label">Nomor Kontak</label>
-                        <input type="tel" name="nomor_kontak" id="modal_nomor_kontak" x-model="form.nomor_kontak" class="um-input" placeholder="08xxxxxxxxxx">
+                        <label for="modal_phone" class="um-label">Nomor Kontak</label>
+                        <input type="tel" name="phone" id="modal_phone" x-model="form.phone" class="um-input" placeholder="08xxxxxxxxxx">
                     </div>
 
                     <!-- NIP Bidan (conditional) -->
                     <div class="um-field" x-show="form.role === 'bidan'">
-                        <label for="modal_nip_bidan" class="um-label">NIP Bidan</label>
-                        <input type="text" name="nip_bidan" id="modal_nip_bidan" x-model="form.nip_bidan" class="um-input" placeholder="18 digit NIP" maxlength="18" pattern="[0-9]{18}" title="NIP Bidan harus 18 digit angka" oninvalid="this.setCustomValidity('NIP Bidan harus terdiri dari 18 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
+                        <label for="modal_nip" class="um-label">NIP Bidan</label>
+                        <input type="text" name="nip" id="modal_nip" x-model="form.nip" class="um-input" placeholder="18 digit NIP" maxlength="18" pattern="[0-9]{18}" title="NIP Bidan harus 18 digit angka" oninvalid="this.setCustomValidity('NIP Bidan harus terdiri dari 18 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
                     <!-- NIK Ortu (conditional) -->
-                    <div class="um-field" x-show="form.role === 'orang tua'">
-                        <label for="modal_nik_ortu" class="um-label">NIK Orang Tua</label>
-                        <input type="text" name="nik_ortu" id="modal_nik_ortu" x-model="form.nik_ortu" class="um-input" placeholder="16 digit NIK" maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" oninvalid="this.setCustomValidity('NIK Orang Tua harus terdiri dari 16 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
+                    <div class="um-field" x-show="form.role === 'ortu'">
+                        <label for="modal_nik" class="um-label">NIK Orang Tua</label>
+                        <input type="text" name="nik" id="modal_nik" x-model="form.nik" class="um-input" placeholder="16 digit NIK" maxlength="16" minlength="16" pattern="[0-9]{16}" title="NIK harus 16 digit angka" oninvalid="this.setCustomValidity('NIK Orang Tua harus terdiri dari 16 digit angka')" oninput="this.setCustomValidity(''); this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
 
                     <!-- Alamat Domisili (conditional) -->
-                    <div class="um-field" x-show="form.role === 'orang tua'">
-                        <label for="modal_alamat_domisili" class="um-label">Alamat Domisili Lengkap</label>
-                        <textarea name="alamat_domisili" id="modal_alamat_domisili" x-model="form.alamat_domisili" class="um-input" rows="2" placeholder="Masukkan alamat lengkap domisili..."></textarea>
+                    <div class="um-field" x-show="form.role === 'ortu'">
+                        <label for="modal_address" class="um-label">Alamat Domisili Lengkap</label>
+                        <textarea name="address" id="modal_address" x-model="form.address" class="um-input" rows="2" placeholder="Masukkan alamat lengkap domisili..."></textarea>
                     </div>
 
                     <!-- Kode Instansi Dinkes (conditional) -->
@@ -278,8 +277,8 @@
 <script>
 function validateUserForm() {
     let roleSelect = document.getElementById('modal_role');
-    let nikInput = document.getElementById('modal_nik_ortu');
-    if (roleSelect && roleSelect.value === 'orang tua' && nikInput) {
+    let nikInput = document.getElementById('modal_nik');
+    if (roleSelect && roleSelect.value === 'ortu' && nikInput) {
         if (!/^\d{16}$/.test(nikInput.value.trim())) {
             alert('NIK Orang Tua harus terdiri dari tepat 16 digit angka.');
             return false;
@@ -298,19 +297,19 @@ function userManager() {
         puskesmasList: @json($puskesmasList),
         posyanduList: @json($posyanduList),
         form: {
-            nama_lengkap: '{{ old('nama_lengkap', '') }}',
+            name: '{{ old('name', '') }}',
             username: '{{ old('username', '') }}',
             role: '{{ old('role', '') }}',
-            nomor_kontak: '{{ old('nomor_kontak', '') }}',
-            nip_bidan: '{{ old('nip_bidan', '') }}',
-            nik_ortu: '{{ old('nik_ortu', '') }}',
+            phone: '{{ old('phone', '') }}',
+            nip: '{{ old('nip', '') }}',
+            nik: '{{ old('nik', '') }}',
             kode_instansi_dinkes: '{{ old('kode_instansi_dinkes', '') }}',
-            is_active: {{ old('is_active', 'true') === 'true' || old('is_active', '1') == '1' ? 'true' : 'false' }},
+            status: {{ old('status', 'true') === 'true' || old('status', '1') == '1' ? 'true' : 'false' }},
             kabupaten_id: '',
             puskesmas_id: '{{ old('puskesmas_id', '') }}',
             posyandu_id: '{{ old('posyandu_id', '') }}',
             email: '{{ old('email', '') }}',
-            alamat_domisili: '{{ old('alamat_domisili', '') }}',
+            address: '{{ old('address', '') }}',
         },
 
         get filteredPuskesmas() {
@@ -326,7 +325,7 @@ function userManager() {
         openCreate() {
             this.isEdit = false;
             this.editId = null;
-            this.form = { nama_lengkap: '', username: '', role: '', nomor_kontak: '', nip_bidan: '', nik_ortu: '', kode_instansi_dinkes: '', is_active: true, kabupaten_id: '', puskesmas_id: '', posyandu_id: '', email: '', alamat_domisili: '' };
+            this.form = { name: '', username: '', role: '', phone: '', nip: '', nik: '', kode_instansi_dinkes: '', status: true, kabupaten_id: '', puskesmas_id: '', posyandu_id: '', email: '', address: '' };
             this.showModal = true;
         },
 
@@ -347,19 +346,19 @@ function userManager() {
                 }
 
                 this.form = {
-                    nama_lengkap: data.nama_lengkap || '',
+                    name: data.name || '',
                     username: data.username || '',
                     role: data.role || '',
-                    nomor_kontak: data.nomor_kontak || '',
-                    nip_bidan: data.nip_bidan || '',
-                    nik_ortu: data.nik_ortu || '',
+                    phone: data.phone || '',
+                    nip: data.nip || '',
+                    nik: data.nik || '',
                     kode_instansi_dinkes: data.kode_instansi_dinkes || '',
-                    is_active: data.is_active === undefined ? true : !!data.is_active,
+                    status: data.status === 'active' ? true : !!data.status,
                     kabupaten_id: kab_id,
                     puskesmas_id: '',
                     posyandu_id: '',
                     email: data.email || '',
-                    alamat_domisili: data.alamat_domisili || '',
+                    address: data.address || '',
                 };
 
                 this.$nextTick(() => {

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Riwayat Pelayanan KB')
-@section('header_title', 'Riwayat Pelayanan KB')
-@section('header_subtitle', 'Kelola semua pelayanan KB yang telah diberikan')
+@section('page_title', 'Riwayat Pelayanan KB')
+@section('page_subtitle', 'Kelola semua pelayanan KB yang telah diberikan')
 
 @section('content')
 <div class="min-h-screen bg-transparent">
@@ -181,3 +181,4 @@
     </div>
 </div>
 @endsection
+

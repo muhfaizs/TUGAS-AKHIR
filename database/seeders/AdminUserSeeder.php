@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserSeeder extends Seeder
 {
@@ -18,10 +19,11 @@ class AdminUserSeeder extends Seeder
         User::updateOrCreate(
             ['username' => $username],
             [
-                'nama_lengkap' => 'Super Administrator',
-                'password' => $password,
-                'nomor_kontak' => '081200000000',
-                'role' => 'super admin',
+                'name' => 'Super Administrator',
+                'email' => 'superadmin@satukia.com',
+                'password' => Hash::make($password),
+                'phone' => '081200000000',
+                'role' => 'super_admin',
                 'hak_akses_master' => ['full_access' => true],
             ]
         );

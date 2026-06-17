@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Bidan - SatuKIA')
-@section('header_title', 'Dashboard')
-@section('header_subtitle', \Carbon\Carbon::now()->translatedFormat('l, d F Y'))
+@section('page_title', 'Dashboard')
+@section('page_subtitle', \Carbon\Carbon::now()->translatedFormat('l, d F Y'))
 
 @section('content')
 
@@ -377,3 +377,4 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 @endsection
+

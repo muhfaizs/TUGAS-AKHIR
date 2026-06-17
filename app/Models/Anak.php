@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -45,7 +45,7 @@ class Anak extends Model
      */
     public function orangTua()
     {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
+        return $this->belongsTo(User::class, 'id_user', 'id');
     }
 
     /**
@@ -80,3 +80,4 @@ class Anak extends Model
         return $this->hasMany(Imunisasi::class, 'id_anak', 'id_anak');
     }
 }
+

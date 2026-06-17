@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Notifikasi & Pengingat KB')
-@section('header_title', 'Reminder Kontrol')
-@section('header_subtitle', 'Daftar akseptor dengan jadwal kunjungan ulang terdekat atau terlewat.')
+@section('page_title', 'Reminder Kontrol')
+@section('page_subtitle', 'Daftar akseptor dengan jadwal kunjungan ulang terdekat atau terlewat.')
 
 @section('content')
 <div class="min-h-screen bg-transparent">
@@ -59,3 +59,4 @@
         @endif
 </div>
 @endsection
+

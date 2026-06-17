@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Data Pemeriksaan - SatuKIA')
-@section('header_title', 'Data Pemeriksaan')
-@section('header_subtitle', 'Riwayat lengkap pemeriksaan kehamilan Anda')
+@section('page_title', 'Data Pemeriksaan')
+@section('page_subtitle', 'Riwayat lengkap pemeriksaan kehamilan Anda')
 
 @section('content')
 <div class="max-w-[85rem] mx-auto">
@@ -85,3 +85,4 @@
     </div>
 </div>
 @endsection
+

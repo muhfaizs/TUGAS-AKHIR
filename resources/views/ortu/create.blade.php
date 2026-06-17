@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Tambah Akun Ibu Hamil - SatuKIA')
-@section('header_title', 'Tambah Akun Ibu Hamil')
-@section('header_subtitle', 'Masukkan data pengguna ibu hamil ke dalam sistem')
+@section('page_title', 'Tambah Akun Ibu Hamil')
+@section('page_subtitle', 'Masukkan data pengguna ibu hamil ke dalam sistem')
 
 @section('content')
 <div class="max-w-3xl">
@@ -75,3 +75,4 @@
     </div>
 </div>
 @endsection
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -25,6 +25,7 @@ class TbLaporanDinkes extends Model
 
     public function bidan()
     {
-        return $this->belongsTo(User::class, 'id_bidan', 'id_user');
+        return $this->belongsTo(User::class, 'id_bidan', 'id');
     }
 }
+

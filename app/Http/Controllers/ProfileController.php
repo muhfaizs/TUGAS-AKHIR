@@ -25,6 +25,7 @@ class ProfileController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'max:20', 'regex:/^[0-9]+$/'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'profile_photo' => ['nullable', 'image', 'max:2048'],
         ];
 
         if ($user->isSuperAdmin() || $user->isBidanOnly() || $user->isDinkes()) {
@@ -47,6 +48,13 @@ class ProfileController extends Controller
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->profile_photo_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            $user->profile_photo_path = $request->file('profile_photo')->store('profile-photos', 'public');
         }
 
         $user->save();

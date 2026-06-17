@@ -1,14 +1,14 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Dashboard - SatuKIA')
-@section('header_title', 'Dashboard')
-@section('header_subtitle', 'Ringkasan sistem monitoring layanan Ibu Hamil')
+@section('page_title', 'Dashboard')
+@section('page_subtitle', 'Ringkasan sistem monitoring layanan Ibu Hamil')
 
 @section('content')
     <!-- Welcome Banner -->
     <div class="bg-teal-700 rounded-3xl p-8 mb-8 text-white relative overflow-hidden shadow-lg">
         <div class="relative z-10">
-            <h2 class="text-2xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name ?? 'Administrator' }}! 👋</h2>
+            <h2 class="text-2xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name ?? 'Administrator' }}! ðŸ‘‹</h2>
             <p class="text-teal-100 max-w-2xl text-sm leading-relaxed">
                 Berikut adalah ringkasan data sistem monitoring layanan Ibu Hamil. Pastikan semua data ter-update untuk pelaporan yang akurat.
             </p>
@@ -547,3 +547,4 @@
 </script>
 @endif
 @endpush
+
