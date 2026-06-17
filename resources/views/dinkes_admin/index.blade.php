@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Kelola Dinkes - SatuKIA')
-@section('header_title', 'Kelola Dinkes')
-@section('header_subtitle', 'Tambah, edit, dan hapus pengguna sistem (Dinkes)')
+@section('page_title', 'Kelola Dinkes')
+@section('page_subtitle', 'Tambah, edit, dan hapus pengguna sistem (Dinkes)')
 
 @section('content')
     <!-- Table Card -->
@@ -159,3 +159,4 @@
     }
 </style>
 @endpush
+

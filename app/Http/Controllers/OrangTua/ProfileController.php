@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\OrangTua;
 
@@ -36,9 +36,9 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['required', 'string', 'max:15'],
-            'nik_ortu' => ['required', 'digits:16', Rule::unique('tb_user')->ignore($user->id_user, 'id_user')],
+            'nik_ortu' => ['required', 'digits:16', Rule::unique('users')->ignore($user->id_user, 'id_user')],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id_user.',id_user'],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
             'alamat_domisili' => ['nullable', 'string'],
@@ -83,3 +83,4 @@ class ProfileController extends Controller
         return redirect()->route('orangtua.profile.edit')->with('success', 'Profil berhasil diperbarui.');
     }
 }
+

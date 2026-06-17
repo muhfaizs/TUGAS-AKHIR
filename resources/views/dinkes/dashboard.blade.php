@@ -1,14 +1,14 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Dinkes - SatuKIA')
-@section('header_title', 'Dashboard Eksekutif Dinkes')
-@section('header_subtitle', 'Pemantauan Indikator Utama Layanan Ibu Hamil')
+@section('page_title', 'Dashboard Eksekutif Dinkes')
+@section('page_subtitle', 'Pemantauan Indikator Utama Layanan Ibu Hamil')
 
 @section('content')
     <!-- Welcome Banner -->
     <div class="bg-teal-700 rounded-3xl p-8 mb-8 text-white relative overflow-hidden shadow-lg">
         <div class="relative z-10">
-            <h2 class="text-2xl font-bold mb-2">Selamat Datang, Tim Dinas Kesehatan! 👋</h2>
+            <h2 class="text-2xl font-bold mb-2">Selamat Datang, Tim Dinas Kesehatan! ðŸ‘‹</h2>
             <p class="text-teal-100 max-w-2xl text-sm leading-relaxed">
                 Pantau data rekapitulasi ibu hamil dan tingkat risiko kehamilan secara real-time.
             </p>
@@ -167,3 +167,4 @@
     });
 </script>
 @endpush
+

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Detail Tindak Lanjut Akseptor')
 
@@ -180,3 +180,4 @@
     </div>
 </div>
 @endsection
+

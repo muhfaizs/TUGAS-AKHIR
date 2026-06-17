@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Laporan Bulanan Dinkes - SatuKIA')
-@section('header_title', 'Laporan Bulanan Dinkes')
-@section('header_subtitle', 'Laporan rekapitulasi pemeriksaan ANC per bulan')
+@section('page_title', 'Laporan Bulanan Dinkes')
+@section('page_subtitle', 'Laporan rekapitulasi pemeriksaan ANC per bulan')
 
 @section('content')
     <!-- Filter Section -->
@@ -159,7 +159,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
                 <h3 class="text-xl font-bold text-slate-800">Laporan Bulanan</h3>
-                <p class="text-sm text-slate-500 mt-1">Bulan {{ $months[request('bulan', date('m'))] }} {{ request('tahun', date('Y')) }} • {{ $ibuHamils->count() }} data pemeriksaan</p>
+                <p class="text-sm text-slate-500 mt-1">Bulan {{ $months[request('bulan', date('m'))] }} {{ request('tahun', date('Y')) }} â€¢ {{ $ibuHamils->count() }} data pemeriksaan</p>
             </div>
             <div class="flex gap-3">
                 @if($ibuHamils->count() > 0)
@@ -273,3 +273,4 @@
         </div>
     </div>
 @endsection
+

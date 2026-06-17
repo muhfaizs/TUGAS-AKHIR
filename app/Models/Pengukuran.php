@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -40,7 +40,7 @@ class Pengukuran extends Model
 
     public function kader()
     {
-        return $this->belongsTo(User::class, 'id_kader', 'id_user');
+        return $this->belongsTo(User::class, 'id_kader', 'id');
     }
 
     public function getStatusGiziAttribute()
@@ -70,3 +70,4 @@ class Pengukuran extends Model
         return 'Normal';
     }
 }
+

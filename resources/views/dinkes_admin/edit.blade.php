@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Edit Dinkes - SatuKIA')
-@section('header_title', 'Edit Data Dinkes')
-@section('header_subtitle', 'Perbarui informasi data pengguna Dinkes')
+@section('page_title', 'Edit Data Dinkes')
+@section('page_subtitle', 'Perbarui informasi data pengguna Dinkes')
 
 @section('content')
 <div class="max-w-3xl">
@@ -86,3 +86,4 @@
     </div>
 </div>
 @endsection
+

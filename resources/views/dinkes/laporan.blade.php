@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Laporan Rekapitulasi Dinkes - SatuKIA')
-@section('header_title', 'Laporan Rekapitulasi')
-@section('header_subtitle', 'Filter dan unduh data riwayat pemeriksaan ibu hamil')
+@section('page_title', 'Laporan Rekapitulasi')
+@section('page_subtitle', 'Filter dan unduh data riwayat pemeriksaan ibu hamil')
 
 @section('content')
     <!-- Filter Section -->
@@ -273,3 +273,4 @@
         </div>
     </div>
 @endsection
+

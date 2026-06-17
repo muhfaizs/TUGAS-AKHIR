@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RujukanController;
 use App\Http\Middleware\BidanOnlyMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
+use App\Http\Controllers\UserManagementController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -62,6 +63,7 @@ Route::middleware('auth')->group(function () {
 
     // Kelola Pengguna: Hanya untuk Super Administrator
     Route::middleware(SuperAdminMiddleware::class)->group(function () {
+        Route::resource('admin/users', UserManagementController::class)->names('admin.users');
         Route::resource('bidan', BidanController::class);
         Route::resource('dinkes', DinkesController::class);
         Route::resource('ortu', OrtuController::class);
@@ -69,6 +71,9 @@ Route::middleware('auth')->group(function () {
 
     // Data Ibu Hamil: Hanya untuk Bidan (Bukan Super Admin)
     Route::middleware(BidanOnlyMiddleware::class)->group(function () {
+        // Kelola Data Kader
+        Route::resource('bidan/kader', UserManagementController::class)->names('bidan.kader');
+
         // Kelola Data Pasien (Ibu Hamil)
         Route::resource('ibu-hamil', IbuHamilController::class);
         Route::post('ibu-hamil/{id}/turun-risiko', [IbuHamilController::class, 'turunRisiko'])->name('ibu-hamil.turun-risiko');

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Auth;
 
@@ -17,10 +17,10 @@ class RegisterController extends Controller
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nik_ortu' => ['required', 'string', 'size:16', 'unique:tb_user,nik_ortu'],
+            'nik_ortu' => ['required', 'string', 'size:16', 'unique:users,nik'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['required', 'string', 'max:15'],
-            'reg_username' => ['required', 'string', 'max:50', 'unique:tb_user,username'],
+            'reg_username' => ['required', 'string', 'max:50', 'unique:users,username'],
             'reg_password' => ['required', 'string', 'min:8', Password::defaults(), 'confirmed'],
         ], [
             'nik_ortu.required' => 'NIK wajib diisi.',
@@ -50,3 +50,4 @@ class RegisterController extends Controller
             ->with('success', 'Registrasi berhasil! Selamat datang, '.$user->nama_lengkap.'.');
     }
 }
+

@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Kelola Pengguna - SatuKIA')
-@section('header_title', 'Kelola Pengguna')
-@section('header_subtitle', 'Tambah, edit, dan hapus pengguna sistem')
+@section('page_title', 'Kelola Pengguna')
+@section('page_subtitle', 'Tambah, edit, dan hapus pengguna sistem')
 
 @section('content')
 <div class="max-w-[1100px] mx-auto">
@@ -167,3 +167,4 @@
     }
 </script>
 @endsection
+

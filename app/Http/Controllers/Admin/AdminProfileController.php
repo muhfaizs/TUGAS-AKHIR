@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -31,7 +31,7 @@ class AdminProfileController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'nomor_kontak' => ['nullable', 'string', 'max:15'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id_user.',id_user'],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
             'foto_profil' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ], [
@@ -63,3 +63,4 @@ class AdminProfileController extends Controller
             ->with('success', 'Profil berhasil diperbarui.');
     }
 }
+

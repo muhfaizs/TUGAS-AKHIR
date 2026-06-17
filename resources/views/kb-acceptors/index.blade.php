@@ -1,13 +1,13 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Daftar Pasien KB - SatuKIA')
-@section('header_title', 'Daftar Pasien KB')
-@section('header_subtitle', 'Kelola data pasien Keluarga Berencana')
+@section('page_title', 'Daftar Pasien KB')
+@section('page_subtitle', 'Kelola data pasien Keluarga Berencana')
 
 @section('content')
 
 <style>
-    /* ── Top actions bar ─────────────────── */
+    /* â”€â”€ Top actions bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .action-bar {
         display: flex;
         align-items: center;
@@ -95,7 +95,7 @@
     .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
     .btn-primary svg { width: 16px; height: 16px; }
 
-    /* ── Table card ──────────────────────── */
+    /* â”€â”€ Table card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     .table-card {
         background: #fff;
         border-radius: 16px;
@@ -466,3 +466,4 @@
 </script>
 
 @endsection
+

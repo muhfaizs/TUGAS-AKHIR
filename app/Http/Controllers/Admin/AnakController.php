@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -56,7 +56,7 @@ class AnakController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'id_user' => ['required', 'exists:tb_user,id_user'],
+            'id_user' => ['required', 'exists:users,id'],
             'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
@@ -158,7 +158,7 @@ class AnakController extends Controller
     public function update(Request $request, Anak $anak): RedirectResponse
     {
         $validated = $request->validate([
-            'id_user' => ['required', 'exists:tb_user,id_user'],
+            'id_user' => ['required', 'exists:users,id'],
             'nik_anak' => ['required', 'string', 'size:16', 'unique:tb_anak,nik_anak,'.$anak->id_anak.',id_anak'],
             'nama_anak' => ['required', 'string', 'max:255'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
@@ -221,3 +221,4 @@ class AnakController extends Controller
             ->with('success', 'Data anak berhasil dihapus.');
     }
 }
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('id_anak')->references('id_anak')->on('tb_anak')->cascadeOnDelete();
-            $table->foreign('id_bidan')->references('id_user')->on('tb_user')->cascadeOnDelete();
+            $table->foreign('id_bidan')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
@@ -33,3 +33,4 @@ return new class extends Migration
         Schema::dropIfExists('tb_tindakan_medis');
     }
 };
+

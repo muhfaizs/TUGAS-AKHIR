@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Pemantauan & Follow-Up KB')
-@section('header_title', 'Jadwal Kontrol')
-@section('header_subtitle', 'Daftar semua jadwal kembali akseptor KB dan status pantauannya.')
+@section('page_title', 'Jadwal Kontrol')
+@section('page_subtitle', 'Daftar semua jadwal kembali akseptor KB dan status pantauannya.')
 
 @section('content')
 <div class="min-h-screen bg-transparent">
@@ -87,3 +87,4 @@
     </div>
 </div>
 @endsection
+

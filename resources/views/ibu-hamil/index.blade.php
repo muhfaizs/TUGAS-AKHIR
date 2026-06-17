@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Data Ibu Hamil - SatuKIA')
-@section('header_title', 'Data Ibu Hamil')
-@section('header_subtitle', 'Cari profil dan kelola data rekam medis ibu hamil')
+@section('page_title', 'Data Ibu Hamil')
+@section('page_subtitle', 'Cari profil dan kelola data rekam medis ibu hamil')
 
 @section('content')
     <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
@@ -165,3 +165,4 @@
     }
 </style>
 @endpush
+

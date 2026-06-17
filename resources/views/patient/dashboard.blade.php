@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Dasbor Pasien')
 
@@ -160,3 +160,4 @@
     @endif
 </div>
 @endsection
+

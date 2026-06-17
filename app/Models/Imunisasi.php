@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -41,7 +41,7 @@ class Imunisasi extends Model
      */
     public function bidan(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id_bidan', 'id_user');
+        return $this->belongsTo(User::class, 'id_bidan', 'id');
     }
 
     /**
@@ -60,3 +60,4 @@ class Imunisasi extends Model
         return $this->belongsTo(Posyandu::class, 'posyandu_id');
     }
 }
+

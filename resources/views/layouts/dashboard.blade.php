@@ -40,7 +40,7 @@
 
             <nav class="sidebar-nav">
                 @if (auth()->user()->isSuperAdmin())
-                    <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dashboard">
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         Dashboard
                     </a>
@@ -50,14 +50,14 @@
                         Kelola Pengguna
                     </a>
 
-                    <a href="{{ route('admin.profile.edit') }}" class="sidebar-link {{ request()->routeIs('admin.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-admin-profile">
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-admin-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Profil Saya
                     </a>
                 @endif
 
                 @if (auth()->user()->isBidan())
-                    <a href="{{ route('bidan.dashboard') }}" class="sidebar-link {{ request()->routeIs('bidan.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-bidan-dashboard">
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-bidan-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         Dashboard
                     </a>
@@ -77,7 +77,7 @@
                         Imunisasi Anak
                     </a>
 
-                    <a href="{{ route('bidan.profile.edit') }}" class="sidebar-link {{ request()->routeIs('bidan.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-profile">
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Profil Saya
                     </a>
@@ -94,7 +94,7 @@
                 @endif
 
                 @if (auth()->user()->isKader())
-                    <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dashboard">
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         Dashboard
                     </a>
@@ -114,19 +114,19 @@
                         Jadwal Posyandu
                     </a>
 
-                    <a href="{{ route('kader.profile.edit') }}" class="sidebar-link {{ request()->routeIs('kader.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-profile">
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Profil Saya
                     </a>
                 @endif
 
                 @if (auth()->user()->isOrangTua())
-                    <a href="{{ route('orangtua.dashboard') }}" class="sidebar-link {{ request()->routeIs('orangtua.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-ot-dashboard">
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-ot-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         Dashboard
                     </a>
 
-                    <a href="{{ route('orangtua.profile.edit') }}" class="sidebar-link {{ request()->routeIs('orangtua.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-ot-profile">
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-ot-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Profil Saya
                     </a>
@@ -138,7 +138,7 @@
                 @endif
 
                 @if (auth()->user()->isDinkes())
-                    <a href="{{ route('dinkes.dashboard') }}" class="sidebar-link {{ request()->routeIs('dinkes.dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dinkes-dashboard">
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-dinkes-dashboard">
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         Dashboard Eksekutif
                     </a>
@@ -148,7 +148,7 @@
                         Laporan Rekapitulasi
                     </a>
 
-                    <a href="{{ route('dinkes.profile.edit') }}" class="sidebar-link {{ request()->routeIs('dinkes.profile.*') ? 'sidebar-link--active' : '' }}" id="nav-dinkes-profile">
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-dinkes-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Profil Saya
                     </a>
@@ -229,12 +229,12 @@
                     </div>
 
                     <div class="topbar-user">
-                        <div class="topbar-avatar" style="{{ auth()->user()->foto_profil ? 'background-image: url(' . asset('storage/' . auth()->user()->foto_profil) . '); background-size: cover; background-position: center; color: transparent;' : '' }}">
-                            {{ auth()->user()->foto_profil ? '' : strtoupper(substr(auth()->user()->nama_lengkap, 0, 2)) }}
+                        <div class="topbar-avatar" style="{{ auth()->user()->profile_photo_path ? 'background-image: url(' . asset('storage/' . auth()->user()->profile_photo_path) . '); background-size: cover; background-position: center; color: transparent;' : '' }}">
+                            {{ auth()->user()->profile_photo_path ? '' : strtoupper(substr(auth()->user()->name, 0, 2)) }}
                         </div>
                         <div class="topbar-user-info">
-                            <span class="topbar-user-name">{{ auth()->user()->nama_lengkap }}</span>
-                            <span class="topbar-user-role">{{ auth()->user()->role }}</span>
+                            <span class="topbar-user-name">{{ auth()->user()->name }}</span>
+                            <span class="topbar-user-role">{{ auth()->user()->role === 'dinkes' ? 'Dinas Kesehatan' : (auth()->user()->role === 'ortu' ? 'Orang Tua' : ucwords(str_replace('_', ' ', auth()->user()->role))) }}</span>
                         </div>
                     </div>
                 </div>
@@ -346,7 +346,12 @@
                 const initialState = form.getAttribute('data-initial-state');
                 const currentState = new URLSearchParams(new FormData(form)).toString();
                 
-                if (initialState === currentState) {
+                let hasFilesChanged = false;
+                form.querySelectorAll('input[type="file"]').forEach(input => {
+                    if (input.files && input.files.length > 0) hasFilesChanged = true;
+                });
+                
+                if (initialState === currentState && !hasFilesChanged) {
                     e.preventDefault();
                     alert('Tidak ada data yang dirubah. Silakan rubah data terlebih dahulu atau klik Batal.');
                 }

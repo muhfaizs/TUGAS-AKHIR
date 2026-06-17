@@ -16,24 +16,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'nik' => 'required|string|size:16|regex:/^[0-9]+$/|unique:users',
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|size:11|regex:/^[0-9]+$/',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
+            'nik_ortu' => 'required|string|size:16|regex:/^[0-9]+$/|unique:users,nik',
+            'nama_lengkap' => 'required|string|max:255',
+            'nomor_kontak' => 'required|string|regex:/^[0-9]+$/',
+            'reg_username' => 'required|string|max:255|unique:users,username',
+            'reg_password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
         ], [
-            'nik.size' => 'NIK harus tepat 16 angka.',
-            'nik.regex' => 'NIK hanya boleh berisi angka.',
-            'phone.size' => 'Nomor ponsel harus tepat 11 angka.',
-            'phone.regex' => 'Nomor ponsel hanya boleh berisi angka.',
+            'nik_ortu.size' => 'NIK harus tepat 16 angka.',
+            'nik_ortu.regex' => 'NIK hanya boleh berisi angka.',
+            'nomor_kontak.regex' => 'Nomor ponsel hanya boleh berisi angka.',
         ]);
 
         $user = User::create([
-            'nik' => $request->nik,
-            'name' => $request->name,
-            'phone' => '+62'.ltrim($request->phone, '0'), // Handle the +62 prefix conceptually
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'nik' => $request->nik_ortu,
+            'name' => $request->nama_lengkap,
+            'phone' => '+62'.ltrim($request->nomor_kontak, '0'), // Handle the +62 prefix conceptually
+            'username' => $request->reg_username,
+            'password' => Hash::make($request->reg_password),
             'role' => 'ortu', // Default role for open registration
         ]);
 
@@ -48,44 +47,23 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:bidan,ortu',
-            'identity' => [
-                'required',
-                'string',
-                'regex:/^[0-9]+$/',
-                function ($attribute, $value, $fail) use ($request) {
-                    if ($request->role === 'bidan' && strlen($value) !== 18) {
-                        $fail('NIP harus tepat 18 angka.');
-                    }
-                    if ($request->role === 'ortu' && strlen($value) !== 16) {
-                        $fail('NIK harus tepat 16 angka.');
-                    }
-                },
-            ],
+            'username' => 'required|string',
             'password' => 'required|string',
-        ], [
-            'identity.regex' => 'Kredensial hanya boleh berisi angka.',
         ]);
 
-        // Determine which column to check against based on role
-        $identityColumn = $request->role === 'bidan' ? 'nip' : 'nik';
-
         $credentials = [
-            $identityColumn => $request->identity,
+            'username' => $request->username,
             'password' => $request->password,
         ];
 
-        $remember = $request->has('remember-me');
+        $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
             if (in_array($user->role, ['bidan', 'dinkes']) && $user->status !== 'aktif') {
                 Auth::logout();
-
-                return back()->withErrors([
-                    'identity' => 'Akun Anda telah dinonaktifkan. Silakan hubungi Super Administrator.',
-                ])->onlyInput('identity', 'role');
+                return back()->with('error', 'Akun Anda telah dinonaktifkan. Silakan hubungi Super Administrator.')->onlyInput('username');
             }
 
             $request->session()->regenerate();
@@ -93,9 +71,7 @@ class AuthController extends Controller
             return redirect()->intended('dashboard')->with('success', 'Selamat datang kembali!');
         }
 
-        return back()->withErrors([
-            'identity' => 'NIP/NIK SALAH',
-        ])->onlyInput('identity', 'role');
+        return back()->with('error', 'Username atau password salah.')->onlyInput('username');
     }
 
     /**

@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tb_user', function (Blueprint $table) {
-            $table->foreignId('puskesmas_id')->nullable()->constrained('puskesmas')->onDelete('set null');
-            $table->foreignId('posyandu_id')->nullable()->constrained('posyandus')->onDelete('set null');
+        Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'puskesmas_id')) {
+                $table->foreignId('puskesmas_id')->nullable()->constrained('puskesmas')->onDelete('set null');
+            }
+            if (!Schema::hasColumn('users', 'posyandu_id')) {
+                $table->foreignId('posyandu_id')->nullable()->constrained('posyandus')->onDelete('set null');
+            }
         });
 
         Schema::table('tb_tindakan_medis', function (Blueprint $table) {

@@ -16,7 +16,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed default Bidan (Super Admin) user
+        $this->call([
+            AdminUserSeeder::class,
+            LocationSeeder::class,
+        ]);
+
+        // Seed default Bidan user
         User::create([
             'name' => 'super administrator',
             'email' => 'admin@satukia.com',

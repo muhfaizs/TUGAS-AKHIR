@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Detail Pemeriksaan ANC')
-@section('header_title', 'Detail Rekam Medis ANC')
-@section('header_subtitle', 'Data detail pemeriksaan terpadu Anda')
+@section('page_title', 'Detail Rekam Medis ANC')
+@section('page_subtitle', 'Data detail pemeriksaan terpadu Anda')
 
 @section('content')
 <div class="mb-6 flex items-center justify-between">
@@ -93,7 +93,7 @@
             <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Tatalaksana & Konseling</h3>
             <div class="mb-4">
                 <span class="px-3 py-1 {{ $anc->ditemukan_risiko ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700' }} rounded-full text-xs font-bold">
-                    {{ $anc->ditemukan_risiko ? '⚠ Ditemukan Risiko Kehamilan' : '✓ Tidak Ditemukan Risiko Kehamilan' }}
+                    {{ $anc->ditemukan_risiko ? 'âš  Ditemukan Risiko Kehamilan' : 'âœ“ Tidak Ditemukan Risiko Kehamilan' }}
                 </span>
             </div>
             
@@ -121,3 +121,4 @@
     </div>
 </div>
 @endsection
+

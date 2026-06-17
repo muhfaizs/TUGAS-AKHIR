@@ -25,11 +25,11 @@ class UserManagementController extends Controller
         // Search
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%{$search}%")
+                $q->where('name', 'like', "%{$search}%")
                     ->orWhere('username', 'like', "%{$search}%")
-                    ->orWhere('nik_ortu', 'like', "%{$search}%")
-                    ->orWhere('nip_bidan', 'like', "%{$search}%")
-                    ->orWhere('nomor_kontak', 'like', "%{$search}%");
+                    ->orWhere('nik', 'like', "%{$search}%")
+                    ->orWhere('nip', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -56,33 +56,35 @@ class UserManagementController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'max:50', 'unique:tb_user,username'],
+            'username' => ['required', 'string', 'max:50', 'unique:users,username'],
             'password' => ['required', 'string', 'min:8', Password::defaults()],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nomor_kontak' => ['nullable', 'string', 'max:15'],
-            'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
-            'nip_bidan' => ['nullable', 'digits:18'],
-            'nik_ortu' => ['nullable', 'digits:16'],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:15'],
+            'role' => ['required', 'string', Rule::in(['super_admin', 'bidan', 'kader', 'ortu', 'dinkes'])],
+            'nip' => ['nullable', 'digits:18'],
+            'nik' => ['nullable', 'digits:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
-            'is_active' => ['nullable', 'boolean'],
+            'status' => ['nullable', 'boolean'],
             'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
             'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email'],
-            'alamat_domisili' => ['nullable', 'string'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email'],
+            'address' => ['nullable', 'string'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
-            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'name.required' => 'Nama lengkap wajib diisi.',
             'role.required' => 'Role wajib dipilih.',
-            'nik_ortu.digits' => 'NIK harus 16 digit angka.',
-            'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
+            'nik.digits' => 'NIK harus 16 digit angka.',
+            'nip.digits' => 'NIP Bidan harus 18 digit angka.',
         ]);
 
-        if (! isset($validated['is_active'])) {
-            $validated['is_active'] = false;
+        if (! isset($validated['status'])) {
+            $validated['status'] = 'inactive';
+        } else {
+            $validated['status'] = $validated['status'] ? 'active' : 'inactive';
         }
 
         if (auth()->user()->isBidan() && $validated['role'] !== 'kader') {
@@ -103,9 +105,9 @@ class UserManagementController extends Controller
     public function show(User $user): JsonResponse
     {
         return response()->json($user->only([
-            'id_user', 'username', 'nama_lengkap', 'nomor_kontak',
-            'role', 'nip_bidan', 'nik_ortu', 'kode_instansi_dinkes',
-            'is_active', 'kabupaten_id', 'puskesmas_id', 'posyandu_id', 'email', 'alamat_domisili',
+            'id', 'username', 'name', 'phone',
+            'role', 'nip', 'nik', 'kode_instansi_dinkes',
+            'status', 'kabupaten_id', 'puskesmas_id', 'posyandu_id', 'email', 'address',
         ]));
     }
 
@@ -115,28 +117,28 @@ class UserManagementController extends Controller
     public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'max:50', Rule::unique('tb_user', 'username')->ignore($user->id_user, 'id_user')],
+            'username' => ['required', 'string', 'max:50', Rule::unique('users', 'username')->ignore($user->id, 'id')],
             'password' => ['nullable', 'string', 'min:8', Password::defaults()],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'nomor_kontak' => ['nullable', 'string', 'max:15'],
-            'role' => ['required', 'string', Rule::in(['super admin', 'bidan', 'kader', 'orang tua', 'dinkes'])],
-            'nip_bidan' => ['nullable', 'digits:18'],
-            'nik_ortu' => ['nullable', 'digits:16'],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:15'],
+            'role' => ['required', 'string', Rule::in(['super_admin', 'bidan', 'kader', 'ortu', 'dinkes'])],
+            'nip' => ['nullable', 'digits:18'],
+            'nik' => ['nullable', 'digits:16'],
             'kode_instansi_dinkes' => ['nullable', 'string', 'max:30'],
-            'is_active' => ['nullable', 'boolean'],
+            'status' => ['nullable', 'boolean'],
             'kabupaten_id' => ['nullable', 'exists:kabupatens,id'],
             'puskesmas_id' => ['nullable', 'exists:puskesmas,id'],
             'posyandu_id' => ['nullable', 'exists:posyandus,id'],
-            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:tb_user,email,'.$user->id_user.',id_user'],
-            'alamat_domisili' => ['nullable', 'string'],
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id.',id'],
+            'address' => ['nullable', 'string'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
             'password.min' => 'Password minimal 8 karakter.',
-            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'name.required' => 'Nama lengkap wajib diisi.',
             'role.required' => 'Role wajib dipilih.',
-            'nik_ortu.digits' => 'NIK harus 16 digit angka.',
-            'nip_bidan.digits' => 'NIP Bidan harus 18 digit angka.',
+            'nik.digits' => 'NIK harus 16 digit angka.',
+            'nip.digits' => 'NIP Bidan harus 18 digit angka.',
         ]);
 
         // Only update password if provided
@@ -144,16 +146,18 @@ class UserManagementController extends Controller
             unset($validated['password']);
         }
 
-        if (! isset($validated['is_active'])) {
-            $validated['is_active'] = false;
+        if (! isset($validated['status'])) {
+            $validated['status'] = 'inactive';
+        } else {
+            $validated['status'] = $validated['status'] ? 'active' : 'inactive';
         }
 
         // Prevent wiping Orang Tua's self-managed posyandu_id
-        if ($validated['role'] === 'orang tua') {
+        if ($validated['role'] === 'ortu') {
             unset($validated['posyandu_id']);
             $validated['kabupaten_id'] = null;
             $validated['puskesmas_id'] = null;
-        } elseif ($validated['role'] === 'super admin') {
+        } elseif ($validated['role'] === 'super_admin') {
             $validated['kabupaten_id'] = null;
             $validated['puskesmas_id'] = null;
             $validated['posyandu_id'] = null;
@@ -179,7 +183,7 @@ class UserManagementController extends Controller
     public function destroy(User $user): RedirectResponse
     {
         // Prevent deleting yourself
-        if ($user->id_user === auth()->id()) {
+        if ($user->id === auth()->id()) {
             $routePrefix = auth()->user()->isBidan() ? 'bidan.kader' : 'admin.users';
 
             return redirect()->route($routePrefix.'.index')

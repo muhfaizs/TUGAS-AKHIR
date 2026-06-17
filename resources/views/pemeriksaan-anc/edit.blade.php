@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Lanjutkan Pemeriksaan ANC')
-@section('header_title', 'Lanjutkan Pemeriksaan ANC')
-@section('header_subtitle', 'Lengkapi rekam medis Antenatal Care (Draft)')
+@section('page_title', 'Lanjutkan Pemeriksaan ANC')
+@section('page_subtitle', 'Lengkapi rekam medis Antenatal Care (Draft)')
 
 @section('content')
 <div class="mb-6 flex items-center justify-between">
@@ -426,3 +426,4 @@
 </script>
 @endpush
 @endsection
+

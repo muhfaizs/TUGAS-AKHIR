@@ -17,12 +17,23 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('puskesmas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('kabupaten_id')->constrained('kabupatens')->onDelete('cascade');
-            $table->string('nama_puskesmas');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('puskesmas')) {
+            Schema::create('puskesmas', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('kabupaten_id')->constrained('kabupatens')->onDelete('cascade');
+                $table->string('nama_puskesmas');
+                $table->timestamps();
+            });
+        } else {
+            Schema::table('puskesmas', function (Blueprint $table) {
+                if (!Schema::hasColumn('puskesmas', 'kabupaten_id')) {
+                    $table->foreignId('kabupaten_id')->nullable()->constrained('kabupatens')->onDelete('cascade');
+                }
+                if (!Schema::hasColumn('puskesmas', 'nama_puskesmas')) {
+                    $table->string('nama_puskesmas')->nullable();
+                }
+            });
+        }
 
         Schema::create('posyandus', function (Blueprint $table) {
             $table->id();

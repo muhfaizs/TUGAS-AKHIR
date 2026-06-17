@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Detail Data Pasien - ' . $kbAcceptor->full_name)
 
@@ -193,3 +193,4 @@
     </div>
 </div>
 @endsection
+

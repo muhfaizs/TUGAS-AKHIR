@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Tambah Pasien KB - SatuKIA')
-@section('header_title', 'Tambah Pasien KB')
-@section('header_subtitle', 'Masukkan data diri pasien KB baru')
+@section('page_title', 'Tambah Pasien KB')
+@section('page_subtitle', 'Masukkan data diri pasien KB baru')
 
 @section('content')
 <style>
@@ -279,3 +279,4 @@
     });
 </script>
 @endsection
+

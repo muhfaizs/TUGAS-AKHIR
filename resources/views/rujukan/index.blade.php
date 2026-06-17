@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Surat Rujukan - SatuKIA')
-@section('header_title', 'Surat Rujukan')
-@section('header_subtitle', 'Manajemen rujukan pasien dengan risiko sangat tinggi')
+@section('page_title', 'Surat Rujukan')
+@section('page_subtitle', 'Manajemen rujukan pasien dengan risiko sangat tinggi')
 
 @section('content')
 <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
@@ -126,3 +126,4 @@
     });
 </script>
 @endpush
+

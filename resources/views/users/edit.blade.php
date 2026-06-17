@@ -1,8 +1,8 @@
-@extends('layouts.app')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Edit User - SatuKIA')
-@section('header_title', 'Edit User')
-@section('header_subtitle', 'Perbarui informasi akun user di sistem.')
+@section('page_title', 'Edit User')
+@section('page_subtitle', 'Perbarui informasi akun user di sistem.')
 
 @section('content')
 <style>
@@ -154,3 +154,4 @@
     </form>
 </div>
 @endsection
+

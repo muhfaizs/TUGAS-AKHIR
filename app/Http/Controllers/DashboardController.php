@@ -35,7 +35,7 @@ class DashboardController extends Controller
                 ->where('status', 'nonaktif')
                 ->count();
 
-            return view('dashboard', compact('totalBidan', 'bidanAktif', 'bidanNonaktif', 'ibuHamilTerdaftar', 'dinkesAktif', 'dinkesNonaktif'));
+            return view('dashboard.admin', compact('totalBidan', 'bidanAktif', 'bidanNonaktif', 'ibuHamilTerdaftar', 'dinkesAktif', 'dinkesNonaktif'));
         }
 
         if ($user->isBidanOnly()) {
