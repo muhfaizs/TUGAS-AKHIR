@@ -2,139 +2,39 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'username', 'nik', 'password', 'role', 'status', 'phone', 'address', 'puskesmas_id', 'profile_photo_path'])]
+#[Fillable(['name', 'email', 'password', 'phone', 'role', 'nik', 'nip', 'status'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The table associated with the model.
-     */
-    protected $table = 'tb_user';
-
-    /**
-     * The primary key for the model.
-     */
-    protected $primaryKey = 'id_user';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'username',
-        'password',
-        'nama_lengkap',
-        'nomor_kontak',
-        'role',
-        'nip_bidan',
-        'id_posyandu_kader',
-        'puskesmas_id',
-        'posyandu_id',
-        'kabupaten_id',
-        'nik_ortu',
-        'kode_instansi_dinkes',
-        'hak_akses_master',
-        'log_aktivitas',
-        'is_active',
-        'wilayah_kerja',
-        'email',
-        'foto_profil',
-        'alamat_domisili',
-    ];
-
-    /**
-     * Get the Kabupaten associated with the user.
-     */
-    public function kabupaten()
-    {
-        return $this->belongsTo(Kabupaten::class, 'kabupaten_id');
-    }
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed',
-            'is_active' => 'boolean',
-            'hak_akses_master' => 'array',
-            'log_aktivitas' => 'array',
-        ];
-    }
-
-    public function hasRole(string|array $role): bool
-    {
-        if (is_array($role)) {
-            return in_array($this->role, $role);
-        }
-        return $this->role === $role;
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === 'super_admin';
-    }
-
-    public function isBidan(): bool
-    {
-        return $this->role === 'bidan';
-    }
-
-    public function isUptKb(): bool
-    {
-        return $this->role === 'upt_kb';
-    }
-
-    public function kbAcceptor(): HasOne
-    {
-        return $this->hasOne(KBAcceptor::class);
-    }
-
-    public function puskesmas(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Puskesmas::class);
-    }
-
-    public function kbServices(): HasMany
-    {
-        return $this->hasMany(KBService::class, 'created_by');
-    }
-
-    public function registeredAcceptors(): HasMany
-    {
-        return $this->hasMany(KBAcceptor::class, 'registered_by');
-    /**
-     * Check if the user is a Super Admin.
+     * Check if the user is the Super Administrator.
      */
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super admin';
+        return $this->role === 'bidan' && $this->email === 'admin@satukia.com';
     }
 
     /**
-     * Check if the user is a Bidan.
+     * Check if the user is a regular Bidan (not Super Admin).
+     */
+    public function isBidanOnly(): bool
+    {
+        return $this->role === 'bidan' && $this->email !== 'admin@satukia.com';
+    }
+
+    /**
+     * Check if the user is a Bidan (either Super Admin or regular Bidan).
      */
     public function isBidan(): bool
     {
@@ -142,19 +42,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user is an Orang Tua.
+     * Check if the user is a Parent (Orang Tua).
      */
-    public function isOrangTua(): bool
+    public function isOrtu(): bool
     {
-        return $this->role === 'orang tua';
-    }
-
-    /**
-     * Check if the user is a Kader.
-     */
-    public function isKader(): bool
-    {
-        return $this->role === 'kader';
+        return $this->role === 'ortu';
     }
 
     /**
@@ -166,42 +58,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the children associated with this user (if Orang Tua).
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
      */
-    public function anak()
+    protected function casts(): array
     {
-        return $this->hasMany(Anak::class, 'id_user', 'id_user');
-    }
-
-    /**
-     * Get the tindakan medis records associated with this bidan.
-     */
-    public function tindakanMedis()
-    {
-        return $this->hasMany(TindakanMedis::class, 'id_bidan', 'id_user');
-    }
-
-    /**
-     * Get the imunisasi records associated with this bidan.
-     */
-    public function imunisasi()
-    {
-        return $this->hasMany(Imunisasi::class, 'id_bidan', 'id_user');
-    }
-
-    /**
-     * Get the Puskesmas associated with the Bidan/Admin.
-     */
-    public function puskesmas()
-    {
-        return $this->belongsTo(Puskesmas::class, 'puskesmas_id');
-    }
-
-    /**
-     * Get the Posyandu associated with the Kader.
-     */
-    public function posyandu()
-    {
-        return $this->belongsTo(Posyandu::class, 'posyandu_id');
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

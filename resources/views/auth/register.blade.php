@@ -1,618 +1,248 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Pasien - SatuKIA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daftar - SatuKIA</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --teal-900: #0d4f40;
-            --teal-800: #0f5a4a;
-            --teal-700: #117a65;
-            --teal-600: #16a085;
-            --teal-500: #1abc9c;
-            --white:    #ffffff;
-            --gray-50:  #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-700: #374151;
-            --gray-900: #111827;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #e8f5f2 0%, #d1ede8 100%);
+            background-color: #ebf6f5; /* Light greenish background */
+            background-image: 
+                radial-gradient(circle at 90% 10%, #dcf2ee 0%, transparent 45%),
+                radial-gradient(circle at 10% 90%, #dcf2ee 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+        .bg-brand-dark-green {
+            background-color: #0e755f !important;
+        }
+        .bg-brand-dark-green-hover:hover {
+            background-color: #0b5c4b !important;
+        }
+        .text-brand-dark-green {
+            color: #0e755f !important;
+        }
+        .text-brand-dark-green-hover:hover {
+            color: #0b5c4b !important;
+        }
+        
+        /* Custom Checkbox */
+        .strength-indicator {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 24px;
-            position: relative;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #94a3b8; /* slate-400 */
         }
-
-        /* Back button */
-        .back-btn {
-            position: absolute;
-            top: 24px; left: 24px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--gray-200);
-            border-radius: 999px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--gray-700);
-            text-decoration: none;
-            transition: background 0.2s;
-            z-index: 20;
+        .strength-indicator.active {
+            color: #10b981; /* emerald-500 */
         }
-        .back-btn:hover { background: var(--white); }
-        .back-btn svg { width: 16px; height: 16px; }
-
-        /* Card */
-        .card {
-            display: flex;
-            width: 100%;
-            max-width: 1000px;
-            min-height: 600px;
-            background: var(--white);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Left panel */
-        .left-panel {
-            width: 38%;
-            background: linear-gradient(145deg, var(--teal-800) 0%, var(--teal-600) 100%);
-            padding: 40px 36px;
-            color: var(--white);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .left-panel::before {
-            content: '';
-            position: absolute;
-            top: -80px; left: -80px;
-            width: 280px; height: 280px;
-            background: rgba(255,255,255,0.07);
-            border-radius: 50%;
-        }
-        .left-panel::after {
-            content: '';
-            position: absolute;
-            bottom: -60px; right: -60px;
-            width: 220px; height: 220px;
-            background: rgba(0,0,0,0.12);
-            border-radius: 50%;
-        }
-        .left-inner { position: relative; z-index: 2; }
-
-        .logo-wrap {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 44px;
-        }
-        .logo-badge {
-            width: 44px; height: 44px;
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 15px;
-        }
-        .logo-name { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
-
-        .left-heading { font-size: 28px; font-weight: 800; line-height: 1.25; margin-bottom: 14px; }
-        .left-desc { font-size: 13.5px; color: rgba(255,255,255,0.78); line-height: 1.7; }
-
-        /* Step indicators */
-        .steps { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 12px; }
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .step-num {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            border: 1.5px solid rgba(255,255,255,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-        .step-item.done .step-num {
-            background: rgba(255,255,255,0.9);
-            color: var(--teal-800);
-            border-color: transparent;
-        }
-        .step-text { font-size: 13px; color: rgba(255,255,255,0.85); }
-        .step-item.done .step-text { font-weight: 600; color: #fff; }
-
-        /* Right panel */
-        .right-panel {
-            flex: 1;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 40px 48px;
-            background: var(--white);
-            overflow-y: auto;
-        }
-
-        .form-wrap { width: 100%; max-width: 380px; }
-
-        /* Tab toggle */
-        .tab-group {
-            display: flex;
-            background: var(--gray-100);
-            border-radius: 12px;
-            padding: 5px;
-            margin-bottom: 32px;
-            border: 1px solid var(--gray-200);
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 10px 0;
-            font-size: 13.5px;
-            font-weight: 500;
-            border-radius: 9px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            text-align: center;
-            display: block;
-        }
-        .tab-btn.active {
-            background: var(--white);
-            color: var(--teal-700);
-            font-weight: 600;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.10);
-            border: 1px solid rgba(0,0,0,0.06);
-        }
-        .tab-btn.inactive { background: transparent; color: var(--gray-500); }
-        .tab-btn.inactive:hover { color: var(--gray-900); }
-
-        .form-title { font-size: 22px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-        .form-sub   { font-size: 13px; color: var(--gray-500); margin-bottom: 24px; }
-
-        /* Field */
-        .field { margin-bottom: 14px; }
-        .field label {
-            display: block;
-            font-size: 12.5px;
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 5px;
-        }
-        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .input-wrap { position: relative; }
-        .input-icon {
-            position: absolute;
-            top: 50%; left: 12px;
-            transform: translateY(-50%);
-            color: var(--gray-400);
-            pointer-events: none;
-            display: flex; align-items: center;
-        }
-        .input-icon svg { width: 16px; height: 16px; }
-
-        .input-field {
-            width: 100%;
-            padding: 10px 12px 10px 38px;
-            border: 1.5px solid var(--gray-200);
-            border-radius: 11px;
-            font-size: 13px;
-            font-family: 'Inter', sans-serif;
-            color: var(--gray-900);
-            background: var(--gray-50);
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-        }
-        .input-field.no-icon { padding-left: 12px; }
-        .input-field::placeholder { color: var(--gray-400); }
-        .input-field:focus {
-            border-color: var(--teal-600);
-            box-shadow: 0 0 0 3px rgba(22,160,133,0.12);
-            background: var(--white);
-        }
-        .input-field.is-error { border-color: #f87171; }
-
-        .field-error {
-            font-size: 11.5px;
-            color: #dc2626;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Eye button */
-        .eye-btn {
-            position: absolute;
-            top: 50%; right: 10px;
-            transform: translateY(-50%);
-            background: none; border: none;
-            cursor: pointer;
-            color: var(--gray-400);
-            padding: 4px; border-radius: 6px;
-            display: flex; align-items: center;
-        }
-        .eye-btn:hover { color: var(--gray-600); }
-        .eye-btn svg { width: 16px; height: 16px; }
-
-        /* Password hint */
-        .pwd-hint {
-            font-size: 11.5px;
-            color: var(--gray-400);
-            margin-top: 4px;
-        }
-
-        /* Divider */
-        .divider {
-            height: 1px;
-            background: var(--gray-100);
-            margin: 18px 0;
-        }
-
-        /* Submit */
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--teal-800) 0%, var(--teal-600) 100%);
-            color: var(--white);
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            border: none;
-            border-radius: 11px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: opacity 0.2s, transform 0.15s;
-            box-shadow: 0 4px 16px rgba(17,122,101,0.28);
-            margin-top: 8px;
-        }
-        .btn-submit:hover   { opacity: 0.92; transform: translateY(-1px); }
-        .btn-submit:active  { transform: translateY(0); }
-        .btn-submit svg { width: 16px; height: 16px; }
-
-        /* Login link */
-        .login-row {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 13px;
-            color: var(--gray-500);
-        }
-        .login-row a { color: var(--teal-700); font-weight: 600; text-decoration: none; }
-        .login-row a:hover { text-decoration: underline; }
-
-        /* Error alert */
-        .alert-error {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-            padding: 11px 14px;
-            border-radius: 10px;
-            font-size: 13px;
-            margin-bottom: 16px;
-            display: flex; align-items: flex-start; gap: 8px;
-        }
-        .alert-error svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; }
-        .alert-error ul  { margin-left: 4px; }
-        .alert-error li  { margin-top: 2px; }
-
-        /* Required star */
-        .req { color: #f43f5e; margin-left: 2px; }
-
-        /* Section label */
-        .section-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.07em;
-            text-transform: uppercase;
-            color: var(--gray-400);
-            margin-bottom: 12px;
-        }
-
-        @media (max-width: 700px) {
-            .card { flex-direction: column; }
-            .left-panel { width: 100%; min-height: 220px; }
-            .right-panel { padding: 28px 22px; }
-            .field-row { grid-template-columns: 1fr; }
+        .strength-indicator svg {
+            width: 14px;
+            height: 14px;
         }
     </style>
 </head>
-<body>
-
-    <!-- Back button -->
-    <a href="{{ route('login') }}" class="back-btn">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+<body class="antialiased min-h-screen flex items-center justify-center p-4 sm:p-8 relative">
+    <!-- Top Left Home Button -->
+    <a href="/" class="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 bg-white px-4 py-2.5 rounded-full text-slate-500 hover:text-slate-800 font-semibold text-sm shadow-sm transition-all border border-slate-100 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Kembali Login
+        Beranda
     </a>
 
-    <div class="card">
-        <!-- ══ Left Panel ══════════════════════════ -->
-        <div class="left-panel">
-            <div class="left-inner">
-                <div class="logo-wrap">
-                    <div class="logo-badge">SK</div>
-                    <span class="logo-name">SatuKIA</span>
-                </div>
-                <h1 class="left-heading">Daftar sebagai<br>Pasien</h1>
-                <p class="left-desc">
-                    Buat akun pasien untuk memantau layanan KB, kesehatan ibu, dan tumbuh kembang bayi Anda.
-                </p>
-            </div>
-
-            <div class="steps">
-                <div class="step-item done">
-                    <div class="step-num">1</div>
-                    <div class="step-text">Isi data diri Anda</div>
-                </div>
-                <div class="step-item done">
-                    <div class="step-num">2</div>
-                    <div class="step-text">Buat username &amp; kata sandi</div>
-                </div>
-                <div class="step-item">
-                    <div class="step-num">3</div>
-                    <div class="step-text">Akun aktif &amp; siap digunakan</div>
-                </div>
+    <!-- Main Container -->
+    <div class="max-w-[650px] w-full bg-white p-8 md:p-10 rounded-[2rem] shadow-2xl shadow-teal-900/10 border border-slate-100 my-10 relative z-10">
+            
+        <!-- Logo Section -->
+        <div class="flex justify-center mb-8">
+            <div class="w-14 h-14 bg-brand-dark-green rounded-[1.1rem] flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-teal-900/15">
+                SK
             </div>
         </div>
 
-        <!-- ══ Right Panel ═════════════════════════ -->
-        <div class="right-panel">
-            <div class="form-wrap">
-
-                <!-- Tab -->
-                <div class="tab-group">
-                    <a href="{{ route('login') }}" class="tab-btn inactive">Masuk</a>
-                    <span class="tab-btn active">Daftar Pasien</span>
-                </div>
-
-                <h2 class="form-title">Buat Akun Pasien</h2>
-                <p class="form-sub">Lengkapi data di bawah untuk mendaftar.</p>
-
+            <form action="/register" method="POST" class="space-y-6">
+                @csrf
+                
+                <!-- Error Messages -->
                 @if ($errors->any())
-                <div class="alert-error">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                    <div>
-                        <strong>Terdapat kesalahan:</strong>
-                        <ul>
-                            @foreach ($errors->all() as $err)
-                                <li>{{ $err }}</li>
+                    <div class="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium mb-4 border border-red-100">
+                        <ul class="list-disc pl-4 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
-                </div>
                 @endif
 
-                <form action="{{ route('register') }}" method="POST" id="registerForm" novalidate>
-                    @csrf
+                <!-- Nomor Induk Kependudukan (NIK) -->
+                <div>
+                    <label for="nik" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Nomor Induk Kependudukan (NIK)</label>
+                    <input type="text" name="nik" id="nik" value="{{ old('nik') }}" class="block w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors text-sm" placeholder="Masukkan 16 digit NIK" required maxlength="16" minlength="16" pattern="[0-9]{16}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                </div>
 
-                    {{-- ── Data Diri ─────────────────── --}}
-                    <div class="section-label">Data Diri</div>
+                <!-- Nama Lengkap -->
+                <div>
+                    <label for="name" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Nama Lengkap</label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="block w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors text-sm" placeholder="Masukkan nama lengkap (sesuai e-KTP)" required>
+                </div>
 
-                    <!-- Nama Lengkap -->
-                    <div class="field">
-                        <label for="name">Nama Lengkap <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <span class="input-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                            </span>
-                            <input id="name" type="text" name="name"
-                                   class="input-field @error('name') is-error @enderror"
-                                   placeholder="Masukkan nama lengkap"
-                                   value="{{ old('name') }}" required>
-                        </div>
-                        @error('name')<div class="field-error">{{ $message }}</div>@enderror
+                <!-- Nomor Ponsel -->
+                <div>
+                    <label for="phone" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Nomor Ponsel</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 text-slate-500 text-sm font-semibold">
+                            +62
+                        </span>
+                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" class="block w-full px-4 py-3 border border-slate-300 rounded-r-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors text-sm" placeholder="81234567890 (11 digit)" required maxlength="11" minlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                     </div>
+                </div>
 
-                    <!-- NIK -->
-                    <div class="field">
-                        <label for="nik">NIK (16 digit) <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <span class="input-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2"/>
-                                </svg>
-                            </span>
-                            <input id="nik" type="text" name="nik"
-                                   class="input-field @error('nik') is-error @enderror"
-                                   placeholder="Contoh: 3273010101900001"
-                                   value="{{ old('nik') }}"
-                                   maxlength="16"
-                                   pattern="\d{16}"
-                                   inputmode="numeric"
-                                   required>
-                        </div>
-                        @error('nik')<div class="field-error">{{ $message }}</div>@enderror
+                <!-- Alamat Email -->
+                <div>
+                    <label for="email" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Alamat Email</label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="block w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors text-sm" placeholder="Masukkan alamat email" required>
+                </div>
+
+                <!-- Buat Password -->
+                <div>
+                    <label for="password" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Buat Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" class="block w-full px-4 py-3 pr-10 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors text-sm" placeholder="Masukkan password" required onkeyup="checkPasswordStrength()">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600" onclick="togglePasswordVisibility('password', 'eye-icon-1')">
+                            <svg id="eye-icon-1" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
+                </div>
 
-                    <!-- Phone & Address row -->
-                    <div class="field">
-                        <label for="phone">Nomor Telepon</label>
-                        <div class="input-wrap">
-                            <span class="input-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                </svg>
-                            </span>
-                            <input id="phone" type="text" name="phone"
-                                   class="input-field @error('phone') is-error @enderror"
-                                   placeholder="Contoh: 081234567890"
-                                   value="{{ old('phone') }}"
-                                   inputmode="tel">
-                        </div>
-                        @error('phone')<div class="field-error">{{ $message }}</div>@enderror
+                <!-- Password Strength Indicators -->
+                <div class="py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                    <div id="req-uppercase" class="strength-indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                        Huruf besar
                     </div>
-
-                    <div class="field">
-                        <label for="address">Alamat</label>
-                        <div class="input-wrap">
-                            <span class="input-icon" style="top:14px;transform:none;">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                            </span>
-                            <textarea id="address" name="address"
-                                      class="input-field @error('address') is-error @enderror"
-                                      placeholder="Alamat lengkap"
-                                      rows="2"
-                                      style="resize:none; padding-top:10px;">{{ old('address') }}</textarea>
-                        </div>
-                        @error('address')<div class="field-error">{{ $message }}</div>@enderror
+                    <div id="req-number" class="strength-indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                        Mengandung angka
                     </div>
-
-                    <div class="divider"></div>
-
-                    {{-- ── Akun Login ─────────────────── --}}
-                    <div class="section-label">Akun Login</div>
-
-                    <!-- Email -->
-                    <div class="field">
-                        <label for="email">Email <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <span class="input-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                </svg>
-                            </span>
-                            <input id="email" type="email" name="email"
-                                   class="input-field @error('email') is-error @enderror"
-                                   placeholder="Masukkan alamat email"
-                                   value="{{ old('email') }}"
-                                   autocomplete="email"
-                                   required>
-                        </div>
-                        @error('email')<div class="field-error">{{ $message }}</div>@enderror
+                    <div id="req-lowercase" class="strength-indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                        Huruf kecil
                     </div>
-
-                    <!-- Password -->
-                    <div class="field">
-                        <label for="password">Kata Sandi <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <span class="input-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                </svg>
-                            </span>
-                            <input id="password" type="password" name="password"
-                                   class="input-field @error('password') is-error @enderror"
-                                   placeholder="Min. 8 karakter"
-                                   autocomplete="new-password"
-                                   required>
-                            <button type="button" class="eye-btn" onclick="togglePwd('password','eye1')">
-                                <svg id="eye1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="pwd-hint">Gunakan minimal 8 karakter dengan huruf dan angka.</div>
-                        @error('password')<div class="field-error">{{ $message }}</div>@enderror
+                    <div id="req-length" class="strength-indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                        Minimum 8 karakter
                     </div>
+                </div>
 
-                    <!-- Confirm Password -->
-                    <div class="field">
-                        <label for="password_confirmation">Konfirmasi Kata Sandi <span class="req">*</span></label>
-                        <div class="input-wrap">
-                            <span class="input-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                </svg>
-                            </span>
-                            <input id="password_confirmation" type="password" name="password_confirmation"
-                                   class="input-field"
-                                   placeholder="Ulangi kata sandi"
-                                   autocomplete="new-password"
-                                   required>
-                            <button type="button" class="eye-btn" onclick="togglePwd('password_confirmation','eye2')">
-                                <svg id="eye2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                            </button>
-                        </div>
+                <!-- Ulangi Password -->
+                <div>
+                    <label for="password_confirmation" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Ulangi Password</label>
+                    <div class="relative">
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="block w-full px-4 py-3 pr-10 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-colors text-sm" placeholder="Ulangi password" required>
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600" onclick="togglePasswordVisibility('password_confirmation', 'eye-icon-2')">
+                            <svg id="eye-icon-2" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
                     </div>
+                </div>
 
-                    <!-- Submit -->
-                    <button type="submit" class="btn-submit" id="submitBtn">
-                        Daftar
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                <!-- Benefits Banner -->
+                <div class="bg-amber-50 rounded-xl p-4 border border-amber-100 flex gap-3 mt-8">
+                    <div class="text-amber-500 flex-shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                          <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
                         </svg>
-                    </button>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-amber-800 mb-1">Penting: Pastikan Data yang Anda Masukkan Sudah Benar</p>
+                        <ul class="text-xs text-amber-700 list-disc pl-4 space-y-1">
+                            <li>Pastikan Nomor NIK yang dimasukkan sudah sesuai dengan data yang terdaftar.</li>
+                            <li>Nomor Ponsel yang dimasukkan harus aktif dan dapat dihubungi.</li>
+                            <li>Email yang dimasukkan harus aktif dan dapat dihubungi.</li>
+                        </ul>
+                    </div>
+                </div>
 
-                    <p class="login-row">
-                        Sudah punya akun? <a href="{{ route('login') }}">Masuk sekarang</a>
-                    </p>
-                </form>
-            </div>
+                <!-- Terms Checkbox -->
+                <div class="flex items-start mt-8">
+                    <div class="flex items-center h-5">
+                        <input id="terms" name="terms" type="checkbox" class="w-4 h-4 border border-slate-300 rounded bg-slate-50 focus:ring-3 focus:ring-teal-300" required>
+                    </div>
+                    <label for="terms" class="ml-2 text-sm text-slate-500 font-medium leading-tight">
+                        Dengan membuat akun, saya menyetujui <a href="#" class="text-brand-dark-green font-semibold hover:underline">Ketentuan Penggunaan</a> dan <a href="#" class="text-brand-dark-green font-semibold hover:underline">Kebijakan Privasi</a>.
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-slate-200 text-slate-500 font-bold rounded-xl px-5 py-4 mt-6 focus:outline-none transition-colors" id="submit-btn" disabled>
+                    Buat Akun
+                </button>
+
+                <div class="mt-6 text-center text-xs font-medium text-slate-500">
+                    Sudah punya akun SatuKIA? <a href="/login" class="font-bold text-brand-dark-green hover:text-brand-dark-green-hover transition-colors">Masuk</a>
+                </div>
+
+            </form>
         </div>
     </div>
 
     <script>
-        function togglePwd(inputId, iconId) {
+        function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />`;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+            }
         }
 
-        // NIK — angka saja
-        document.getElementById('nik').addEventListener('input', function () {
-            this.value = this.value.replace(/\D/g, '').slice(0, 16);
-        });
+        function checkPasswordStrength() {
+            const pw = document.getElementById('password').value;
+            
+            const hasUpper = /[A-Z]/.test(pw);
+            const hasNumber = /[0-9]/.test(pw);
+            const hasLower = /[a-z]/.test(pw);
+            const hasLength = pw.length >= 8;
 
-        // Submit loading state
-        document.getElementById('registerForm').addEventListener('submit', function () {
-            const btn = document.getElementById('submitBtn');
-            btn.innerHTML = `
-                <svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-                Memproses...
-            `;
-            btn.disabled = true;
-        });
+            document.getElementById('req-uppercase').classList.toggle('active', hasUpper);
+            document.getElementById('req-number').classList.toggle('active', hasNumber);
+            document.getElementById('req-lowercase').classList.toggle('active', hasLower);
+            document.getElementById('req-length').classList.toggle('active', hasLength);
+
+            const terms = document.getElementById('terms').checked;
+            const btn = document.getElementById('submit-btn');
+
+            if (hasUpper && hasNumber && hasLower && hasLength) {
+                btn.classList.remove('bg-slate-200', 'text-slate-500');
+                btn.classList.add('bg-brand-dark-green', 'hover:bg-brand-dark-green-hover', 'text-white', 'shadow-lg', 'shadow-teal-900/20');
+                btn.disabled = false;
+            } else {
+                btn.classList.add('bg-slate-200', 'text-slate-500');
+                btn.classList.remove('bg-brand-dark-green', 'hover:bg-brand-dark-green-hover', 'text-white', 'shadow-lg', 'shadow-teal-900/20');
+                btn.disabled = true;
+            }
+        }
+
+        // Add event listener for checkbox to also trigger button state validation
+        document.getElementById('terms').addEventListener('change', checkPasswordStrength);
     </script>
-
-    <style>
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spin { animation: spin 0.8s linear infinite; }
-    </style>
 </body>
 </html>

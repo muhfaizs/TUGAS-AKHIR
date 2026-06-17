@@ -1,332 +1,345 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'SatuKIA') }} — Kesehatan Ibu dan Anak</title>
-    <meta name="description" content="SatuKIA: Platform m-Health terpadu untuk layanan Keluarga Berencana, pemantauan kehamilan, dan tumbuh kembang bayi. Dari posyandu ke puskesmas, data KIA dalam satu genggaman.">
-
+    <title>SatuKIA - Monitoring Kesehatan Ibu & Anak Lebih Cerdas</title>
+    
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
 
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/css/welcome.css', 'resources/js/app.js'])
-    @endif
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #e0f2fe 0%, #f0fdf4 50%, #f8fafc 100%);
+        }
+        .text-brand-dark {
+            color: #0f172a;
+        }
+        .text-brand-teal {
+            color: #0d9488;
+        }
+        .bg-brand-teal {
+            background-color: #0d9488;
+        }
+        .bg-brand-teal-light {
+            background-color: #14b8a6;
+        }
+        .shadow-soft {
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+        }
+        .shadow-glow {
+            box-shadow: 0 10px 40px -10px rgba(13, 148, 136, 0.4);
+        }
+        .bg-brand-gradient {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
 </head>
-<body class="landing-page">
-    <!-- Animated Background -->
-    <div class="lp-bg-canvas" aria-hidden="true">
-        <div class="lp-orb lp-orb--1"></div>
-        <div class="lp-orb lp-orb--2"></div>
-        <div class="lp-orb lp-orb--3"></div>
-    </div>
-
+<body class="antialiased text-slate-600 min-h-screen relative overflow-x-hidden selection:bg-teal-200 selection:text-teal-900">
+    
     <!-- Navbar -->
-    <nav class="lp-navbar" id="navbar">
-        <div class="lp-navbar-inner">
-            <a href="/" class="lp-brand">
-                <div class="lp-brand-icon" aria-hidden="true">SK</div>
-                <div class="lp-brand-label"><span>Satu</span>KIA</div>
-            </a>
-            <div class="lp-nav-links">
-                @if (Route::has('login'))
-                    @auth
-                        @php
-                            $dashboardUrl = match(auth()->user()->role) {
-                                'super admin', 'kader' => route('admin.dashboard'),
-                                'bidan' => route('bidan.dashboard'),
-                                'orang tua' => route('orangtua.dashboard'),
-                                'dinkes' => route('dinkes.dashboard'),
-                                default => '/'
-                            };
-                        @endphp
-                        <a href="{{ $dashboardUrl }}" class="lp-nav-link lp-nav-link--solid">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="lp-nav-link lp-nav-link--ghost">Masuk</a>
-                        <a href="{{ route('login') }}?tab=register" class="lp-nav-link lp-nav-link--solid">Daftar</a>
-                    @endauth
-                @endif
+    <nav class="w-full bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-slate-200/50 transition-all">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-brand-gradient rounded-[0.8rem] flex items-center justify-center text-white font-extrabold text-lg shadow-sm">
+                    SK
+                </div>
+                <span class="text-[1.35rem] font-extrabold tracking-tight text-brand-dark">SatuKIA</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="#fitur" class="hidden md:block text-sm font-semibold text-slate-500 hover:text-brand-teal transition-colors">Fitur</a>
+                <a href="#cara-kerja" class="hidden md:block text-sm font-semibold text-slate-500 hover:text-brand-teal transition-colors">Cara Kerja</a>
+                <a href="/login" class="text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-5 py-2.5 rounded-full transition-colors border border-teal-100">Masuk Akun</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="lp-hero lp-container" id="hero">
-        <div class="lp-hero-content">
-            <div class="lp-hero-badge">
-                <span class="lp-hero-badge-dot"></span>
-                Platform KIA Digital Terpadu
-            </div>
+    <section class="hero-gradient pt-16 pb-32 relative z-10 overflow-hidden">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                
+                <!-- Left Column: Content -->
+                <div class="lg:col-span-6 relative z-10">
+                    <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm mb-8">
+                        <span class="relative flex h-2.5 w-2.5">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Platform KIA Digital Terpadu</span>
+                    </div>
 
-            <h1 class="lp-hero-title">
-                Monitoring Kesehatan<br>
-                <span class="lp-hero-title-accent">Ibu & Anak</span><br>
-                Lebih Cerdas
-            </h1>
+                    <h1 class="text-[3.5rem] lg:text-[4.5rem] font-extrabold text-brand-dark leading-[1.05] mb-6 tracking-tight">
+                        Monitoring<br />
+                        Pintar<br />
+                        Kesehatan<br />
+                        Ibu & Anak.
+                    </h1>
 
-            <p class="lp-hero-desc">
-                SatuKIA mengintegrasikan layanan Keluarga Berencana (KB), pemantauan
-                kehamilan, dan tumbuh kembang bayi dalam satu platform digital.
-                Data mengalir dari posyandu ke puskesmas dengan aman dan terukur.
-            </p>
+                    <p class="text-xl text-slate-500 mb-10 leading-relaxed max-w-xl font-medium">
+                        SatuKIA mengintegrasikan layanan Keluarga Berencana (KB), Pemantauan Kehamilan, dan Tumbuh Kembang Bayi dalam satu platform digital yang Aman dan Terukur.
+                    </p>
 
-            <div class="lp-hero-actions">
-                @if (Route::has('login'))
-                    <a href="{{ route('login') }}" class="lp-btn lp-btn--primary">
-                        Mulai Sekarang
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg>
+                    <div class="flex flex-col sm:flex-row items-center gap-4">
+                        <a href="/login" class="w-full sm:w-auto bg-brand-teal hover:bg-brand-teal-light text-white font-bold px-8 py-4 rounded-full shadow-glow transition-all flex items-center justify-center gap-2 hover:-translate-y-1">
+                            Mulai Sekarang
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </a>
+                        <a href="#fitur" class="w-full sm:w-auto bg-white hover:bg-slate-50 text-brand-dark font-bold px-8 py-4 rounded-full border-2 border-slate-200 shadow-sm transition-all hover:-translate-y-1 flex justify-center">
+                            Lihat Fitur
+                        </a>
+                    </div>
+                    
+                    <!-- Small Stats -->
+                    <div class="mt-12 flex items-center gap-10 text-sm">
+                        <div>
+                            <p class="font-extrabold text-3xl text-brand-dark tracking-tight">24/7</p>
+                            <p class="text-slate-500 font-medium mt-1">Monitoring Aktif</p>
+                        </div>
+                        <div class="w-px h-12 bg-slate-200"></div>
+                        <div>
+                            <p class="font-extrabold text-3xl text-brand-dark tracking-tight">1 Klik</p>
+                            <p class="text-slate-500 font-medium mt-1">Laporan Aman</p>
+                        </div>
+                        <div class="w-px h-12 bg-slate-200"></div>
+                        <div>
+                            <p class="font-extrabold text-3xl text-brand-dark tracking-tight">100%</p>
+                            <p class="text-slate-500 font-medium mt-1">Aman & Rahasia</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Illustration -->
+                <div class="lg:col-span-6 relative w-full h-[550px] lg:h-[650px] flex items-center justify-center mt-12 lg:mt-0">
+                    <!-- Background aesthetic blob -->
+                    <div class="absolute w-[120%] h-[120%] bg-gradient-to-tr from-teal-100 to-green-50 rounded-full blur-3xl -z-10 opacity-70"></div>
+                    
+                    <a href="/login" class="w-[90%] z-10 block cursor-pointer">
+                        <img src="/images/hero_illustration.png" alt="Ilustrasi Ibu dan Anak" class="w-full object-contain drop-shadow-2xl rounded-[3rem] transition-transform duration-700 hover:scale-[1.02]" />
                     </a>
-                @endif
-                <a href="#fitur" class="lp-btn lp-btn--outline">Lihat Fitur</a>
-            </div>
 
-            <div class="lp-hero-stats">
-                <div class="lp-hero-stat">
-                    <span class="lp-hero-stat-value">24/7</span>
-                    <span class="lp-hero-stat-label">Monitoring Aktif</span>
-                </div>
-                <div class="lp-hero-stat">
-                    <span class="lp-hero-stat-value">1 Klik</span>
-                    <span class="lp-hero-stat-label">Laporan Instan</span>
-                </div>
-                <div class="lp-hero-stat">
-                    <span class="lp-hero-stat-value">100%</span>
-                    <span class="lp-hero-stat-label">Data Aman</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="lp-hero-visual">
-            <div class="lp-hero-glow"></div>
-            <div class="lp-hero-img-wrap">
-                <img src="{{ asset('images/hero-illustration.png') }}" alt="Ilustrasi kesehatan ibu dan anak" loading="eager">
-            </div>
-
-            <!-- Floating Cards -->
-            <div class="lp-float-card lp-float-card--1">
-                <div class="lp-fc-row">
-                    <div class="lp-fc-icon lp-fc-icon--teal">🤰</div>
-                    <div>
-                        <div class="lp-fc-text">Pemeriksaan ANC</div>
-                        <div class="lp-fc-sub">Kunjungan ke-3 selesai</div>
+                    <!-- Floating Cards -->
+                    <div class="absolute top-8 -left-4 lg:left-0 glass-card rounded-[1.5rem] p-4 shadow-soft flex items-center gap-4 z-20 animate-[bounce_4s_infinite_alternate]">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl shadow-sm">🤰</div>
+                        <div class="pr-4">
+                            <p class="font-bold text-slate-800 text-sm">Pemeriksaan ANC</p>
+                            <p class="text-xs font-medium text-slate-500">Kunjungan ke-3 selesai</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="lp-float-card lp-float-card--2">
-                <div class="lp-fc-row">
-                    <div class="lp-fc-icon lp-fc-icon--coral">💊</div>
-                    <div>
-                        <div class="lp-fc-text">Peserta KB Aktif</div>
-                        <div class="lp-fc-sub">+15 akseptor bulan ini</div>
+                    
+                    <div class="absolute bottom-32 -left-8 lg:-left-12 glass-card rounded-[1.5rem] p-4 shadow-soft flex items-center gap-4 z-20 animate-[bounce_5s_infinite_alternate_reverse]">
+                        <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-xl shadow-sm">👶</div>
+                        <div class="pr-4">
+                            <p class="font-bold text-slate-800 text-sm">Tumbuh Kembang</p>
+                            <p class="text-xs font-medium text-slate-500">12 bayi terpantau</p>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="lp-float-card lp-float-card--3">
-                <div class="lp-fc-row">
-                    <div class="lp-fc-icon lp-fc-icon--amber">👶</div>
-                    <div>
-                        <div class="lp-fc-text">Tumbuh Kembang Bayi</div>
-                        <div class="lp-fc-sub">12 bayi terpantau</div>
+                    
+                    <div class="absolute bottom-8 -right-4 lg:right-4 glass-card rounded-[1.5rem] p-4 shadow-soft flex items-center gap-4 z-20 animate-[bounce_6s_infinite_alternate]">
+                        <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl shadow-sm">💊</div>
+                        <div class="pr-4">
+                            <p class="font-bold text-slate-800 text-sm">Peserta KB Aktif</p>
+                            <p class="text-xs font-medium text-slate-500">+15 akseptor baru</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Trusted Section -->
-    <section class="lp-trusted lp-container lp-reveal">
-        <p class="lp-trusted-label">Dipercaya oleh tenaga kesehatan di seluruh Indonesia</p>
-        <div class="lp-trusted-logos">
-            <div class="lp-trusted-logo">
-                <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l7 3.5v7.64l-7 3.5-7-3.5V7.68l7-3.5z"/></svg>
-                Puskesmas
-            </div>
-            <div class="lp-trusted-logo">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                Posyandu
-            </div>
-            <div class="lp-trusted-logo">
-                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                Kader & Bidan
-            </div>
-            <div class="lp-trusted-logo">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                Dinas Kesehatan
+    <!-- Trusted By -->
+    <section class="py-12 bg-white border-y border-slate-200">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">Dipercaya oleh institusi kesehatan di seluruh Indonesia</p>
+            <div class="flex flex-wrap justify-center items-center gap-x-16 gap-y-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+                <div class="flex items-center gap-3 text-slate-600 font-bold text-lg"><span class="text-2xl">🏥</span> Puskesmas</div>
+                <div class="flex items-center gap-3 text-slate-600 font-bold text-lg"><span class="text-2xl">🏡</span> Posyandu</div>
+                <div class="flex items-center gap-3 text-slate-600 font-bold text-lg"><span class="text-2xl">👩‍⚕️</span> Ikatan Bidan</div>
+                <div class="flex items-center gap-3 text-slate-600 font-bold text-lg"><span class="text-2xl">🏢</span> Dinas Kesehatan</div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section id="fitur" class="lp-section lp-container">
-        <div class="lp-section-header lp-reveal">
-            <p class="lp-section-kicker">Fitur Unggulan</p>
-            <h2 class="lp-section-title">Tiga Modul Terpadu<br>Dalam Satu Platform</h2>
-            <p class="lp-section-desc">
-                Layanan KB, pemantauan kehamilan, dan monitoring bayi terintegrasi dari posyandu hingga puskesmas.
-            </p>
-        </div>
-
-        <div class="lp-features-grid">
-            {{-- Modul KB --}}
-            <div class="lp-feature-card lp-reveal lp-reveal-delay-1">
-                <div class="lp-feature-icon lp-feature-icon--2">
-                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                </div>
-                <h3 class="lp-feature-title">Layanan Keluarga Berencana</h3>
-                <p class="lp-feature-text">Kelola data akseptor KB, pencatatan metode kontrasepsi, dan jadwal kunjungan ulang secara digital.</p>
+    <section id="fitur" class="py-32 bg-slate-50 relative">
+        <!-- Background elements -->
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-50 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3"></div>
+        
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <p class="text-sm font-bold text-brand-teal uppercase tracking-[0.2em] mb-4">Fitur Unggulan</p>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-brand-dark mb-6 tracking-tight">Tiga Modul Terpadu Dalam Satu Platform</h2>
+                <p class="text-xl text-slate-500 font-medium">Layanan KB, pemantauan kehamilan, dan monitoring bayi terintegrasi dari posyandu hingga puskesmas.</p>
             </div>
 
-            {{-- Modul Ibu Hamil --}}
-            <div class="lp-feature-card lp-reveal lp-reveal-delay-2">
-                <div class="lp-feature-icon lp-feature-icon--1">
-                    <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2zm-1 10h-2v2h-2v-2H7v-2h2v-2h2v2h2v2z"/></svg>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-rose-50 text-rose-500 rounded-[1.2rem] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">❤️</div>
+                    <h3 class="text-2xl font-bold text-brand-dark mb-3">Keluarga Berencana</h3>
+                    <p class="text-slate-500 leading-relaxed font-medium">Kelola data akseptor KB, pencatatan metode kontrasepsi, dan jadwal kunjungan ulang secara digital dan otomatis.</p>
                 </div>
-                <h3 class="lp-feature-title">Pemantauan Kehamilan</h3>
-                <p class="lp-feature-text">Pantau kesehatan ibu hamil dari trimester pertama hingga persalinan, termasuk jadwal ANC dan riwayat pemeriksaan.</p>
-            </div>
-
-            {{-- Modul Bayi --}}
-            <div class="lp-feature-card lp-reveal lp-reveal-delay-3">
-                <div class="lp-feature-icon lp-feature-icon--3">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <!-- Feature 2 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-[1.2rem] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">📋</div>
+                    <h3 class="text-2xl font-bold text-brand-dark mb-3">Pemantauan Kehamilan</h3>
+                    <p class="text-slate-500 leading-relaxed font-medium">Pantau kesehatan ibu hamil dari trimester pertama hingga persalinan, termasuk jadwal ANC dan grafik evaluasi.</p>
                 </div>
-                <h3 class="lp-feature-title">Tumbuh Kembang Bayi</h3>
-                <p class="lp-feature-text">Catat berat badan, tinggi badan, lingkar kepala, dan jadwal imunisasi bayi dengan grafik pertumbuhan WHO.</p>
-            </div>
-
-            {{-- Fitur Umum --}}
-            <div class="lp-feature-card lp-reveal lp-reveal-delay-1">
-                <div class="lp-feature-icon lp-feature-icon--4">
-                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+                <!-- Feature 3 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-orange-50 text-orange-500 rounded-[1.2rem] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">👶</div>
+                    <h3 class="text-2xl font-bold text-brand-dark mb-3">Tumbuh Kembang Bayi</h3>
+                    <p class="text-slate-500 leading-relaxed font-medium">Catat berat badan, tinggi badan, lingkar kepala, dan jadwal imunisasi bayi yang disinkronkan dengan standar WHO.</p>
                 </div>
-                <h3 class="lp-feature-title">Laporan Terpadu</h3>
-                <p class="lp-feature-text">Rangkuman data KB, kehamilan, dan bayi tersedia otomatis untuk pelaporan ke dinas kesehatan.</p>
-            </div>
-
-            <div class="lp-feature-card lp-reveal lp-reveal-delay-2">
-                <div class="lp-feature-icon lp-feature-icon--5">
-                    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                <!-- Feature 4 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-[1.2rem] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">📊</div>
+                    <h3 class="text-2xl font-bold text-brand-dark mb-3">Laporan Terpadu</h3>
+                    <p class="text-slate-500 leading-relaxed font-medium">Rangkuman data KIA tersedia secara real-time dan siap diunduh untuk kebutuhan pelaporan ke dinas kesehatan.</p>
                 </div>
-                <h3 class="lp-feature-title">Akses Bertingkat</h3>
-                <p class="lp-feature-text">Role-based access untuk kader, bidan, orang tua, dan admin puskesmas. Data aman dan terkontrol.</p>
-            </div>
-
-            <div class="lp-feature-card lp-reveal lp-reveal-delay-3">
-                <div class="lp-feature-icon lp-feature-icon--6">
-                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                <!-- Feature 5 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-purple-50 text-purple-500 rounded-[1.2rem] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">🔒</div>
+                    <h3 class="text-2xl font-bold text-brand-dark mb-3">Akses Bertingkat</h3>
+                    <p class="text-slate-500 leading-relaxed font-medium">Hak akses terstruktur untuk kader, bidan, admin puskesmas, dan ibu hamil. Menjamin privasi dan keamanan data.</p>
                 </div>
-                <h3 class="lp-feature-title">Multi-Posyandu</h3>
-                <p class="lp-feature-text">Kelola beberapa posyandu sekaligus dengan data KB, ibu hamil, dan bayi dalam satu dashboard.</p>
+                <!-- Feature 6 -->
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm border border-slate-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-brand-teal/10 text-brand-teal rounded-[1.2rem] flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-brand-teal group-hover:text-white transition-all duration-300">👥</div>
+                    <h3 class="text-2xl font-bold text-brand-dark mb-3">Multi-Posyandu</h3>
+                    <p class="text-slate-500 leading-relaxed font-medium">Pantau dan kelola berbagai cabang posyandu di wilayah kerja puskesmas Anda melalui satu dashboard terpusat.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="lp-section lp-container">
-        <div class="lp-section-header lp-reveal">
-            <p class="lp-section-kicker">Cara Kerja</p>
-            <h2 class="lp-section-title">Mulai dalam 4 Langkah Mudah</h2>
-            <p class="lp-section-desc">Proses sederhana untuk memulai digitalisasi data kesehatan ibu dan anak.</p>
-        </div>
+    <!-- How it Works Section -->
+    <section id="cara-kerja" class="py-32 bg-white relative overflow-hidden">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-24">
+                <p class="text-sm font-bold text-brand-teal uppercase tracking-[0.2em] mb-4">Cara Kerja</p>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-brand-dark mb-6 tracking-tight">Mulai dalam 4 Langkah Mudah</h2>
+                <p class="text-xl text-slate-500 font-medium">Proses sederhana untuk memulai digitalisasi data kesehatan ibu dan anak.</p>
+            </div>
 
-        <div class="lp-steps-grid">
-            <div class="lp-step lp-reveal lp-reveal-delay-1">
-                <div class="lp-step-num">1</div>
-                <h3 class="lp-step-title">Daftar Akun</h3>
-                <p class="lp-step-text">Buat akun untuk puskesmas atau posyandu Anda dalam hitungan menit.</p>
-            </div>
-            <div class="lp-step lp-reveal lp-reveal-delay-2">
-                <div class="lp-step-num">2</div>
-                <h3 class="lp-step-title">Input Data KIA</h3>
-                <p class="lp-step-text">Masukkan data KB, kehamilan, atau bayi melalui form yang mudah dipahami.</p>
-            </div>
-            <div class="lp-step lp-reveal lp-reveal-delay-3">
-                <div class="lp-step-num">3</div>
-                <h3 class="lp-step-title">Pantau Berkala</h3>
-                <p class="lp-step-text">Catat kunjungan, pemeriksaan, dan perkembangan secara rutin di setiap modul.</p>
-            </div>
-            <div class="lp-step lp-reveal lp-reveal-delay-4">
-                <div class="lp-step-num">4</div>
-                <h3 class="lp-step-title">Lihat Laporan</h3>
-                <p class="lp-step-text">Dapatkan laporan terpadu KB, ibu hamil, dan bayi untuk evaluasi serta koordinasi.</p>
+            <div class="relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-[2.5rem] left-[12%] right-[12%] h-1 bg-gradient-to-r from-teal-100 via-teal-300 to-teal-100 rounded-full -z-10"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                    <!-- Step 1 -->
+                    <div class="text-center group">
+                        <div class="w-20 h-20 mx-auto bg-white text-teal-600 rounded-full flex items-center justify-center text-2xl font-extrabold shadow-soft mb-8 border-[6px] border-slate-50 ring-1 ring-slate-200 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-100 transition-all duration-300">1</div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Daftar Akun</h3>
+                        <p class="text-slate-500 font-medium">Buat akun puskesmas atau posyandu Anda dengan proses verifikasi yang cepat.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="text-center group">
+                        <div class="w-20 h-20 mx-auto bg-white text-teal-600 rounded-full flex items-center justify-center text-2xl font-extrabold shadow-soft mb-8 border-[6px] border-slate-50 ring-1 ring-slate-200 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-100 transition-all duration-300">2</div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Input Data</h3>
+                        <p class="text-slate-500 font-medium">Masukkan data awal pasien dan riwayat KIA menggunakan form yang intuitif.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="text-center group">
+                        <div class="w-20 h-20 mx-auto bg-white text-teal-600 rounded-full flex items-center justify-center text-2xl font-extrabold shadow-soft mb-8 border-[6px] border-slate-50 ring-1 ring-slate-200 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-100 transition-all duration-300">3</div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Pantau Berkala</h3>
+                        <p class="text-slate-500 font-medium">Catat hasil pemeriksaan secara rutin di modul KB, kehamilan, dan bayi.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="text-center group">
+                        <div class="w-20 h-20 mx-auto bg-white text-teal-600 rounded-full flex items-center justify-center text-2xl font-extrabold shadow-soft mb-8 border-[6px] border-slate-50 ring-1 ring-slate-200 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-100 transition-all duration-300">4</div>
+                        <h3 class="text-xl font-bold text-brand-dark mb-3">Lihat Laporan</h3>
+                        <p class="text-slate-500 font-medium">Dapatkan grafik dan laporan terpadu untuk bahan evaluasi dan tindak lanjut.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Stats Banner -->
-    <section class="lp-section lp-container">
-        <div class="lp-stats-banner lp-reveal">
-            <div class="lp-stat-item">
-                <div class="lp-stat-num" data-count="500">0+</div>
-                <div class="lp-stat-text">Posyandu Terdaftar</div>
-            </div>
-            <div class="lp-stat-item">
-                <div class="lp-stat-num" data-count="10000">0+</div>
-                <div class="lp-stat-text">Pasien Terpantau</div>
-            </div>
-            <div class="lp-stat-item">
-                <div class="lp-stat-num" data-count="2000">0+</div>
-                <div class="lp-stat-text">Tenaga Kesehatan</div>
-            </div>
-            <div class="lp-stat-item">
-                <div class="lp-stat-num">99.9%</div>
-                <div class="lp-stat-text">Uptime Sistem</div>
+    <section class="py-24 bg-brand-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center divide-x divide-white/20">
+                <div class="px-4 hover:scale-105 transition-transform">
+                    <p class="text-5xl md:text-6xl font-extrabold mb-3 drop-shadow-sm">0+</p>
+                    <p class="text-teal-50 font-semibold text-lg tracking-wide">Posyandu Terdaftar</p>
+                </div>
+                <div class="px-4 hover:scale-105 transition-transform">
+                    <p class="text-5xl md:text-6xl font-extrabold mb-3 drop-shadow-sm">0+</p>
+                    <p class="text-teal-50 font-semibold text-lg tracking-wide">Pasien Terpantau</p>
+                </div>
+                <div class="px-4 hover:scale-105 transition-transform">
+                    <p class="text-5xl md:text-6xl font-extrabold mb-3 drop-shadow-sm">0+</p>
+                    <p class="text-teal-50 font-semibold text-lg tracking-wide">Tenaga Kesehatan</p>
+                </div>
+                <div class="px-4 hover:scale-105 transition-transform">
+                    <p class="text-5xl md:text-6xl font-extrabold mb-3 drop-shadow-sm">99.9%</p>
+                    <p class="text-teal-50 font-semibold text-lg tracking-wide">Uptime Sistem</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="lp-cta lp-container">
-        <div class="lp-cta-card lp-reveal">
-            <h2 class="lp-cta-title">Siap Digitalisasi Data KIA?</h2>
-            <p class="lp-cta-desc">
-                Bergabung dengan ratusan puskesmas dan posyandu yang sudah menggunakan SatuKIA
-                untuk pemantauan kesehatan ibu dan anak yang lebih baik.
-            </p>
-            <div class="lp-cta-actions">
-                @if (Route::has('login'))
-                    <a href="{{ route('login') }}" class="lp-btn lp-btn--white">Masuk Sekarang</a>
-                @endif
-                <a href="{{ route('login') }}?tab=register" class="lp-btn lp-btn--ghost-white">Daftar Gratis</a>
+    <section class="py-32 bg-slate-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-[3rem] p-12 md:p-20 text-center shadow-[0_20px_50px_-15px_rgba(13,148,136,0.15)] border border-teal-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-teal-50/80 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3"></div>
+                <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sky-50/80 rounded-full blur-3xl -z-10 -translate-x-1/3 translate-y-1/3"></div>
+                
+                <h2 class="text-4xl md:text-5xl font-extrabold text-brand-dark mb-6 tracking-tight">Siap Digitalisasi Data KIA?</h2>
+                <p class="text-xl text-slate-500 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+                    Bergabung dengan ratusan puskesmas dan posyandu yang sudah menggunakan SatuKIA untuk pemantauan kesehatan ibu dan anak yang lebih baik.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/register" class="inline-block bg-brand-teal hover:bg-brand-teal-light text-white font-bold px-10 py-5 rounded-full shadow-glow transition-all hover:-translate-y-1 text-lg">
+                        Daftar Puskesmas Baru
+                    </a>
+                    <a href="/login" class="inline-block bg-white hover:bg-slate-50 text-brand-teal border-2 border-teal-100 font-bold px-10 py-5 rounded-full shadow-sm transition-all hover:-translate-y-1 text-lg">
+                        Masuk ke Akun
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="lp-footer lp-container">
-        <span>&copy; {{ date('Y') }} SatuKIA — KB · Ibu Hamil · Bayi — Dari posyandu untuk generasi sehat <span class="lp-footer-heart">♥</span></span>
+    <footer class="bg-white border-t border-slate-200 py-16">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-brand-gradient rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        SK
+                    </div>
+                    <span class="text-2xl font-extrabold tracking-tight text-brand-dark">SatuKIA</span>
+                </div>
+                <div class="flex gap-8 text-sm font-semibold text-slate-500">
+                    <a href="#" class="hover:text-brand-teal transition-colors">Tentang Kami</a>
+                    <a href="#" class="hover:text-brand-teal transition-colors">Kebijakan Privasi</a>
+                    <a href="#" class="hover:text-brand-teal transition-colors">Syarat & Ketentuan</a>
+                    <a href="#" class="hover:text-brand-teal transition-colors">Bantuan</a>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 font-medium">
+                <p>&copy; {{ date('Y') }} SatuKIA. Hak Cipta Dilindungi.</p>
+                <p>Platform Monitoring Kesehatan Ibu & Anak Terpadu.</p>
+            </div>
+        </div>
     </footer>
-
-    <!-- Scripts -->
-    <script>
-        // Navbar scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 20);
-        });
-
-        // Intersection Observer for scroll animations
-        const reveals = document.querySelectorAll('.lp-reveal');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(el => observer.observe(el));
-
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector(link.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-        });
-    </script>
 </body>
 </html>
