@@ -159,7 +159,7 @@
     <div class="bg-white rounded-3xl shadow-sm border border-slate-100 mb-8 overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center">
             <div>
-                <h3 class="text-lg font-bold text-slate-800 mb-1">Inbox Laporan Periodik (Anak)</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">Inbox Laporan Periodik</h3>
                 <p class="text-sm text-slate-500">Daftar laporan rekapitulasi yang dikirimkan oleh Bidan Puskesmas/Posyandu.</p>
             </div>
         </div>
@@ -178,6 +178,7 @@
                             <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Tanggal Submit</th>
                             <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Asal Puskesmas</th>
                             <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Bidan Pengirim</th>
+                            <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Jenis Laporan</th>
                             <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Periode Laporan</th>
                             <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Status</th>
                             <th class="p-4 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">Aksi</th>
@@ -194,6 +195,15 @@
                                 </td>
                                 <td class="p-4 text-sm text-slate-600">
                                     {{ $lap->bidan->name ?? 'Bidan' }}
+                                </td>
+                                <td class="p-4">
+                                    @if($lap->jenis_laporan === 'KB')
+                                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs font-semibold">KB</span>
+                                    @elseif($lap->jenis_laporan === 'Ibu Hamil')
+                                        <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded-md text-xs font-semibold">Ibu Hamil</span>
+                                    @else
+                                        <span class="bg-teal-100 text-teal-700 px-2 py-1 rounded-md text-xs font-semibold">{{ $lap->jenis_laporan ?? 'KIA' }}</span>
+                                    @endif
                                 </td>
                                 <td class="p-4 text-sm text-slate-600">
                                     {{ \Carbon\Carbon::parse($lap->periode_awal)->format('d M Y') }} - {{ \Carbon\Carbon::parse($lap->periode_akhir)->format('d M Y') }}

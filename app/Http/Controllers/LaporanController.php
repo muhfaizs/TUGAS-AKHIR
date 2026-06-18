@@ -242,9 +242,15 @@ class LaporanController extends Controller
             $data = json_decode($data, true);
         }
 
-        $laporan = collect($data)->map(function ($item) {
-            return json_decode(json_encode($item));
-        });
+        // For KB and Ibu Hamil, keep the associative array structure
+        if (in_array($laporanDinkes->jenis_laporan, ['KB', 'Ibu Hamil'])) {
+            $laporan = json_decode(json_encode($data));
+        } else {
+            // For KIA (default), convert to a collection of visit objects
+            $laporan = collect($data)->map(function ($item) {
+                return json_decode(json_encode($item));
+            });
+        }
 
         return view('dashboard.dinkes.laporan_detail', compact('laporanDinkes', 'laporan'));
     }

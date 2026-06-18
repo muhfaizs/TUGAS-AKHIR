@@ -95,6 +95,88 @@
                     </table>
                 </div>
             </div>
+        @elseif($laporanDinkes->jenis_laporan === 'Ibu Hamil')
+            @php
+                $ihData = is_array($laporan) ? $laporan : (is_object($laporan) ? (array) $laporan : []);
+                $ihType = $ihData['type'] ?? 'bulanan';
+                $ihBulan = $ihData['bulan'] ?? '';
+                $ihTahun = $ihData['tahun'] ?? '';
+                $ihMetrics = isset($ihData['metrics']) ? (is_object($ihData['metrics']) ? (array) $ihData['metrics'] : $ihData['metrics']) : [];
+                $ihPasiens = isset($ihData['ibuHamils']) ? collect($ihData['ibuHamils'])->map(function($item) { return is_object($item) ? $item : json_decode(json_encode($item)); }) : collect();
+                $months = ['01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April','05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus','09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'];
+                $periodeLabel = $ihType == 'bulanan' ? 'Bulan '.($months[$ihBulan] ?? $ihBulan).' '.$ihTahun : 'Tahun '.$ihTahun;
+            @endphp
+            <div style="padding: 24px;">
+                <h4 style="font-weight: 700; color: #0F172A; margin-bottom: 16px; font-size: 15px;">Laporan Pemeriksaan ANC - {{ $periodeLabel }}</h4>
+
+                {{-- Summary Metrics --}}
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px;">
+                    @php
+                        $metricItems = [
+                            ['label' => 'K1 (Trimester 1)', 'key' => 'k1', 'color' => '#0D9488'],
+                            ['label' => 'Triple Eliminasi', 'key' => 'triple_eliminasi', 'color' => '#6366F1'],
+                            ['label' => 'Gizi Buruk (KEK)', 'key' => 'kek', 'color' => '#EA580C'],
+                            ['label' => 'Kasus Anemia', 'key' => 'anemia', 'color' => '#DC2626'],
+                            ['label' => 'Faktor Risiko', 'key' => 'faktor_risiko', 'color' => '#9333EA'],
+                            ['label' => 'Komplikasi', 'key' => 'komplikasi', 'color' => '#EC4899'],
+                            ['label' => 'Rujukan FKRTL', 'key' => 'rujukan', 'color' => '#D97706'],
+                            ['label' => 'TTD >= 90', 'key' => 'ttd_90', 'color' => '#059669'],
+                            ['label' => 'Kematian Ibu', 'key' => 'kematian', 'color' => '#334155'],
+                        ];
+                    @endphp
+                    @foreach($metricItems as $mi)
+                        <div style="background: #F8FAFC; border-radius: 12px; padding: 14px 16px; border: 1px solid rgba(15,23,42,0.06);">
+                            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em;">{{ $mi['label'] }}</div>
+                            <div style="font-size: 22px; font-weight: 800; color: {{ $mi['color'] }}; margin-top: 4px;">{{ $ihMetrics[$mi['key']] ?? 0 }}</div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Data Table --}}
+                <h4 style="font-weight: 700; color: #0F172A; margin-bottom: 16px; font-size: 15px;">Daftar Data Pasien</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 900px; text-align: left; border: 1px solid rgba(15,23,42,0.06);">
+                        <thead style="background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">
+                            <tr>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Nama Pasien</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Usia</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Usia Kehamilan</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Risiko</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Gravida</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Jml Pemeriksaan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($ihPasiens as $pasien)
+                            <tr style="border-bottom: 1px solid rgba(15,23,42,0.04);">
+                                <td style="padding: 12px;">
+                                    <div style="font-weight: 600; font-size: 14px; color: #0F172A;">{{ $pasien->nama_lengkap ?? '-' }}</div>
+                                    <div style="font-size: 12px; color: #64748B;">NIK: {{ $pasien->nik ?? '-' }}</div>
+                                </td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $pasien->umur ?? '-' }} thn</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $pasien->usia_kehamilan ?? '-' }} minggu</td>
+                                <td style="padding: 12px;">
+                                    @php $risiko = $pasien->status_risiko_kehamilan ?? 'Rendah'; @endphp
+                                    @if($risiko === 'Sangat Tinggi')
+                                        <span style="background: rgba(239,68,68,0.1); color: #DC2626; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">{{ $risiko }}</span>
+                                    @elseif($risiko === 'Tinggi')
+                                        <span style="background: rgba(244,63,94,0.1); color: #E11D48; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">{{ $risiko }}</span>
+                                    @else
+                                        <span style="background: rgba(16,185,129,0.1); color: #059669; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">{{ $risiko }}</span>
+                                    @endif
+                                </td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">G{{ $pasien->gravida ?? '-' }}P{{ $pasien->paritas ?? '-' }}A{{ $pasien->abortus ?? '-' }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $pasien->jumlah_pemeriksaan_anc ?? 0 }}x</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" style="padding: 24px; text-align: center; color: #64748B; font-size: 14px;">Tidak ada data pasien.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         @else
             @if(count($laporan) == 0)
                 <div style="text-align: center; padding: 48px 24px; color: #64748B;">
