@@ -17,12 +17,14 @@ class NotificationController extends Controller
     {
         $orangTua = $anak->orangTua;
 
-        if (! $orangTua) {
-            return back()->with('error', 'Data Orang Tua tidak ditemukan untuk anak ini.');
+        $contactNumber = $anak->nomor_kontak_darurat ?: ($orangTua ? $orangTua->phone : null);
+
+        if (! $contactNumber) {
+            return back()->with('error', 'Nomor kontak tidak ditemukan untuk anak ini.');
         }
 
         // WhatsApp Number Formatting (The "0 to 62" Fix)
-        $waNumber = preg_replace('/[^0-9]/', '', $orangTua->nomor_kontak);
+        $waNumber = preg_replace('/[^0-9]/', '', $contactNumber);
         if (str_starts_with($waNumber, '0')) {
             $waNumber = '62'.substr($waNumber, 1);
         } elseif (str_starts_with($waNumber, '+62')) {
@@ -48,20 +50,14 @@ class NotificationController extends Controller
 
         $waLink = "https://api.whatsapp.com/send?phone={$waNumber}&text=".urlencode($pesan);
 
-        // 1. Create In-App Notification
-        Notifikasi::create([
-            'id_user' => $orangTua->id_user,
-            'judul' => 'Laporan Hasil Pemeriksaan',
-            'pesan' => $pesan,
-            'wa_link' => $waLink,
-        ]);
-
-        // 2. Simulated Email with PDF Summary Attachment (Log)
-        if ($orangTua->email) {
-            Mail::raw("Terlampir ringkasan rekam medis untuk {$anak->nama_anak}.\n\n".$pesan, function ($message) use ($orangTua, $anak) {
-                $message->to($orangTua->email)
-                    ->subject('Dokumen PDF Laporan Hasil Pemeriksaan - '.$anak->nama_anak);
-            });
+        // 1. Create In-App Notification (If OrangTua exists)
+        if ($orangTua && $orangTua->id_user) {
+            Notifikasi::create([
+                'id_user' => $orangTua->id_user,
+                'judul' => 'Laporan Hasil Pemeriksaan',
+                'pesan' => $pesan,
+                'wa_link' => $waLink,
+            ]);
         }
 
         // 3. Redirect the Bidan to the WA Link
@@ -100,14 +96,6 @@ class NotificationController extends Controller
             'pesan' => $pesan,
         ]);
 
-        // 2. Simulated Email
-        if ($orangTua->email) {
-            Mail::raw("PEMBERITAHUAN PENTING\n\n".$pesan, function ($message) use ($orangTua, $anak) {
-                $message->to($orangTua->email)
-                    ->subject('Panggilan Puskesmas - '.$anak->nama_anak);
-            });
-        }
-
-        return back()->with('success', 'Notifikasi Panggilan Sistem dan Email berhasil dikirim ke Orang Tua.');
+        return back()->with('success', 'Notifikasi Panggilan Sistem berhasil dikirim ke Orang Tua.');
     }
 }

@@ -327,6 +327,7 @@
                                 <option value="">-- Pilih Identitas Anda --</option>
                                 <option value="ortu">Orang Tua Bayi/Balita</option>
                                 <option value="pasien_kb">Pasien Keluarga Berencana (KB)</option>
+                                <option value="ibu_hamil">Ibu Hamil</option>
                             </select>
                         </div>
                     </div>

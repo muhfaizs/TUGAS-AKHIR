@@ -8,7 +8,7 @@
     <!-- Welcome Banner -->
     <div class="bg-teal-700 rounded-3xl p-8 mb-8 text-white relative overflow-hidden shadow-lg">
         <div class="relative z-10">
-            <h2 class="text-2xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name ?? 'Administrator' }}! ðŸ‘‹</h2>
+            <h2 class="text-2xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name ?? 'Administrator' }}! 👋</h2>
             <p class="text-teal-100 max-w-2xl text-sm leading-relaxed">
                 Berikut adalah ringkasan data sistem monitoring layanan KIA dan KB. Pastikan semua data ter-update untuk pelaporan yang akurat.
             </p>
@@ -242,7 +242,7 @@
             </a>
 
 
-        @elseif(Auth::user()->isOrtu())
+        @elseif(Auth::user()->isIbuHamil())
             @if(isset($ibuHamil) && $ibuHamil)
                 <!-- Card 1: Usia Kehamilan -->
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden border-t-4 border-t-teal-400">
@@ -356,29 +356,7 @@
     </div>
 
     @if(Auth::user()->isBidanOnly())
-        @if(isset($kbTerlambatKontrol) && $kbTerlambatKontrol > 0)
-        <!-- Alert Box: Terlambat Kontrol KB -->
-        <div class="bg-orange-50 rounded-xl p-6 mt-4 mb-4 border border-orange-200" id="kb-terlambat-section">
-            <h4 class="text-lg font-bold text-orange-800 flex items-center gap-2 mb-4">
-                <svg viewBox="0 0 24 24" class="w-5 h-5 fill-orange-600"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                {{ $kbTerlambatKontrol }} Akseptor Terlambat Kontrol
-            </h4>
-            <div class="space-y-3">
-                @foreach($kbTerlambatKontrolList->take(3) as $acceptor)
-                <div class="flex justify-between items-center text-sm">
-                    <div class="font-medium text-orange-900">{{ $acceptor->full_name }} <span class="text-orange-700">({{ $acceptor->kbServices->first()->service_method ?? '-' }})</span></div>
-                    <div class="text-orange-700">Jadwal: {{ \Carbon\Carbon::parse($acceptor->kbServices->first()->follow_up_date)->translatedFormat('d M Y') }}</div>
-                </div>
-                <hr class="border-orange-200">
-                @endforeach
-            </div>
-            <div class="mt-4">
-                <a href="{{ route('kb-services.jadwal-kontrol') }}" class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors shadow-sm">
-                    Lihat Detail
-                </a>
-            </div>
-        </div>
-        @endif
+        <!-- Alert Box KB removed and replaced with a table below -->
 
         <!-- Pasien Prioritas / Berisiko Table -->
         <div style="background: #fff; border-radius: 20px; box-shadow: 0 4px 20px rgba(13,148,136,0.04); border: 1px solid rgba(15,23,42,0.06); overflow: hidden; margin-top: 24px; margin-bottom: 32px;" id="pasien-prioritas-section">
@@ -473,7 +451,7 @@
                                                 Riwayat
                                             </a>
 
-                                            @if($anak->orangTua && $anak->orangTua->phone)
+                                            @if(($anak->nomor_kontak_darurat) || ($anak->orangTua && $anak->orangTua->phone))
                                                 <!-- Panggilan Sistem -->
                                                 <form action="{{ route('bidan.anak.send-system', $anak->id_anak) }}" method="POST" style="display:inline;" title="Kirim notifikasi panggilan via Sistem">
                                                     @csrf
@@ -488,7 +466,7 @@
                                                     @csrf
                                                     <button type="submit" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(34,197,94,0.1); color: #16A34A; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(34,197,94,0.2)';" onmouseout="this.style.background='rgba(34,197,94,0.1)';">
                                                         <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                                                        Kirim WA
+                                                        Kirim Notif WA
                                                     </button>
                                                 </form>
                                             @endif
@@ -587,7 +565,90 @@
             </div>
         </div>
         @endif
-    @elseif(Auth::user()->isOrtu() && isset($ibuHamil) && $ibuHamil)
+
+        <!-- Akseptor KB Terlambat Kontrol Table -->
+        <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 mt-8 mb-8 relative overflow-hidden" id="kb-terlambat-section">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Akseptor KB Terlambat Kontrol / Prioritas</h3>
+                    <p class="text-sm text-slate-500">Pasien KB yang melewati jadwal tindak lanjut pelayanannya</p>
+                </div>
+                <div class="ml-auto">
+                    <span class="bg-orange-50 text-orange-600 py-1 px-3 rounded-full text-xs font-bold">{{ isset($kbTerlambatKontrolList) ? $kbTerlambatKontrolList->count() : 0 }} Pasien</span>
+                </div>
+            </div>
+
+            @if(!isset($kbTerlambatKontrolList) || $kbTerlambatKontrolList->isEmpty())
+                <div class="text-center py-12 text-slate-500">
+                    <svg viewBox="0 0 24 24" class="w-12 h-12 fill-slate-300 mx-auto mb-3 block"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <p class="text-[15px] font-semibold mb-1 text-slate-700">Tidak Ada Pasien KB Terlambat Kontrol</p>
+                    <p class="text-[13px] m-0">Semua akseptor KB masih dalam batas jadwal kontrol yang aman.</p>
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="pb-4 font-bold text-slate-500 text-xs tracking-wider uppercase border-b border-slate-100">NAMA AKSEPTOR</th>
+                                <th class="pb-4 font-bold text-slate-500 text-xs tracking-wider uppercase border-b border-slate-100">METODE KB</th>
+                                <th class="pb-4 font-bold text-slate-500 text-xs tracking-wider uppercase border-b border-slate-100">JADWAL KONTROL</th>
+                                <th class="pb-4 font-bold text-slate-500 text-xs tracking-wider uppercase border-b border-slate-100">STATUS</th>
+                                <th class="pb-4 font-bold text-slate-500 text-xs tracking-wider uppercase border-b border-slate-100 text-right">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            @foreach($kbTerlambatKontrolList->take(10) as $acceptor)
+                            @php
+                                $latestService = $acceptor->kbServices->first();
+                                $daysOverdue = $latestService && $latestService->follow_up_date ? \Carbon\Carbon::parse($latestService->follow_up_date)->diffInDays(now()) : 0;
+                            @endphp
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="py-4 border-b border-slate-50">
+                                    <a href="{{ route('kb-acceptors.show', $acceptor->id) }}" class="flex items-center gap-3 group/profile hover:opacity-80 transition-opacity">
+                                        <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold">
+                                            {{ substr($acceptor->full_name, 0, 2) }}
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-slate-800 group-hover/profile:text-teal-600 transition-colors">{{ $acceptor->full_name }}</p>
+                                            <p class="text-xs text-slate-500">NIK: {{ $acceptor->nik ?? '-' }}</p>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="py-4 border-b border-slate-50 text-slate-600 font-medium">
+                                    {{ $latestService->service_method ?? '-' }}
+                                </td>
+                                <td class="py-4 border-b border-slate-50 text-slate-600">
+                                    {{ $latestService && $latestService->follow_up_date ? \Carbon\Carbon::parse($latestService->follow_up_date)->translatedFormat('d M Y') : '-' }}
+                                </td>
+                                <td class="py-4 border-b border-slate-50">
+                                    <span class="px-2.5 py-1 bg-orange-100 text-orange-700 rounded-md text-xs font-bold inline-flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                        Terlambat {{ floor($daysOverdue) }} Hari
+                                    </span>
+                                </td>
+                                <td class="py-4 border-b border-slate-50 text-right">
+                                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <a href="{{ route('kb-acceptors.show', $acceptor->id) }}" class="p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors" title="Lihat Riwayat">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    @elseif(Auth::user()->isIbuHamil() && isset($ibuHamil) && $ibuHamil)
         <!-- Download PDF Rekap -->
         <div class="flex justify-between items-center mt-10 mb-6">
             <div>
@@ -595,7 +656,7 @@
                 <p class="text-slate-500 font-medium text-sm mt-1">Pantau perkembangan TFU, DJJ, dan Berat Badan Ibu dari waktu ke waktu.</p>
             </div>
             @if(isset($ibuHamil) && $ibuHamil && $ibuHamil->pemeriksaanAncs && $ibuHamil->pemeriksaanAncs->count() > 0)
-            <a href="{{ route('ortu.download-rekap') }}" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-teal-600/30 transition-all active:scale-95 group">
+            <a href="{{ route('ibu-hamil.cetak-rekap', $ibuHamil->id) }}" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-teal-600/30 transition-all active:scale-95 group" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
@@ -634,7 +695,25 @@
 @endsection
 
 @push('scripts')
-@if(Auth::user()->isOrtu() && isset($ibuHamil) && $ibuHamil && $ibuHamil->pemeriksaanAncs->count() > 0)
+@if(Auth::user()->isIbuHamil() && isset($ibuHamil) && $ibuHamil && $ibuHamil->pemeriksaanAncs->count() > 0)
+@php
+    $ancData = $ibuHamil->pemeriksaanAncs->sortBy('tanggal_pemeriksaan')->values();
+    $labels = $ancData->map(function($item) {
+        return $item->tanggal_pemeriksaan->format('d M y');
+    })->toJson();
+    
+    $dataTfu = $ancData->map(function($item) {
+        return $item->tinggi_fundus_uteri ?: 0;
+    })->toJson();
+    
+    $dataDjj = $ancData->map(function($item) {
+        return $item->denyut_jantung_janin ?: 0;
+    })->toJson();
+
+    $dataBb = $ancData->map(function($item) {
+        return $item->berat_badan ?: 0;
+    })->toJson();
+@endphp
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

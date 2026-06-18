@@ -48,7 +48,7 @@
                             <a href="{{ route('bidan.imunisasi.pdf', $i) }}" class="btn-icon" style="color: #6366F1;" title="Cetak/Download PDF" onmouseover="this.style.background='rgba(99,102,241,0.1)';" onmouseout="this.style.background='none';">
                                 <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
                             </a>
-                            @if($i->anak && $i->anak->orangTua && $i->anak->orangTua->phone)
+                            @if(($i->anak && $i->anak->nomor_kontak_darurat) || ($i->anak && $i->anak->orangTua && $i->anak->orangTua->phone))
                             <form method="POST" action="{{ route('bidan.anak.send-notification', $i->anak->id_anak) }}" class="inline-form" target="_blank">
                                 @csrf
                                 <button type="submit" class="btn-icon" style="color: #16A34A;" title="Kirim Hasil via WhatsApp" onmouseover="this.style.background='rgba(34,197,94,0.1)';" onmouseout="this.style.background='none';">

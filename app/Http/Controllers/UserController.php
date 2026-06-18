@@ -39,7 +39,9 @@ class UserController extends Controller
                 'Dinas Kesehatan' => 'dinas_kesehatan',
                 'Kader' => 'kader',
                 'Pasien' => 'patient',
-                'Super Admin' => 'super_admin'
+                'Super Admin' => 'super_admin',
+                'Ibu Hamil' => 'ibu_hamil',
+                'Pasien KB' => 'pasien_kb'
             ];
             
             $role = $roleMapping[$request->role] ?? $request->role;

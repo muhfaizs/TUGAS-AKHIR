@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Tambah Data Ibu Hamil - SatuKIA')
 @section('page_title', 'Registrasi Ibu Hamil')
@@ -98,7 +98,7 @@
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Pekerjaan</label>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Pekerjaan Ibu Hamil</label>
                             <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-teal-500 focus:border-teal-500 bg-slate-50 focus:bg-white transition-colors">
                         </div>
                         <div>

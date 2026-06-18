@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Data Ibu Hamil - SatuKIA')
 @section('page_title', 'Data Ibu Hamil')
@@ -21,6 +21,29 @@
         </div>
 
         <div class="p-6 md:p-8 pt-4">
+            <!-- Form Pencarian -->
+            <form action="{{ route('ibu-hamil.index') }}" method="GET" class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex w-full md:w-auto gap-2">
+                    <div class="relative w-full md:w-80">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari berdasarkan Nama atau NIK pasien..." class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-teal-500 focus:border-teal-500 bg-slate-50">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    @if(request('search'))
+                        <a href="{{ route('ibu-hamil.index') }}" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1" title="Reset Pencarian">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Reset
+                        </a>
+                    @endif
+                </div>
+                <button type="submit" class="hidden">Cari</button>
+            </form>
+
             <table id="ibuhamil-table" class="w-full text-left border-collapse">
                 <thead>
                     <tr>
@@ -33,7 +56,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @foreach($ibuHamils as $pasien)
+                    @forelse($ibuHamils as $pasien)
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <td class="py-4 border-b border-slate-50">
                             <a href="{{ route('ibu-hamil.show', $pasien->id) }}" class="flex items-center gap-4 group/profile hover:opacity-80 transition-opacity">
@@ -74,7 +97,7 @@
                             </div>
                         </td>
                         <td class="py-4 border-b border-slate-50 text-right">
-                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="flex items-center justify-end gap-2 transition-opacity">
                                 <a href="{{ route('ibu-hamil.show', $pasien->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 rounded-md transition-colors">
                                     Lihat Detail
                                 </a>
@@ -93,7 +116,19 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="6" class="py-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <svg class="w-16 h-16 text-slate-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <h3 class="text-lg font-bold text-slate-700 mb-1">Data Tidak Tersedia</h3>
+                                <p class="text-slate-500 text-sm">Tidak ada profil pasien yang cocok dengan pencarian Anda.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -101,67 +136,15 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const table = new simpleDatatables.DataTable("#ibuhamil-table", {
-            searchable: true,
-            fixedHeight: true,
-            perPage: 10,
-            labels: {
-                placeholder: "Cari berdasarkan Nama atau NIK pasien...",
-                perPage: "Data per halaman",
-                noRows: "Tidak ada profil pasien yang ditemukan",
-                info: "Menampilkan {start} - {end} dari {rows} pasien",
-            }
-        });
-        
-        // Custom styling for Simple DataTables elements to match Tailwind
-        const wrapper = document.querySelector('.dataTable-wrapper');
-        if(wrapper) {
-            const input = wrapper.querySelector('.dataTable-input');
-            if(input) {
-                input.classList.add('px-4', 'py-2.5', 'border', 'border-slate-200', 'rounded-xl', 'text-sm', 'focus:ring-teal-500', 'focus:border-teal-500', 'bg-slate-50', 'w-80');
-            }
-            
-            const selector = wrapper.querySelector('.dataTable-selector');
-            if(selector) {
-                selector.classList.add('px-3', 'py-2', 'border', 'border-slate-200', 'rounded-lg', 'text-sm', 'bg-white', 'mr-2');
-            }
-            
-            const search = wrapper.querySelector('.dataTable-search');
-            if(search) {
-                search.classList.add('mb-4');
-            }
-            
-            const top = wrapper.querySelector('.dataTable-top');
-            if(top) {
-                top.classList.add('flex', 'flex-col', 'md:flex-row', 'justify-between', 'items-start', 'md:items-center', 'mb-6');
-            }
-        }
-    });
-</script>
 <style>
-    /* Additional overrides for Simple-DataTables */
-    .dataTable-table > thead > tr > th {
-        border-bottom: 1px solid #f1f5f9 !important;
-        padding-bottom: 1rem;
-    }
-    .dataTable-pagination a {
+    /* Pagination link styling for server-side pagination if needed */
+    .pagination a {
         border-radius: 0.5rem;
         padding: 0.5rem 0.75rem;
         margin: 0 0.125rem;
         font-size: 0.875rem;
         color: #64748b;
         transition: all 0.2s;
-    }
-    .dataTable-pagination a:hover {
-        background-color: #f1f5f9;
-        color: #0f172a;
-    }
-    .dataTable-pagination .active a,
-    .dataTable-pagination .active a:hover {
-        background-color: #0d9488;
-        color: white;
     }
 </style>
 @endpush

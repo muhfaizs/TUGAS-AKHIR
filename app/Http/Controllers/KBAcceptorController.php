@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class KBAcceptorController extends Controller
 {
@@ -89,6 +91,7 @@ class KBAcceptorController extends Controller
             'health_history' => 'nullable|string',
             'bmi' => 'nullable|numeric',
             'allergies' => 'nullable|string',
+            'password' => 'required|string|min:8|confirmed',
         ], [
             'nik.unique' => 'NIK sudah terdaftar.'
         ]);
@@ -114,6 +117,33 @@ class KBAcceptorController extends Controller
             $validated['photo_profile_path'] = $request->file('photo_profile_path')
                 ->store('kb-acceptors/profiles', 'public');
         }
+
+        // Cek apakah user dengan NIK ini sudah ada
+        $user = User::where('nik', $validated['nik'])->first();
+        
+        if (!$user) {
+            // Buat User Akun Pasien baru
+            $user = User::create([
+                'name' => $validated['full_name'],
+                'email' => $validated['email'],
+                'phone' => $validated['phone'],
+                'nik' => $validated['nik'],
+                'password' => Hash::make($validated['password']),
+                'role' => 'pasien_kb',
+                'status' => 'active',
+                'puskesmas_id' => $validated['puskesmas_id'],
+            ]);
+        } else {
+            // Jika user sudah ada (misal dia juga Ibu Hamil / Ortu),
+            // update passwordnya jika diisi (opsional) atau gunakan user id tersebut
+            $user->update([
+                'password' => Hash::make($validated['password'])
+            ]);
+        }
+
+        $validated['user_id'] = $user->id;
+        unset($validated['password']);
+        unset($validated['password_confirmation']);
 
         $acceptor = KBAcceptor::create($validated);
 

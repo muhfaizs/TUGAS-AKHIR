@@ -51,7 +51,7 @@
                 <!-- NIP -->
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-2">NIP (Nomor Induk Pegawai)</label>
-                    <input type="text" name="nip" value="{{ old('nip', $user->nip) }}" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-teal-500 focus:border-teal-500 bg-slate-50 focus:bg-white transition-colors" maxlength="18" minlength="18" pattern="[0-9]{18}" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="18 Digit NIP">
+                    <input type="text" name="nip" value="{{ old('nip', $user->nip) }}" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-teal-500 focus:border-teal-500 bg-slate-50 focus:bg-white transition-colors" maxlength="16" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Maksimal 16 Digit Angka">
                 </div>
                 @else
                 <!-- NIK -->
@@ -72,6 +72,21 @@
                     <label class="block text-sm font-bold text-slate-700 mb-2">Alamat Email</label>
                     <input type="email" name="email" value="{{ old('email', $user->email) }}" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-teal-500 focus:border-teal-500 bg-slate-50 focus:bg-white transition-colors" required>
                 </div>
+
+                @if(Auth::user()->isKader())
+                <!-- Lokasi Tugas Kerja -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Lokasi Tugas Kerja (Posyandu)</label>
+                    <select name="posyandu_id" class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-teal-500 focus:border-teal-500 bg-slate-50 focus:bg-white transition-colors" required>
+                        <option value="">-- Pilih Posyandu Tempat Anda Bertugas --</option>
+                        @foreach($posyandus as $posyandu)
+                            <option value="{{ $posyandu->id }}" {{ old('posyandu_id', $user->posyandu_id) == $posyandu->id ? 'selected' : '' }}>
+                                {{ $posyandu->nama_posyandu }} {{ $posyandu->puskesmas ? ' - ' . $posyandu->puskesmas->nama_puskesmas : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
             </div>
 
                 <div class="pt-4 mt-6 border-t border-slate-100">

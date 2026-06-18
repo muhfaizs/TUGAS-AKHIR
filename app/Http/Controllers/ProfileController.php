@@ -11,8 +11,11 @@ class ProfileController extends Controller
 {
     public function edit()
     {
+        $posyandus = \App\Models\Posyandu::all();
+        
         return view('profile.edit', [
             'user' => Auth::user(),
+            'posyandus' => $posyandus,
         ]);
     }
 
@@ -29,9 +32,13 @@ class ProfileController extends Controller
         ];
 
         if ($user->isSuperAdmin() || $user->isBidanOnly() || $user->isDinkes()) {
-            $rules['nip'] = ['nullable', 'string', 'size:18', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($user->id)];
+            $rules['nip'] = ['nullable', 'string', 'max:16', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($user->id)];
         } else {
             $rules['nik'] = ['nullable', 'string', 'size:16', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($user->id)];
+        }
+
+        if ($user->isKader()) {
+            $rules['posyandu_id'] = ['nullable', 'exists:posyandus,id'];
         }
 
         $request->validate($rules);
@@ -44,6 +51,10 @@ class ProfileController extends Controller
             $user->nip = $request->nip;
         } else {
             $user->nik = $request->nik;
+        }
+
+        if ($user->isKader() && $request->has('posyandu_id')) {
+            $user->posyandu_id = $request->posyandu_id;
         }
 
         if ($request->filled('password')) {

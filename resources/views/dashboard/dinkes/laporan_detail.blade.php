@@ -16,14 +16,24 @@
         <div style="padding: 24px 28px; border-bottom: 1px solid rgba(15,23,42,0.06); display: flex; align-items: center; justify-content: space-between;">
             <div>
                 <h3 style="font-size: 16px; font-weight: 700; color: #0F172A; margin: 0;">Data Laporan Rekapitulasi</h3>
-                <p style="font-size: 13px; color: #64748B; margin: 2px 0 0;">Pengirim: {{ $laporanDinkes->bidan->nama_lengkap ?? '-' }} | Total: {{ count($laporan) }} data | Disubmit pada: {{ $laporanDinkes->created_at->translatedFormat('d M Y, H:i') }}</p>
+                @php
+                    $totalData = 0;
+                    if ($laporanDinkes->jenis_laporan === 'KB') {
+                        $totalData = isset($laporan->detailLayanan) ? count((array)$laporan->detailLayanan) : (isset($laporan['detailLayanan']) ? count($laporan['detailLayanan']) : 0);
+                    } elseif ($laporanDinkes->jenis_laporan === 'Ibu Hamil') {
+                        $totalData = isset($laporan->ibuHamils) ? count((array)$laporan->ibuHamils) : (isset($laporan['ibuHamils']) ? count($laporan['ibuHamils']) : 0);
+                    } else {
+                        $totalData = is_array($laporan) || $laporan instanceof \Countable ? count($laporan) : 0;
+                    }
+                @endphp
+                <p style="font-size: 13px; color: #64748B; margin: 2px 0 0;">Pengirim: {{ $laporanDinkes->bidan->nama_lengkap ?? '-' }} | Total: {{ $totalData }} data | Disubmit pada: {{ $laporanDinkes->created_at->translatedFormat('d M Y, H:i') }}</p>
             </div>
         </div>
 
         @if($laporanDinkes->jenis_laporan === 'KB')
             @php
-                $kbData = isset($laporan['laporanData']) ? $laporan['laporanData'] : [];
-                $kbDetail = isset($laporan['detailLayanan']) ? $laporan['detailLayanan'] : [];
+                $kbData = isset($laporan->laporanData) ? $laporan->laporanData : [];
+                $kbDetail = isset($laporan->detailLayanan) ? $laporan->detailLayanan : [];
                 $totalBaru = 0;
                 $totalAktif = 0;
                 foreach($kbData as $k) {
@@ -32,7 +42,7 @@
                 }
             @endphp
             <div style="padding: 24px;">
-                <h4 style="font-weight: 700; color: #0F172A; margin-bottom: 16px; font-size: 15px;">Rekapitulasi Pelayanan KB (Bulan {{ isset($laporan['bulan']) ? \Carbon\Carbon::create()->month((int) $laporan['bulan'])->translatedFormat('F') : '' }} {{ $laporan['tahun'] ?? '' }})</h4>
+                <h4 style="font-weight: 700; color: #0F172A; margin-bottom: 16px; font-size: 15px;">Rekapitulasi Pelayanan KB (Bulan {{ isset($laporan->bulan) ? \Carbon\Carbon::create()->month((int) $laporan->bulan)->translatedFormat('F') : '' }} {{ $laporan->tahun ?? '' }})</h4>
                 <div style="overflow-x: auto; margin-bottom: 32px;">
                     <table style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: center; border: 1px solid rgba(15,23,42,0.06);">
                         <thead style="background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">

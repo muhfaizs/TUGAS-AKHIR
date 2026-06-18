@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Anak;
 use App\Models\IbuHamil;
 use App\Models\JadwalPosyandu;
+use App\Models\KbAcceptor;
+use App\Models\KBService;
 use App\Models\Notifikasi;
 use App\Models\Pengukuran;
+use App\Models\TbLaporanDinkes;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -71,20 +74,21 @@ class DashboardController extends Controller
                 ->get();
 
             // Data KB
-            $kbTotalAkseptorAktif = \App\Models\KbAcceptor::where('status', 'active')->count();
-            $kbPelayananHariIni = \App\Models\KBService::whereDate('service_date', now()->toDateString())->count();
-            $kbJadwalKontrolHariIni = \App\Models\KBService::whereDate('follow_up_date', now()->toDateString())->count();
-            
-            $kbTerlambatKontrolList = \App\Models\KbAcceptor::where('status', 'active')
-                ->whereHas('kbServices', function($q) {
+            $kbTotalAkseptorAktif = KbAcceptor::where('status', 'active')->count();
+            $kbPelayananHariIni = KBService::whereDate('service_date', now()->toDateString())->count();
+            $kbJadwalKontrolHariIni = KBService::whereDate('follow_up_date', now()->toDateString())->count();
+
+            $kbTerlambatKontrolList = KbAcceptor::where('status', 'active')
+                ->whereHas('kbServices', function ($q) {
                     $q->whereDate('follow_up_date', '<', now()->toDateString());
                 })
-                ->with(['kbServices' => function($q) {
+                ->with(['kbServices' => function ($q) {
                     $q->orderBy('service_date', 'desc')->limit(1);
                 }])
                 ->get()
-                ->filter(function($acceptor) {
+                ->filter(function ($acceptor) {
                     $latestService = $acceptor->kbServices->first();
+
                     return $latestService && $latestService->follow_up_date && $latestService->follow_up_date < now()->toDateString();
                 });
             $kbTerlambatKontrol = $kbTerlambatKontrolList->count();
@@ -93,15 +97,15 @@ class DashboardController extends Controller
             $kbChartData = [];
             for ($i = 5; $i >= 0; $i--) {
                 $month = now()->subMonths($i);
-                $count = \App\Models\KBService::whereMonth('service_date', $month->month)
-                            ->whereYear('service_date', $month->year)->count();
+                $count = KBService::whereMonth('service_date', $month->month)
+                    ->whereYear('service_date', $month->year)->count();
                 $kbChartData['labels'][] = $month->translatedFormat('M');
                 $kbChartData['data'][] = $count;
             }
 
             // Distribusi Metode KB
-            $kbMethodDistribution = \App\Models\KBService::selectRaw('service_method, count(*) as count')
-                                        ->groupBy('service_method')->pluck('count', 'service_method')->toArray();
+            $kbMethodDistribution = KBService::selectRaw('service_method, count(*) as count')
+                ->groupBy('service_method')->pluck('count', 'service_method')->toArray();
 
             return view('dashboard', compact(
                 'totalPasien', 'pasienAktif', 'pasienRisikoTinggi', 'ibuHamilMeninggal', 'ibuHamilMeninggalList', 'pasienPrioritasList',
@@ -134,9 +138,9 @@ class DashboardController extends Controller
                     $query->where('flag_risiko', 1);
                 })
                 ->get();
-                
+
             // Data KB
-            $totalAkseptor = \App\Models\KbAcceptor::count();
+            $totalAkseptor = KbAcceptor::count();
 
             return view('dashboard.kader.index', compact('totalAnak', 'anakBerisiko', 'jadwalTerdekat', 'pasienPrioritas', 'totalAkseptor'));
         }
@@ -160,14 +164,14 @@ class DashboardController extends Controller
             $persentaseImunisasi = $totalAnak > 0 ? round(($anakDiimunisasi / $totalAnak) * 100, 1) : 0;
 
             // Data KB
-            $totalAkseptor = \App\Models\KbAcceptor::count();
-            $akseptorAktif = \App\Models\KbAcceptor::where('status', 'active')->count();
-            $kbPending = \App\Models\KbAcceptor::where('status', 'pending')->count();
+            $totalAkseptor = KbAcceptor::count();
+            $akseptorAktif = KbAcceptor::where('status', 'active')->count();
+            $kbPending = KbAcceptor::where('status', 'pending')->count();
             $kbInactive = $totalAkseptor - $akseptorAktif - $kbPending;
             $anakNormal = $totalAnak - $anakBerisiko;
 
             // Laporan dari Bidan
-            $laporanDinkes = \App\Models\TbLaporanDinkes::with('bidan')->latest()->take(5)->get();
+            $laporanDinkes = TbLaporanDinkes::with('bidan')->latest()->take(5)->get();
 
             return view('dinkes.dashboard', compact(
                 'totalIbuHamil', 'ibuHamilBerisiko', 'risikoRendah', 'risikoTinggi', 'risikoSangatTinggi', 'ibuHamilMeninggal', 'ibuHamilMeninggalList',
@@ -243,7 +247,7 @@ class DashboardController extends Controller
                     foreach ($missingVaksinInMonth as $vaksin) {
                         $tanggalJadwal = $tanggalLahir->copy()->addMonths($lowestMissingMonth);
                         $selisihHari = now()->diffInDays($tanggalJadwal, false);
-                        
+
                         $pengingatList[] = [
                             'vaksin' => $vaksin,
                             'tanggal' => $tanggalJadwal->format('d M Y'),
@@ -263,16 +267,26 @@ class DashboardController extends Controller
 
         // Pasien KB dashboard
         if ($user->isPasienKb()) {
-            $acceptor = \App\Models\KbAcceptor::where('nik', $user->nik)->first();
-            
+            $acceptor = KbAcceptor::where('nik', $user->nik)->first();
+
             // if we found acceptor but user_id is null, link it
-            if ($acceptor && !$acceptor->user_id) {
+            if ($acceptor && ! $acceptor->user_id) {
                 $acceptor->user_id = $user->id;
                 $acceptor->save();
             }
 
-            $services = $acceptor ? $acceptor->services()->orderBy('created_at', 'desc')->get() : collect();
+            $services = $acceptor ? $acceptor->kbServices()->orderBy('created_at', 'desc')->get() : collect();
+
             return view('dashboard.pasien_kb.index', compact('acceptor', 'services'));
+        }
+
+        // Ibu Hamil dashboard
+        if ($user->isIbuHamil()) {
+            $ibuHamil = IbuHamil::with(['pemeriksaanAncs' => function ($query) {
+                $query->orderBy('tanggal_pemeriksaan', 'desc');
+            }])->where('nik', $user->nik)->first();
+
+            return view('dashboard', compact('ibuHamil'));
         }
 
         // Default fallback (just in case)

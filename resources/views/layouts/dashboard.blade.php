@@ -186,10 +186,34 @@
                         <svg viewBox="0 0 24 24"><path d="M13 2v8h8c0-4.42-3.58-8-8-8zm6.32 13.89C20.37 14.54 21 12.84 21 11H6.44l-.95-2H2v2h2.22s1.89 4.07 2.12 4.42C5.24 16.01 4.5 17.17 4.5 18.5 4.5 20.43 6.07 22 8 22c1.76 0 3.22-1.3 3.46-3h2.08c.24 1.7 1.7 3 3.46 3 1.93 0 3.5-1.57 3.5-3.5 0-1.04-.46-1.97-1.18-2.61zM8 20c-.83 0-1.5-.67-1.5-1.5S7.17 17 8 17s1.5.67 1.5 1.5S8.83 20 8 20zm9 0c-.83 0-1.5-.67-1.5-1.5S16.17 17 17 17s1.5.67 1.5 1.5S17.83 20 17 20z"/></svg>
                         Data Anak
                     </a>
+                @endif
 
-                    <a href="{{ route('ortu.pemeriksaan') }}" class="sidebar-link {{ request()->routeIs('ortu.pemeriksaan*') ? 'sidebar-link--active' : '' }}" id="nav-ot-pemeriksaan">
+                @if (auth()->user()->isIbuHamil())
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-ih-dashboard">
+                        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                        Dashboard
+                    </a>
+
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-ih-profile">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Profil Saya
+                    </a>
+
+                    <a href="{{ route('ortu.pemeriksaan') }}" class="sidebar-link {{ request()->routeIs('ortu.pemeriksaan*') ? 'sidebar-link--active' : '' }}" id="nav-ih-pemeriksaan">
                         <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
                         Riwayat Kehamilan (ANC)
+                    </a>
+                @endif
+
+                @if (auth()->user()->isPasienKb())
+                    <div class="sidebar-heading">MENU UTAMA</div>
+                    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'sidebar-link--active' : '' }}" id="nav-pkb-dashboard">
+                        <svg viewBox="0 0 24 24"><path d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"/></svg>
+                        Pasien
+                    </a>
+                    <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-pkb-profile">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Profil Saya
                     </a>
                 @endif
 
@@ -290,7 +314,7 @@
                         </div>
                         <div class="topbar-user-info">
                             <span class="topbar-user-name">{{ auth()->user()->name }}</span>
-                            <span class="topbar-user-role">{{ auth()->user()->role === 'dinkes' ? 'Dinas Kesehatan' : (auth()->user()->role === 'ortu' ? 'Orang Tua' : ucwords(str_replace('_', ' ', auth()->user()->role))) }}</span>
+                            <span class="topbar-user-role">{{ auth()->user()->role === 'dinkes' ? 'Dinas Kesehatan' : (auth()->user()->role === 'ortu' ? 'Orang Tua' : (auth()->user()->role === 'ibu_hamil' ? 'Ibu Hamil' : ucwords(str_replace('_', ' ', auth()->user()->role)))) }}</span>
                         </div>
                     </div>
                 </div>

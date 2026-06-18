@@ -234,6 +234,24 @@
                 </div>
             </div>
 
+            <!-- Akun Login Pasien -->
+            <div class="form-section-title">Akun Login Pasien</div>
+            <p style="font-size: 13px; color: #6b7280; margin-top: -16px; margin-bottom: 20px;">
+                Buatkan password agar pasien dapat login ke dalam sistem menggunakan NIK dan Password ini.
+            </p>
+
+            <div class="form-grid-2">
+                <div class="f-group">
+                    <label>Password Login *</label>
+                    <input type="password" name="password" class="f-input" required minlength="8">
+                    @error('password')<div class="f-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="f-group">
+                    <label>Verifikasi Password *</label>
+                    <input type="password" name="password_confirmation" class="f-input" required minlength="8">
+                </div>
+            </div>
+
             <!-- Informasi Kesehatan -->
             <div class="form-section-title">Informasi Kesehatan</div>
 
