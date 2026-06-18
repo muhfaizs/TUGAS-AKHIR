@@ -98,19 +98,34 @@
                         Manajemen Rujukan
                     </a>
 
-                    <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-acceptors">
+                    <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.index', 'kb-acceptors.show', 'kb-acceptors.create', 'kb-acceptors.edit') ? 'sidebar-link--active' : '' }}" id="nav-kb-acceptors">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                        Akseptor KB
+                        Data Pasien KB
                     </a>
 
-                    <a href="{{ route('kb-services.index') }}" class="sidebar-link {{ request()->routeIs('kb-services.*') ? 'sidebar-link--active' : '' }}" id="nav-kb-services">
+                    <a href="{{ route('kb-services.create') }}" class="sidebar-link {{ request()->routeIs('kb-services.create') ? 'sidebar-link--active' : '' }}" id="nav-kb-services-create">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                        Input Pelayanan KB
+                    </a>
+
+                    <a href="{{ route('kb-services.index') }}" class="sidebar-link {{ request()->routeIs('kb-services.index', 'kb-services.show', 'kb-services.edit') ? 'sidebar-link--active' : '' }}" id="nav-kb-services">
                         <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                        Pelayanan KB
+                        Riwayat Pelayanan KB
                     </a>
 
-                    <a href="{{ route('bidan.laporan-bulanan') }}" class="sidebar-link {{ request()->routeIs('bidan.laporan-*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-ibu-hamil">
+                    <a href="{{ route('kb-services.jadwal-kontrol') }}" class="sidebar-link {{ request()->routeIs('kb-services.jadwal-kontrol') ? 'sidebar-link--active' : '' }}" id="nav-kb-jadwal-kontrol">
+                        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>
+                        Jadwal Kontrol KB
+                    </a>
+
+                    <a href="{{ route('bidan.laporan-bulanan') }}" class="sidebar-link {{ request()->routeIs('bidan.laporan-bulanan') || request()->routeIs('bidan.laporan-tahunan') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-ibu-hamil">
                         <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
                         Laporan Ibu Hamil
+                    </a>
+
+                    <a href="{{ route('kb-acceptors.laporan-r1') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.laporan-r1') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-kb">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Laporan KB
                     </a>
 
                     <a href="{{ route('laporan.index') }}" class="sidebar-link {{ request()->routeIs('laporan.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-anak">
@@ -140,7 +155,10 @@
                         Jadwal Posyandu
                     </a>
 
-
+                    <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-kb">
+                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                        Data Pasien KB
+                    </a>
 
                     <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'sidebar-link--active' : '' }}" id="nav-kader-profile">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>

@@ -259,16 +259,7 @@
     .modal-btn-confirm { flex: 1; padding: 10px; border-radius: 8px; border: none; background: #ef4444; color: #fff; font-weight: 600; cursor: pointer; }
 </style>
 
-@if (session('success'))
-<div class="alert-ok">
-    <div class="alert-ok-icon">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-        </svg>
-    </div>
-    {{ session('success') }}
-</div>
-@endif
+
 
 <!-- Action bar -->
 <div class="action-bar">
@@ -281,17 +272,8 @@
             </span>
             <input type="text" name="search" class="search-input" id="searchInput"
                    placeholder="Cari NIK, Nama, dan No.Hp..."
-                   value="{{ request('search') }}"
-                   oninput="clearTimeout(this.delay); this.delay = setTimeout(() => { this.form.submit() }, 500);">
+                   value="{{ request('search') }}">
         </div>
-
-        <select name="status" class="filter-select" onchange="this.form.submit()">
-            <option value="">Semua Status</option>
-            <option value="active"      {{ request('status') === 'active'      ? 'selected' : '' }}>Aktif</option>
-            <option value="inactive"    {{ request('status') === 'inactive'    ? 'selected' : '' }}>Tidak Aktif</option>
-            <option value="transferred" {{ request('status') === 'transferred' ? 'selected' : '' }}>Pindah</option>
-            <option value="graduated"   {{ request('status') === 'graduated'   ? 'selected' : '' }}>Lulus</option>
-        </select>
     </form>
 
     @if(auth()->check() && in_array(auth()->user()->role, ['kader', 'bidan', 'admin', 'super_admin']))
@@ -313,7 +295,7 @@
                 <th>Nama</th>
                 <th>Telepon</th>
                 <th>Puskesmas</th>
-                <th class="center">Status</th>
+
                 <th class="center">Aksi</th>
             </tr>
         </thead>
@@ -355,29 +337,6 @@
                 <!-- Puskesmas -->
                 <td style="font-size:13px;">
                     {{ $acceptor->puskesmas->name ?? 'N/A' }}
-                </td>
-
-                <!-- Status -->
-                <td class="center">
-                    @if($acceptor->status === 'active')
-                        <span class="status-badge s-active">
-                            <span class="status-dot" style="background:#22c55e;"></span> Aktif
-                        </span>
-                    @elseif($acceptor->status === 'inactive')
-                        <span class="status-badge s-inactive">
-                            <span class="status-dot" style="background:#9ca3af;"></span> Tidak Aktif
-                        </span>
-                    @elseif($acceptor->status === 'transferred')
-                        <span class="status-badge s-transferred">
-                            <span class="status-dot" style="background:#3b82f6;"></span> Pindah
-                        </span>
-                    @elseif($acceptor->status === 'graduated')
-                        <span class="status-badge s-graduated">
-                            <span class="status-dot" style="background:#8b5cf6;"></span> Lulus
-                        </span>
-                    @else
-                        <span class="status-badge s-inactive">{{ ucfirst($acceptor->status) }}</span>
-                    @endif
                 </td>
 
                 <!-- Aksi -->
@@ -425,7 +384,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="6">
+                <td colspan="5">
                     <div class="empty-state">
                         <div class="empty-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
@@ -473,10 +432,30 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
-        if (searchInput && searchInput.value.length > 0) {
-            searchInput.focus();
-            let len = searchInput.value.length;
-            searchInput.setSelectionRange(len, len);
+        const tableRows = document.querySelectorAll('.data-table tbody tr.group');
+        
+        if (searchInput) {
+            // Restore focus if there was a server-side search
+            if (searchInput.value.length > 0) {
+                searchInput.focus();
+                let len = searchInput.value.length;
+                searchInput.setSelectionRange(len, len);
+            }
+
+            // Client-side instant filter
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                tableRows.forEach(row => {
+                    // Coba cari di teks baris tersebut
+                    const text = row.innerText.toLowerCase();
+                    if (text.includes(query)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
         }
     });
 

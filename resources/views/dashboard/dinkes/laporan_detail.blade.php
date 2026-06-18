@@ -20,86 +20,163 @@
             </div>
         </div>
 
-        @if(count($laporan) == 0)
-            <div style="text-align: center; padding: 48px 24px; color: #64748B;">
-                <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; fill: #CBD5E1; margin: 0 auto 12px; display: block;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
-                <p style="font-size: 15px; font-weight: 600; margin: 0 0 4px;">Tidak Ada Data</p>
+        @if($laporanDinkes->jenis_laporan === 'KB')
+            @php
+                $kbData = isset($laporan['laporanData']) ? $laporan['laporanData'] : [];
+                $kbDetail = isset($laporan['detailLayanan']) ? $laporan['detailLayanan'] : [];
+                $totalBaru = 0;
+                $totalAktif = 0;
+                foreach($kbData as $k) {
+                    $totalBaru += $k->baru;
+                    $totalAktif += $k->aktif;
+                }
+            @endphp
+            <div style="padding: 24px;">
+                <h4 style="font-weight: 700; color: #0F172A; margin-bottom: 16px; font-size: 15px;">Rekapitulasi Pelayanan KB (Bulan {{ isset($laporan['bulan']) ? \Carbon\Carbon::create()->month((int) $laporan['bulan'])->translatedFormat('F') : '' }} {{ $laporan['tahun'] ?? '' }})</h4>
+                <div style="overflow-x: auto; margin-bottom: 32px;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: center; border: 1px solid rgba(15,23,42,0.06);">
+                        <thead style="background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">
+                            <tr>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; border-right: 1px solid rgba(15,23,42,0.06);" rowspan="2">Metode Kontrasepsi</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; border-bottom: 1px solid rgba(15,23,42,0.06);" colspan="2">Jumlah Peserta KB</th>
+                            </tr>
+                            <tr>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B; border-right: 1px solid rgba(15,23,42,0.06);">Baru</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Aktif</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($kbData as $k)
+                            <tr style="border-bottom: 1px solid rgba(15,23,42,0.04);">
+                                <td style="padding: 12px; font-size: 14px; font-weight: 500; text-align: left; border-right: 1px solid rgba(15,23,42,0.06);">{{ $k->metode }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569; border-right: 1px solid rgba(15,23,42,0.06);">{{ $k->baru }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $k->aktif }}</td>
+                            </tr>
+                            @endforeach
+                            <tr style="background: #F8FAFC; font-weight: 700;">
+                                <td style="padding: 12px; font-size: 14px; text-align: right; border-right: 1px solid rgba(15,23,42,0.06);">TOTAL</td>
+                                <td style="padding: 12px; font-size: 14px; color: #0F172A; border-right: 1px solid rgba(15,23,42,0.06);">{{ $totalBaru }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #0F172A;">{{ $totalAktif }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="font-weight: 700; color: #0F172A; margin-bottom: 16px; font-size: 15px;">Daftar Rincian Pelayanan Pasien</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 800px; text-align: left; border: 1px solid rgba(15,23,42,0.06);">
+                        <thead style="background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">
+                            <tr>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Nama Akseptor</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Metode</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Tanggal</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Lokasi</th>
+                                <th style="padding: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748B;">Keluhan / Risko</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($kbDetail as $d)
+                            <tr style="border-bottom: 1px solid rgba(15,23,42,0.04);">
+                                <td style="padding: 12px;">
+                                    <div style="font-weight: 600; font-size: 14px; color: #0F172A;">{{ $d->acceptor->full_name ?? $d->akseptor_name ?? '-' }}</div>
+                                    <div style="font-size: 12px; color: #64748B;">{{ $d->acceptor->nik ?? '-' }}</div>
+                                </td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $d->service_method }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ \Carbon\Carbon::parse($d->service_date)->translatedFormat('d M Y') }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $d->location }}</td>
+                                <td style="padding: 12px; font-size: 14px; color: #475569;">{{ $d->side_effects ?? '-' }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" style="padding: 24px; text-align: center; color: #64748B; font-size: 14px;">Tidak ada data pelayanan bulan ini.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         @else
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; min-width: 900px; text-align: left;">
-                    <thead>
-                        <tr>
-                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Tanggal</th>
-                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Nama Anak</th>
-                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Posyandu</th>
-                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">BB / TB</th>
-                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Status Gizi</th>
-                            <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Tindakan & Imunisasi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($laporan as $data)
-                            <tr style="transition: background 0.15s; border-bottom: 1px solid rgba(15,23,42,0.04);">
-                                <td style="padding: 16px 24px; vertical-align: middle; font-size: 14px; color: #0F172A; font-weight: 500;">
-                                    {{ \Carbon\Carbon::parse($data->tanggal)->translatedFormat('d M Y') }}
-                                </td>
-                                <td style="padding: 16px 24px; vertical-align: middle;">
-                                    <div style="font-weight: 600; color: #0F172A; font-size: 14px;">{{ $data->anak->nama_anak ?? '-' }}</div>
-                                    <div style="font-size: 12px; color: #64748B;">NIK: {{ $data->anak->nik_anak ?? '-' }}</div>
-                                </td>
-                                <td style="padding: 16px 24px; vertical-align: middle; font-size: 14px; color: #475569;">
-                                    <div style="font-weight: 600; color: #0F172A;">{{ $data->posyandu ?? '-' }}</div>
-                                    @if(isset($data->pelaksana) && count($data->pelaksana) > 0)
-                                        <div style="font-size: 11px; color: #64748B; margin-top: 4px;">{{ implode(', ', $data->pelaksana) }}</div>
-                                    @endif
-                                </td>
-                                <td style="padding: 16px 24px; vertical-align: middle; font-size: 14px; color: #475569;">
-                                    @if(isset($data->pengukuran))
-                                        <span style="font-weight: 600;">{{ $data->pengukuran->berat_badan }} kg</span> / <span style="font-weight: 600;">{{ $data->pengukuran->tinggi_badan }} cm</span>
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td style="padding: 16px 24px; vertical-align: middle;">
-                                    @if(isset($data->pengukuran))
-                                        @if(isset($data->pengukuran->status_stunting) && str_contains(strtolower($data->pengukuran->status_stunting), 'stunting'))
-                                            <span class="badge badge-danger" style="margin-bottom: 4px; display: inline-block;">{{ $data->pengukuran->status_stunting }}</span><br>
-                                        @endif
-                                        @if(isset($data->pengukuran->status_gizi))
-                                            @if(str_contains(strtolower($data->pengukuran->status_gizi), 'kurang') || str_contains(strtolower($data->pengukuran->status_gizi), 'buruk'))
-                                                <span class="badge badge-warning" style="display: inline-block;">{{ $data->pengukuran->status_gizi }}</span>
-                                            @else
-                                                <span class="badge badge-success" style="display: inline-block;">{{ $data->pengukuran->status_gizi }}</span>
-                                            @endif
-                                        @endif
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td style="padding: 16px 24px; vertical-align: middle; font-size: 13px; color: #475569;">
-                                    @if(isset($data->tindakan) || isset($data->imunisasi))
-                                        @if(isset($data->imunisasi))
-                                            <div style="margin-bottom: 4px; color: #059669;">
-                                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor; display: inline; vertical-align: middle; margin-top: -2px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                                                Vaksin: {{ $data->imunisasi->nama_vaksin }}
-                                            </div>
-                                        @endif
-                                        @if(isset($data->tindakan))
-                                            <div style="color: #E11D48;">
-                                                <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor; display: inline; vertical-align: middle; margin-top: -2px;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
-                                                Tindakan: {{ \Illuminate\Support\Str::limit($data->tindakan->diagnosa, 20) }}
-                                            </div>
-                                        @endif
-                                    @else
-                                        <span style="color: #94A3B8;">-</span>
-                                    @endif
-                                </td>
+            @if(count($laporan) == 0)
+                <div style="text-align: center; padding: 48px 24px; color: #64748B;">
+                    <svg viewBox="0 0 24 24" style="width: 48px; height: 48px; fill: #CBD5E1; margin: 0 auto 12px; display: block;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
+                    <p style="font-size: 15px; font-weight: 600; margin: 0 0 4px;">Tidak Ada Data</p>
+                </div>
+            @else
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 900px; text-align: left;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Tanggal</th>
+                                <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Nama Anak</th>
+                                <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Posyandu</th>
+                                <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">BB / TB</th>
+                                <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Status Gizi</th>
+                                <th style="padding: 14px 24px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; background: rgba(240,253,250,0.5); border-bottom: 1px solid rgba(15,23,42,0.06);">Tindakan & Imunisasi</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            @foreach($laporan as $data)
+                                <tr style="transition: background 0.15s; border-bottom: 1px solid rgba(15,23,42,0.04);">
+                                    <td style="padding: 16px 24px; vertical-align: middle; font-size: 14px; color: #0F172A; font-weight: 500;">
+                                        {{ \Carbon\Carbon::parse($data->tanggal)->translatedFormat('d M Y') }}
+                                    </td>
+                                    <td style="padding: 16px 24px; vertical-align: middle;">
+                                        <div style="font-weight: 600; color: #0F172A; font-size: 14px;">{{ $data->anak->nama_anak ?? '-' }}</div>
+                                        <div style="font-size: 12px; color: #64748B;">NIK: {{ $data->anak->nik_anak ?? '-' }}</div>
+                                    </td>
+                                    <td style="padding: 16px 24px; vertical-align: middle; font-size: 14px; color: #475569;">
+                                        <div style="font-weight: 600; color: #0F172A;">{{ $data->posyandu ?? '-' }}</div>
+                                        @if(isset($data->pelaksana) && count($data->pelaksana) > 0)
+                                            <div style="font-size: 11px; color: #64748B; margin-top: 4px;">{{ implode(', ', $data->pelaksana) }}</div>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 16px 24px; vertical-align: middle; font-size: 14px; color: #475569;">
+                                        @if(isset($data->pengukuran))
+                                            <span style="font-weight: 600;">{{ $data->pengukuran->berat_badan }} kg</span> / <span style="font-weight: 600;">{{ $data->pengukuran->tinggi_badan }} cm</span>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td style="padding: 16px 24px; vertical-align: middle;">
+                                        @if(isset($data->pengukuran))
+                                            @if(isset($data->pengukuran->status_stunting) && str_contains(strtolower($data->pengukuran->status_stunting), 'stunting'))
+                                                <span class="badge badge-danger" style="margin-bottom: 4px; display: inline-block;">{{ $data->pengukuran->status_stunting }}</span><br>
+                                            @endif
+                                            @if(isset($data->pengukuran->status_gizi))
+                                                @if(str_contains(strtolower($data->pengukuran->status_gizi), 'kurang') || str_contains(strtolower($data->pengukuran->status_gizi), 'buruk'))
+                                                    <span class="badge badge-warning" style="display: inline-block;">{{ $data->pengukuran->status_gizi }}</span>
+                                                @else
+                                                    <span class="badge badge-success" style="display: inline-block;">{{ $data->pengukuran->status_gizi }}</span>
+                                                @endif
+                                            @endif
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td style="padding: 16px 24px; vertical-align: middle; font-size: 13px; color: #475569;">
+                                        @if(isset($data->tindakan) || isset($data->imunisasi))
+                                            @if(isset($data->imunisasi))
+                                                <div style="margin-bottom: 4px; color: #059669;">
+                                                    <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor; display: inline; vertical-align: middle; margin-top: -2px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                                    Vaksin: {{ $data->imunisasi->nama_vaksin }}
+                                                </div>
+                                            @endif
+                                            @if(isset($data->tindakan))
+                                                <div style="color: #E11D48;">
+                                                    <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor; display: inline; vertical-align: middle; margin-top: -2px;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 9h-2V7h-2v5H6v2h2v5h2v-5h2v-2z"/></svg>
+                                                    Tindakan: {{ \Illuminate\Support\Str::limit($data->tindakan->diagnosa, 20) }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <span style="color: #94A3B8;">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         @endif
     </div>
 

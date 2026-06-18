@@ -1,8 +1,8 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Laporan Tahunan KB')
-@section('page_title', 'Laporan R1 KB')
-@section('page_subtitle', 'Kelola, unduh, dan kirimkan Laporan R1 KB.')
+@section('page_title', 'Laporan KB')
+@section('page_subtitle', 'Kelola, unduh, dan kirimkan Laporan KB.')
 
 @section('content')
 <div class="min-h-screen bg-transparent">
@@ -11,8 +11,8 @@
         <div class="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-white opacity-5 rounded-full"></div>
         <div class="relative z-10 flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold mb-2">Laporan R1 KB</h1>
-                <p class="text-teal-100 text-sm">Buat, unduh, dan kirimkan Laporan R1 KB ke Dinas Kesehatan.</p>
+                <h1 class="text-3xl font-bold mb-2">Laporan KB</h1>
+                <p class="text-teal-100 text-sm">Buat, unduh, dan kirimkan Laporan KB ke Dinas Kesehatan.</p>
             </div>
         </div>
     </div>

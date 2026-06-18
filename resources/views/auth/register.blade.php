@@ -83,6 +83,21 @@
                     </div>
                 @endif
 
+                <!-- Peran Pendaftaran -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Mendaftar Sebagai</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="relative flex items-center justify-center p-3 border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition-all [&:has(input:checked)]:border-teal-500 [&:has(input:checked)]:bg-teal-50/50">
+                            <input type="radio" name="role" value="ortu" class="absolute w-0 h-0 opacity-0" checked>
+                            <span class="text-sm font-semibold text-slate-700 select-none">Orang Tua Bayi</span>
+                        </label>
+                        <label class="relative flex items-center justify-center p-3 border border-slate-300 rounded-xl cursor-pointer hover:bg-slate-50 transition-all [&:has(input:checked)]:border-teal-500 [&:has(input:checked)]:bg-teal-50/50">
+                            <input type="radio" name="role" value="pasien_kb" class="absolute w-0 h-0 opacity-0">
+                            <span class="text-sm font-semibold text-slate-700 select-none">Pasien KB</span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Nomor Induk Kependudukan (NIK) -->
                 <div>
                     <label for="nik" class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Nomor Induk Kependudukan (NIK)</label>

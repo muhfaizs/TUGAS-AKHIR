@@ -3,9 +3,9 @@
         <tr>
             <th>No</th>
             <th>Nama Akseptor</th>
-            <th>No JKN</th>
+            <th>NIK</th>
             <th>Metode KB</th>
-            <th>Tujuan</th>
+            <th>Kunjungan Terakhir</th>
             <th>Status</th>
         </tr>
     </thead>
@@ -13,11 +13,11 @@
         @forelse($akseptors as $index => $kb)
         <tr>
             <td>{{ $index + 1 }}</td>
-            <td>{{ $kb->name }}</td>
-            <td>{{ $kb->no_jkn ?? '-' }}</td>
-            <td>{{ $kb->metode_kb ?? '-' }}</td>
-            <td>{{ $kb->tujuan ?? '-' }}</td>
-            <td>{{ $kb->status == 'active' ? 'Aktif' : $kb->status }}</td>
+            <td>{{ $kb->full_name ?? '-' }}</td>
+            <td>{{ $kb->nik ?? '-' }}</td>
+            <td>{{ $kb->lastService()->service_method ?? '-' }}</td>
+            <td>{{ $kb->lastService() && $kb->lastService()->service_date ? \Carbon\Carbon::parse($kb->lastService()->service_date)->translatedFormat('d M Y') : '-' }}</td>
+            <td>{{ strtolower($kb->status) == 'active' || strtolower($kb->status) == 'aktif' ? 'Aktif' : $kb->status }}</td>
         </tr>
         @empty
         <tr>

@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Tambah Pasien KB - SatuKIA')
 @section('page_title', 'Tambah Pasien KB')
@@ -80,7 +80,7 @@
                 </div>
                 <div class="f-group">
                     <label>NIK *</label>
-                    <input type="text" name="nik" value="{{ old('nik') }}" class="f-input" required>
+                    <input type="text" name="nik" value="{{ old('nik') }}" class="f-input" required maxlength="16" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     @error('nik')<div class="f-error">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -234,6 +234,21 @@
                 </div>
             </div>
 
+            <!-- Informasi Kesehatan -->
+            <div class="form-section-title">Informasi Kesehatan</div>
+
+            <div class="form-grid-2">
+                <div class="f-group">
+                    <label>Riwayat Penyakit</label>
+                    <textarea name="health_history" class="f-input" placeholder="Isi jika ada riwayat penyakit">{{ old('health_history') }}</textarea>
+                    @error('health_history')<div class="f-error">{{ $message }}</div>@enderror
+                </div>
+                <div class="f-group">
+                    <label>Alergi</label>
+                    <textarea name="allergies" class="f-input" placeholder="Isi jika ada alergi obat/makanan">{{ old('allergies') }}</textarea>
+                    @error('allergies')<div class="f-error">{{ $message }}</div>@enderror
+                </div>
+            </div>
 
             <!-- Buttons -->
             <div class="btn-row">

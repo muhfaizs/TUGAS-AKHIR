@@ -74,7 +74,7 @@ class KBAcceptorController extends Controller
             'gender' => 'required|in:M,F',
             'marital_status' => 'required|string',
             'phone' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'email' => 'nullable|email|max:255|unique:kb_acceptors,email',
             'education' => 'nullable|string|max:50',
             'occupation' => 'nullable|string|max:100',
             'religion' => 'nullable|string|max:50',
@@ -126,7 +126,7 @@ class KBAcceptorController extends Controller
      */
     public function show(KBAcceptor $kbAcceptor)
     {
-        $kbAcceptor->load(['familyMembers', 'kbServices', 'puskesmas', 'registeredBy']);
+        $kbAcceptor->load(['kbServices', 'puskesmas', 'registeredBy']);
         return view('kb-acceptors.show', compact('kbAcceptor'));
     }
 
@@ -160,7 +160,7 @@ class KBAcceptorController extends Controller
             'gender' => 'required|in:M,F',
             'marital_status' => 'required|string',
             'phone' => 'required|string|max:20',
-            'email' => 'nullable|email|max:255',
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('kb_acceptors', 'email')->ignore($kbAcceptor->id)],
             'education' => 'nullable|string|max:50',
             'occupation' => 'nullable|string|max:100',
             'religion' => 'nullable|string|max:50',
@@ -275,9 +275,6 @@ class KBAcceptorController extends Controller
         return response()->json($acceptors);
     }
 
-    /**
-     * Verify KB acceptor (admin only)
-     */
     public function verify(Request $request, KBAcceptor $kbAcceptor)
     {
         if (auth()->user()->role !== 'bidan') {
@@ -295,5 +292,125 @@ class KBAcceptorController extends Controller
         ]);
 
         return back()->with('success', 'Akseptor KB berhasil diverifikasi.');
+    }
+
+    /**
+     * Laporan R1 KB (Rekapitulasi Bulanan)
+     */
+    public function laporanR1(Request $request)
+    {
+        $bulan = $request->input('bulan', date('m'));
+        $tahun = $request->input('tahun', date('Y'));
+
+        // Basic stats for Laporan R1 KB
+        $methods = ['IUD', 'MOW', 'MOP', 'Implant', 'Tubektomi', 'Vasektomi', 'Pil', 'Suntik', 'Kondom', 'Jelly'];
+        
+        $laporanData = [];
+        $totalBaru = 0;
+        $totalAktif = 0;
+        $selectedDate = \Carbon\Carbon::create($tahun, $bulan)->endOfMonth()->toDateString();
+
+        foreach ($methods as $method) {
+            $baruCount = \App\Models\KBService::where('service_method', $method)
+                ->whereMonth('service_date', $bulan)
+                ->whereYear('service_date', $tahun)
+                ->count();
+
+            // Hitung aktif pada bulan/tahun yang dipilih
+            $aktifCount = \App\Models\KBService::where('service_method', $method)
+                ->where('status', 'Aktif')
+                ->whereDate('service_date', '<=', $selectedDate)
+                ->distinct('kb_acceptor_id')
+                ->count();
+
+            $laporanData[] = [
+                'metode' => $method,
+                'baru' => $baruCount,
+                'aktif' => $aktifCount
+            ];
+
+            $totalBaru += $baruCount;
+            $totalAktif += $aktifCount;
+        }
+
+        // Get Detail Data Pasien
+        $detailLayanan = \App\Models\KBService::with('acceptor')
+            ->whereMonth('service_date', $bulan)
+            ->whereYear('service_date', $tahun)
+            ->orderBy('service_date', 'desc')
+            ->get();
+
+        return view('kb-acceptors.laporan_r1', compact('laporanData', 'bulan', 'tahun', 'totalBaru', 'totalAktif', 'detailLayanan'));
+    }
+
+    public function submitLaporanR1(Request $request)
+    {
+        if (auth()->user()->role !== 'bidan') {
+            abort(403, 'Unauthorized');
+        }
+
+        $bulan = $request->input('bulan', date('m'));
+        $tahun = $request->input('tahun', date('Y'));
+
+        // Basic stats for Laporan R1 KB
+        $methods = ['IUD', 'MOW', 'MOP', 'Implant', 'Tubektomi', 'Vasektomi', 'Pil', 'Suntik', 'Kondom', 'Jelly'];
+        
+        $laporanData = [];
+        $selectedDate = \Carbon\Carbon::create($tahun, $bulan)->endOfMonth()->toDateString();
+
+        foreach ($methods as $method) {
+            $baruCount = \App\Models\KBService::where('service_method', $method)
+                ->whereMonth('service_date', $bulan)
+                ->whereYear('service_date', $tahun)
+                ->count();
+
+            $aktifCount = \App\Models\KBService::where('service_method', $method)
+                ->where('status', 'Aktif')
+                ->whereDate('service_date', '<=', $selectedDate)
+                ->distinct('kb_acceptor_id')
+                ->count();
+
+            $laporanData[] = [
+                'metode' => $method,
+                'baru' => $baruCount,
+                'aktif' => $aktifCount
+            ];
+        }
+
+        $detailLayanan = \App\Models\KBService::with('acceptor')
+            ->whereMonth('service_date', $bulan)
+            ->whereYear('service_date', $tahun)
+            ->orderBy('service_date', 'desc')
+            ->get();
+
+        $dataSerialized = json_encode([
+            'laporanData' => $laporanData,
+            'detailLayanan' => $detailLayanan,
+            'bulan' => $bulan,
+            'tahun' => $tahun
+        ]);
+
+        $laporanDinkes = \App\Models\TbLaporanDinkes::create([
+            'id_bidan' => auth()->id(),
+            'nama_puskesmas' => auth()->user()->puskesmas->nama_puskesmas ?? 'Puskesmas',
+            'periode_awal' => \Carbon\Carbon::create($tahun, $bulan, 1)->toDateString(),
+            'periode_akhir' => \Carbon\Carbon::create($tahun, $bulan)->endOfMonth()->toDateString(),
+            'status' => 'Terkirim',
+            'jenis_laporan' => 'KB',
+            'data_serialized' => $dataSerialized,
+        ]);
+
+        $dinkesUsers = \App\Models\User::where('role', 'dinkes')->get();
+        foreach ($dinkesUsers as $dinkes) {
+            \App\Models\Notifikasi::create([
+                'id_user' => $dinkes->id,
+                'judul' => 'Laporan KB Baru',
+                'pesan' => 'Ada laporan KB baru dari '.($laporanDinkes->nama_puskesmas).' oleh Bidan '.auth()->user()->name.'.',
+                'wa_link' => null,
+            ]);
+        }
+
+        return redirect()->route('kb-acceptors.laporan-r1', ['bulan' => $bulan, 'tahun' => $tahun])
+            ->with('success', 'Laporan KB berhasil disubmit ke Dinas Kesehatan.');
     }
 }

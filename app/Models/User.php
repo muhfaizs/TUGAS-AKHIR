@@ -79,6 +79,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if the user is a KB Patient.
+     */
+    public function isPasienKb(): bool
+    {
+        return $this->role === 'pasien_kb';
+    }
+
+    /**
      * Check if the user is Dinkes.
      */
     public function isDinkes(): bool

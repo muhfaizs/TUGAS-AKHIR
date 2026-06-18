@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Edit Akseptor KB - ' . $kbAcceptor->full_name)
 @section('page_title', 'Edit Akseptor KB')
@@ -86,7 +86,7 @@
             </div>
             <div class="f-group">
                 <label>NIK *</label>
-                <input type="text" name="nik" value="{{ old('nik', $kbAcceptor->nik) }}" class="f-input" required>
+                <input type="text" name="nik" value="{{ old('nik', $kbAcceptor->nik) }}" class="f-input" required maxlength="16" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 @error('nik') <div class="f-error">{{ $message }}</div> @enderror
             </div>
 

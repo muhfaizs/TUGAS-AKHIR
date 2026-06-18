@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Detail Tindak Lanjut Akseptor')
 
@@ -12,7 +12,7 @@
                 <h1 class="text-3xl font-bold mb-2">Detail Tindak Lanjut</h1>
                 <p class="text-teal-100 text-sm">Pemantauan dan follow-up akseptor KB</p>
             </div>
-            <a href="{{ route('followups.index') }}" class="bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/30 inline-flex items-center gap-2 no-underline">
+            <a href="{{ route('kb-services.jadwal-kontrol') }}" class="bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors border border-white/30 inline-flex items-center gap-2 no-underline">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 Kembali
             </a>
@@ -168,7 +168,7 @@
                         </div>
 
                         <div class="flex gap-3 mt-4 sm:mt-0">
-                            <a href="{{ route('followups.index') }}" class="px-6 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors no-underline">Batal</a>
+                            <a href="{{ route('kb-services.jadwal-kontrol') }}" class="px-6 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors no-underline">Batal</a>
                             <button type="submit" class="px-6 py-2.5 bg-[#117a65] text-white font-bold rounded-xl shadow-sm hover:bg-[#0f6b58] hover:-translate-y-0.5 transition-all">Simpan Hasil Follow-Up</button>
                         </div>
                     </div>

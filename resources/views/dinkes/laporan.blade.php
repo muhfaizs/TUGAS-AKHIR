@@ -487,21 +487,23 @@
                 <thead>
                     <tr>
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Nama Akseptor</th>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">No JKN</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">NIK</th>
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Metode KB</th>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Tujuan</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Kunjungan Terakhir</th>
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Status</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm">
                     @forelse($kbAkseptors as $kb)
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
-                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->name }}</td>
-                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->no_jkn ?? '-' }}</td>
-                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->metode_kb ?? '-' }}</td>
-                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->tujuan ?? '-' }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->full_name ?? '-' }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->nik ?? '-' }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">{{ $kb->lastService()->service_method ?? '-' }}</td>
+                        <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">
+                            {{ $kb->lastService() && $kb->lastService()->service_date ? \Carbon\Carbon::parse($kb->lastService()->service_date)->translatedFormat('d M Y') : '-' }}
+                        </td>
                         <td class="py-4 px-4">
-                            @if($kb->status == 'active')
+                            @if(strtolower($kb->status) == 'active' || strtolower($kb->status) == 'aktif')
                                 <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold uppercase">Aktif</span>
                             @else
                                 <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-bold uppercase">{{ $kb->status }}</span>
