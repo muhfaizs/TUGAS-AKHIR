@@ -20,7 +20,8 @@ class AuthController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'nomor_kontak' => 'required|string|regex:/^[0-9]+$/',
             'reg_username' => 'required|string|max:255|unique:users,username',
-            'reg_password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
+            'reg_password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()],
+            'role' => 'required|in:ortu,pasien_kb',
         ], [
             'nik_ortu.size' => 'NIK harus tepat 16 angka.',
             'nik_ortu.regex' => 'NIK hanya boleh berisi angka.',
@@ -33,7 +34,7 @@ class AuthController extends Controller
             'phone' => '+62'.ltrim($request->nomor_kontak, '0'), // Handle the +62 prefix conceptually
             'username' => $request->reg_username,
             'password' => Hash::make($request->reg_password),
-            'role' => 'ortu', // Default role for open registration
+            'role' => $request->role,
         ]);
 
         Auth::login($user);

@@ -10,6 +10,7 @@ use App\Http\Controllers\DinkesController;
 use App\Http\Controllers\IbuHamilController;
 use App\Http\Controllers\Kader\JadwalPosyanduController;
 use App\Http\Controllers\Kader\PengukuranController;
+use App\Http\Controllers\FollowUpController;
 use App\Http\Controllers\KBAcceptorController;
 use App\Http\Controllers\KBServiceController;
 use App\Http\Controllers\LaporanController;
@@ -59,10 +60,20 @@ Route::middleware('auth')->group(function () {
 
     // Modul Keluarga Berencana (KB)
     Route::get('/kb-acceptors/search', [KBAcceptorController::class, 'search'])->name('kb-acceptors.search');
+    Route::get('/kb-acceptors/laporan-r1', [KBAcceptorController::class, 'laporanR1'])->name('kb-acceptors.laporan-r1');
+    Route::post('/kb-acceptors/laporan-r1/submit', [KBAcceptorController::class, 'submitLaporanR1'])->name('kb-acceptors.laporan-r1.submit');
     Route::post('/kb-acceptors/{kb_acceptor}/submit', [KBAcceptorController::class, 'submitForVerification'])->name('kb-acceptors.submit');
     Route::post('/kb-acceptors/{kb_acceptor}/verify', [KBAcceptorController::class, 'verify'])->name('kb-acceptors.verify');
     Route::resource('kb-acceptors', KBAcceptorController::class);
+    
+    Route::get('/kb-services/jadwal-kontrol', [KBServiceController::class, 'jadwalKontrol'])->name('kb-services.jadwal-kontrol');
+    Route::post('/kb-services/{kb_service}/send-reminder', [KBServiceController::class, 'sendReminder'])->name('kb-services.send-reminder');
+    Route::post('/kb-services/{kb_service}/verify', [KBServiceController::class, 'verify'])->name('kb-services.verify');
     Route::resource('kb-services', KBServiceController::class);
+    
+    // Rute Follow Up (Pemantauan Tindak Lanjut KB)
+    Route::get('followups/{kb_service}', [FollowUpController::class, 'show'])->name('followups.show');
+    Route::post('followups/{kb_service}', [FollowUpController::class, 'store'])->name('followups.store');
 
     // Modul Data Anak (Orang Tua)
     Route::resource('orangtua/anak', AnakController::class)->names('orangtua.anak');

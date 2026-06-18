@@ -208,6 +208,7 @@
                                 value="{{ old('nik_ortu') }}"
                                 required
                                 maxlength="16"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 pattern="[0-9]{16}"
                             >
                         </div>

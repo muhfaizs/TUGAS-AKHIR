@@ -65,6 +65,6 @@ class FollowUpController extends Controller
         // Opsional: Jika status Selesai, kita bisa tandai service-nya jika diperlukan
         // tapi saat ini cukup disimpan di tabel follow_ups
 
-        return redirect()->route('followups.index')->with('success', $message);
+        return redirect()->route('kb-acceptors.show', $service->kb_acceptor_id)->with('success', $message);
     }
 }

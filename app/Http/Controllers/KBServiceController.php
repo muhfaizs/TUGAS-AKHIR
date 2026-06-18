@@ -173,4 +173,59 @@ class KBServiceController extends Controller
 
         return response()->json($acceptors);
     }
+
+    public function jadwalKontrol(Request $request)
+    {
+        // Get services with follow_up_date within the next 14 days or overdue but not resolved yet
+        // For simplicity, just get all upcoming or recent follow_up_dates
+        $query = KBService::with(['acceptor' => function($q) {
+                $q->select('id', 'full_name', 'nik', 'phone', 'address');
+            }])
+            ->whereNotNull('follow_up_date')
+            ->orderBy('follow_up_date', 'asc');
+
+        if ($request->filled('status')) {
+            if ($request->status == 'upcoming') {
+                $query->where('follow_up_date', '>=', now()->toDateString());
+            } elseif ($request->status == 'overdue') {
+                $query->where('follow_up_date', '<', now()->toDateString());
+            }
+        }
+
+        if ($request->filled('method')) {
+            $query->where('service_method', $request->method);
+        }
+
+        $jadwalKontrols = $query->paginate(20)->withQueryString();
+
+        return view('kb-services.jadwal_kontrol', compact('jadwalKontrols'));
+    }
+
+    public function sendReminder(Request $request, KBService $kbService)
+    {
+        $acceptor = $kbService->acceptor;
+        if (!$acceptor || !$acceptor->phone) {
+            return back()->with('error', 'Nomor telepon akseptor tidak ditemukan.');
+        }
+
+        // Create the WhatsApp message
+        $tanggalKontrol = \Carbon\Carbon::parse($kbService->follow_up_date)->translatedFormat('l, d F Y');
+        
+        $pesan = "Halo Ibu {$acceptor->full_name},\n\n";
+        $pesan .= "Ini adalah pesan pengingat otomatis dari *SatuKIA (Sistem Informasi KIA)*.\n\n";
+        $pesan .= "Kami mengingatkan bahwa jadwal kunjungan ulang / kontrol KB Ibu untuk metode *{$kbService->service_method}* adalah pada:\n";
+        $pesan .= "🗓️ *{$tanggalKontrol}*\n\n";
+        $pesan .= "Silakan datang ke Faskes pada tanggal tersebut. Jangan ragu untuk menghubungi kami jika ada keluhan.\n\n";
+        $pesan .= "Salam hangat,\nBidan Anda";
+
+        $phone = preg_replace('/[^0-9]/', '', $acceptor->phone);
+        // Replace leading 0 with 62
+        if (strpos($phone, '0') === 0) {
+            $phone = '62' . substr($phone, 1);
+        }
+
+        $waUrl = "https://wa.me/{$phone}?text=" . urlencode($pesan);
+
+        return redirect()->away($waUrl);
+    }
 }

@@ -14,6 +14,7 @@ class TbLaporanDinkes extends Model
         'periode_awal',
         'periode_akhir',
         'status',
+        'jenis_laporan',
         'data_serialized',
     ];
 

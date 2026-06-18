@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard - SatuKIA')
 @section('page_title', 'Dashboard')
-@section('page_subtitle', 'Ringkasan sistem monitoring layanan Ibu Hamil')
+@section('page_subtitle', 'Ringkasan sistem monitoring layanan KIA dan KB')
 
 @section('content')
     <!-- Welcome Banner -->
@@ -10,7 +10,7 @@
         <div class="relative z-10">
             <h2 class="text-2xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name ?? 'Administrator' }}! ðŸ‘‹</h2>
             <p class="text-teal-100 max-w-2xl text-sm leading-relaxed">
-                Berikut adalah ringkasan data sistem monitoring layanan Ibu Hamil. Pastikan semua data ter-update untuk pelaporan yang akurat.
+                Berikut adalah ringkasan data sistem monitoring layanan KIA dan KB. Pastikan semua data ter-update untuk pelaporan yang akurat.
             </p>
         </div>
         <!-- Decorative shapes -->
@@ -196,7 +196,75 @@
                     <p class="text-slate-500 font-medium text-sm group-hover:text-orange-600 transition-colors">Anak Berisiko</p>
                 </div>
             </a>
+
+            <!-- Card 7: Total Akseptor Aktif KB -->
+            <a href="{{ route('kb-acceptors.index', ['status' => 'active']) }}" class="block bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden border-t-4 border-t-teal-400 transition-all hover:-translate-y-1 hover:shadow-md group">
+                <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 mb-6 group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-slate-800 mb-1">{{ $kbTotalAkseptorAktif ?? 0 }}</h3>
+                    <p class="text-slate-500 font-medium text-sm group-hover:text-teal-600 transition-colors">Total Akseptor Aktif</p>
+                </div>
+            </a>
+
+            <!-- Card 8: Pelayanan KB Hari Ini -->
+            <a href="{{ route('kb-services.index') }}" class="block bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden border-t-4 border-t-emerald-400 transition-all hover:-translate-y-1 hover:shadow-md group">
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-slate-800 mb-1">{{ $kbPelayananHariIni ?? 0 }}</h3>
+                    <p class="text-slate-500 font-medium text-sm group-hover:text-emerald-600 transition-colors">Pelayanan Hari Ini</p>
+                </div>
+            </a>
+
+            <!-- Card 9: Jadwal Kontrol KB Hari Ini -->
+            <a href="{{ route('kb-services.jadwal-kontrol') }}" class="block bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden border-t-4 border-t-sky-400 transition-all hover:-translate-y-1 hover:shadow-md group">
+                <div class="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center text-sky-600 mb-6 group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-slate-800 mb-1">{{ $kbJadwalKontrolHariIni ?? 0 }}</h3>
+                    <p class="text-slate-500 font-medium text-sm group-hover:text-sky-600 transition-colors">Jadwal Kontrol Hari Ini</p>
+                </div>
+            </a>
+
+            <!-- Card 10: Terlambat Kontrol KB -->
+            <a href="#kb-terlambat-section" class="block bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden border-t-4 border-t-orange-400 transition-all hover:-translate-y-1 hover:shadow-md group">
+                <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mb-6 group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-3xl font-extrabold text-slate-800 mb-1">{{ $kbTerlambatKontrol ?? 0 }}</h3>
+                    <p class="text-slate-500 font-medium text-sm group-hover:text-orange-600 transition-colors">Terlambat Kontrol KB</p>
+                </div>
+            </a>
         </div>
+
+        @if(isset($kbTerlambatKontrol) && $kbTerlambatKontrol > 0)
+        <!-- Alert Box: Terlambat Kontrol KB -->
+        <div class="bg-orange-50 rounded-xl p-6 mt-4 mb-4 border border-orange-200" id="kb-terlambat-section">
+            <h4 class="text-lg font-bold text-orange-800 flex items-center gap-2 mb-4">
+                <svg viewBox="0 0 24 24" class="w-5 h-5 fill-orange-600"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                {{ $kbTerlambatKontrol }} Akseptor Terlambat Kontrol
+            </h4>
+            <div class="space-y-3">
+                @foreach($kbTerlambatKontrolList->take(3) as $acceptor)
+                <div class="flex justify-between items-center text-sm">
+                    <div class="font-medium text-orange-900">{{ $acceptor->full_name }} <span class="text-orange-700">({{ $acceptor->kbServices->first()->service_method ?? '-' }})</span></div>
+                    <div class="text-orange-700">Jadwal: {{ \Carbon\Carbon::parse($acceptor->kbServices->first()->follow_up_date)->translatedFormat('d M Y') }}</div>
+                </div>
+                <hr class="border-orange-200">
+                @endforeach
+            </div>
+            <div class="mt-4">
+                <a href="{{ route('kb-services.jadwal-kontrol') }}" class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors shadow-sm">
+                    Lihat Detail
+                </a>
+            </div>
+        </div>
+        @endif
 
         <!-- Pasien Prioritas / Berisiko Table -->
         <div style="background: #fff; border-radius: 20px; box-shadow: 0 4px 20px rgba(13,148,136,0.04); border: 1px solid rgba(15,23,42,0.06); overflow: hidden; margin-top: 24px;" id="pasien-prioritas-section">
@@ -311,6 +379,8 @@
                 </div>
             @endif
         </div>
+
+
 
         @elseif(Auth::user()->isOrtu())
             @if(isset($ibuHamil) && $ibuHamil)
