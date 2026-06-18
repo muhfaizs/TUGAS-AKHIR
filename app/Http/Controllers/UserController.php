@@ -57,9 +57,14 @@ class UserController extends Controller
             $map = [
                 'bidan' => 'Bidan',
                 'dinas_kesehatan' => 'Dinas Kesehatan',
+                'dinkes' => 'Dinas Kesehatan',
                 'kader' => 'Kader',
                 'patient' => 'Pasien',
-                'super_admin' => 'Super Admin'
+                'ortu' => 'Orang Tua',
+                'super_admin' => 'Super Admin',
+                'ibu_hamil' => 'Ibu Hamil',
+                'pasien_kb' => 'Pasien KB',
+                'upt_kb' => 'UPT KB'
             ];
             $user->role = $map[$user->role] ?? $user->role;
             $user->is_active = $user->status === 'active';
@@ -80,7 +85,10 @@ class UserController extends Controller
             'bidan' => 'Bidan',
             'kader' => 'Kader',
             'dinas_kesehatan' => 'Dinas Kesehatan',
-            'patient' => 'Pasien',
+            'ortu' => 'Orang Tua / Pasien',
+            'ibu_hamil' => 'Ibu Hamil',
+            'pasien_kb' => 'Pasien KB',
+            'upt_kb' => 'UPT KB',
         ];
 
         $statuses = [
@@ -114,7 +122,7 @@ class UserController extends Controller
             'nik' => 'required|string|min:16|max:18|unique:users,nik',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:super_admin,bidan,kader,dinas_kesehatan,patient',
+            'role' => 'required|in:super_admin,bidan,kader,dinas_kesehatan,dinkes,patient,ortu,ibu_hamil,pasien_kb,upt_kb',
             'status' => 'required|in:active,inactive,verified',
             'puskesmas_id' => 'nullable|exists:puskesmas,id',
         ]);
@@ -143,7 +151,10 @@ class UserController extends Controller
             'bidan' => 'Bidan',
             'kader' => 'Kader',
             'dinas_kesehatan' => 'Dinas Kesehatan',
-            'patient' => 'Pasien',
+            'ortu' => 'Orang Tua / Pasien',
+            'ibu_hamil' => 'Ibu Hamil',
+            'pasien_kb' => 'Pasien KB',
+            'upt_kb' => 'UPT KB',
         ];
 
         $statuses = [
@@ -178,7 +189,7 @@ class UserController extends Controller
             'nik' => ['required', 'string', 'min:16', 'max:18', Rule::unique('users', 'nik')->ignore($user->id)],
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:6|confirmed',
-            'role' => 'required|in:super_admin,bidan,kader,dinas_kesehatan,patient',
+            'role' => 'required|in:super_admin,bidan,kader,dinas_kesehatan,dinkes,patient,ortu,ibu_hamil,pasien_kb,upt_kb',
             'status' => 'required|in:active,inactive,verified',
             'puskesmas_id' => 'nullable|exists:puskesmas,id',
         ]);
