@@ -43,13 +43,13 @@ class PemeriksaanAncController extends Controller
             'jumlah_tablet_darah' => $numericRule,
             'risiko_anemia' => "$req|string|in:Ringan,Sedang,Tinggi,-",
             // Lab fields are only required if rujuk_laboratorium is checked
-            'lab_hb' => "exclude_unless:rujuk_laboratorium,1|$req|string|regex:/^([0-9.]+|\-)$/",
-            'lab_protein_urine' => "exclude_unless:rujuk_laboratorium,1|$req|string|in:Negatif (-),Positif (+),Positif (++),Positif (+++),-",
-            'lab_golongan_darah' => "exclude_unless:rujuk_laboratorium,1|$req|string|in:A,B,AB,O,-",
-            'lab_hiv' => "exclude_unless:rujuk_laboratorium,1|$req|string|in:Non Reaktif,Reaktif,-",
-            'lab_sifilis' => "exclude_unless:rujuk_laboratorium,1|$req|string|in:Non Reaktif,Reaktif,-",
-            'lab_hepatitis_b' => "exclude_unless:rujuk_laboratorium,1|$req|string|in:Non Reaktif,Reaktif,-",
-            'catatan_lab' => 'exclude_unless:rujuk_laboratorium,1|nullable|string',
+            'lab_hb' => ['exclude_unless:rujuk_laboratorium,1', $req, 'string', 'regex:/^([0-9.]+|\-)$/'],
+            'lab_protein_urine' => ['exclude_unless:rujuk_laboratorium,1', $req, 'string', 'in:Negatif (-),Positif (+),Positif (++),Positif (+++),-'],
+            'lab_golongan_darah' => ['exclude_unless:rujuk_laboratorium,1', $req, 'string', 'in:A,B,AB,O,-'],
+            'lab_hiv' => ['exclude_unless:rujuk_laboratorium,1', $req, 'string', 'in:Non Reaktif,Reaktif,-'],
+            'lab_sifilis' => ['exclude_unless:rujuk_laboratorium,1', $req, 'string', 'in:Non Reaktif,Reaktif,-'],
+            'lab_hepatitis_b' => ['exclude_unless:rujuk_laboratorium,1', $req, 'string', 'in:Non Reaktif,Reaktif,-'],
+            'catatan_lab' => ['exclude_unless:rujuk_laboratorium,1', 'nullable', 'string'],
             'hasil_usg' => "$req|string",
             'tatalaksana_kasus' => "$req|string",
             'konseling' => "$req|string",
@@ -60,9 +60,9 @@ class PemeriksaanAncController extends Controller
     private function mapEmptyValues($validated)
     {
         $numericFields = [
-            'berat_badan', 'tinggi_badan', 'lingkar_lengan_atas', 
-            'tinggi_fundus_uteri', 'denyut_jantung_janin', 
-            'jumlah_tablet_darah', 'lab_hb'
+            'berat_badan', 'tinggi_badan', 'lingkar_lengan_atas',
+            'tinggi_fundus_uteri', 'denyut_jantung_janin',
+            'jumlah_tablet_darah', 'lab_hb',
         ];
 
         foreach ($numericFields as $field) {
@@ -81,9 +81,9 @@ class PemeriksaanAncController extends Controller
 
         $rules = $this->getValidationRules($isDraft);
         $rules['ibu_hamil_id'] = 'required|exists:ibu_hamils,id';
-        
+
         $validated = $request->validate($rules, [
-            'regex' => 'Kolom :attribute hanya boleh berisi angka atau strip (-).'
+            'regex' => 'Kolom :attribute hanya boleh berisi angka atau strip (-).',
         ]);
 
         $validated = $this->mapEmptyValues($validated);
@@ -150,9 +150,9 @@ class PemeriksaanAncController extends Controller
         $isDraft = in_array($action, ['draft', 'draft_print']);
 
         $validated = $request->validate($this->getValidationRules($isDraft), [
-            'regex' => 'Kolom :attribute hanya boleh berisi angka atau strip (-).'
+            'regex' => 'Kolom :attribute hanya boleh berisi angka atau strip (-).',
         ]);
-        
+
         $validated = $this->mapEmptyValues($validated);
 
         $validated['diberikan_imunisasi_tt'] = $request->has('diberikan_imunisasi_tt');

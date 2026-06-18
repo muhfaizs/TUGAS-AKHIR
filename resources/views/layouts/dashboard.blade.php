@@ -90,12 +90,12 @@
 
                     <a href="{{ route('ibu-hamil.index') }}" class="sidebar-link {{ request()->routeIs('ibu-hamil.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-ibu-hamil">
                         <svg viewBox="0 0 24 24"><path d="M12 2c-4.97 0-9 4.03-9 9 0 4.17 2.84 7.67 6.69 8.69L12 22l2.31-2.31C18.16 18.67 21 15.17 21 11c0-4.97-4.03-9-9-9zm0 2c3.86 0 7 3.14 7 7 0 2.38-1.19 4.47-3 5.74V17h-2v-1.5h-4V17H8v-1.26C6.19 14.47 5 12.38 5 11c0-3.86 3.14-7 7-7z"/></svg>
-                        Kelola Pasien Ibu Hamil
+                        Data Ibu Hamil
                     </a>
 
                     <a href="{{ route('rujukan.index') }}" class="sidebar-link {{ request()->routeIs('rujukan.*') ? 'sidebar-link--active' : '' }}" id="nav-bidan-rujukan">
                         <svg viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-4 5h18l-7-9z"/></svg>
-                        Manajemen Rujukan
+                        Surat Rujukan
                     </a>
 
                     <a href="{{ route('kb-acceptors.index') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.index', 'kb-acceptors.show', 'kb-acceptors.create', 'kb-acceptors.edit') ? 'sidebar-link--active' : '' }}" id="nav-kb-acceptors">
@@ -118,9 +118,14 @@
                         Jadwal Kontrol KB
                     </a>
 
-                    <a href="{{ route('bidan.laporan-bulanan') }}" class="sidebar-link {{ request()->routeIs('bidan.laporan-bulanan') || request()->routeIs('bidan.laporan-tahunan') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-ibu-hamil">
+                    <a href="{{ route('bidan.laporan-bulanan') }}" class="sidebar-link {{ request()->routeIs('bidan.laporan-bulanan') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-bulanan">
                         <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                        Laporan Ibu Hamil
+                        Laporan Bulanan Bumil
+                    </a>
+
+                    <a href="{{ route('bidan.laporan-tahunan') }}" class="sidebar-link {{ request()->routeIs('bidan.laporan-tahunan') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-tahunan">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                        Laporan Tahunan Bumil
                     </a>
 
                     <a href="{{ route('kb-acceptors.laporan-r1') }}" class="sidebar-link {{ request()->routeIs('kb-acceptors.laporan-r1') ? 'sidebar-link--active' : '' }}" id="nav-bidan-laporan-kb">

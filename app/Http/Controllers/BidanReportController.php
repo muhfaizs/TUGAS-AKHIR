@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\IbuHamil;
+use App\Models\TbLaporanDinkes;
 use App\Models\User;
 use App\Notifications\LaporanBidanDikirim;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -189,6 +190,49 @@ class BidanReportController extends Controller
     public function kirim(Request $request)
     {
         $periode = $request->input('periode'); // e.g. "Bulan 05 Tahun 2026" or "Tahun 2026"
+        $type = $request->input('type', 'bulanan');
+        $tahun = $request->input('tahun', date('Y'));
+        $bulan = $request->input('bulan', date('m'));
+
+        $query = IbuHamil::with(['bidan'])->where('bidan_id', auth()->id());
+        if ($type == 'bulanan') {
+            $query->with(['pemeriksaanAncs' => function ($q) use ($bulan, $tahun) {
+                $q->whereMonth('tanggal_pemeriksaan', $bulan)->whereYear('tanggal_pemeriksaan', $tahun)->orderBy('tanggal_pemeriksaan', 'desc');
+            }])->whereHas('pemeriksaanAncs', function ($q) use ($bulan, $tahun) {
+                $q->whereMonth('tanggal_pemeriksaan', $bulan)->whereYear('tanggal_pemeriksaan', $tahun);
+            });
+            $periodeAwal = $tahun.'-'.str_pad($bulan, 2, '0', STR_PAD_LEFT).'-01';
+            $periodeAkhir = date('Y-m-t', strtotime($periodeAwal));
+        } else {
+            $query->with(['pemeriksaanAncs' => function ($q) use ($tahun) {
+                $q->whereYear('tanggal_pemeriksaan', $tahun)->orderBy('tanggal_pemeriksaan', 'desc');
+            }])->whereHas('pemeriksaanAncs', function ($q) use ($tahun) {
+                $q->whereYear('tanggal_pemeriksaan', $tahun);
+            });
+            $periodeAwal = $tahun.'-01-01';
+            $periodeAkhir = $tahun.'-12-31';
+        }
+
+        $ibuHamils = $query->orderBy('created_at', 'desc')->get();
+        $metrics = $this->calculateMetrics($ibuHamils);
+
+        $dataSerialized = [
+            'type' => $type,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'ibuHamils' => $ibuHamils,
+            'metrics' => $metrics,
+        ];
+
+        TbLaporanDinkes::create([
+            'id_bidan' => auth()->id(),
+            'nama_puskesmas' => auth()->user()->puskesmas->nama_puskesmas ?? 'Puskesmas',
+            'periode_awal' => $periodeAwal,
+            'periode_akhir' => $periodeAkhir,
+            'status' => 'Terkirim',
+            'jenis_laporan' => 'Ibu Hamil',
+            'data_serialized' => json_encode($dataSerialized),
+        ]);
 
         // Kirim Notifikasi ke Dinkes
         $dinkesUsers = User::where('role', 'dinkes')->get();
