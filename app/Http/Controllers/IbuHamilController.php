@@ -16,10 +16,19 @@ class IbuHamilController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Hanya tampilkan pasien yang ditangani bidan ini (atau semua jika super admin, tp konteksnya bidan)
-        $ibuHamils = IbuHamil::withSum('pemeriksaanAncs', 'jumlah_tablet_darah')->orderBy('created_at', 'desc')->get();
+        $query = IbuHamil::withSum('pemeriksaanAncs', 'jumlah_tablet_darah')->orderBy('created_at', 'desc');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nik', 'like', '%' . $search . '%');
+            });
+        }
+
+        $ibuHamils = $query->get();
 
         return view('ibu-hamil.index', compact('ibuHamils'));
     }
@@ -191,6 +200,13 @@ class IbuHamilController extends Controller
         $ibuHamil = IbuHamil::with(['pemeriksaanAncs' => function ($query) {
             $query->orderBy('tanggal_pemeriksaan', 'asc');
         }])->findOrFail($id);
+
+        $user = Auth::user();
+        if ($user->isIbuHamil() && $user->nik !== $ibuHamil->nik) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengunduh rekam medis milik Anda sendiri.');
+        } elseif (!$user->isIbuHamil() && !$user->isBidanOnly() && !$user->isSuperAdmin()) {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengunduh rekam medis ini.');
+        }
 
         $pdf = Pdf::loadView('ibu-hamil.rekap-pdf', [
             'ibuHamil' => $ibuHamil,

@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Kelola Pengguna - SatuKIA')
 @section('page_title', 'Kelola Pengguna')
@@ -28,7 +28,9 @@
                     <option value="Bidan" {{ request('role') == 'Bidan' ? 'selected' : '' }}>Bidan</option>
                     <option value="Dinas Kesehatan" {{ request('role') == 'Dinas Kesehatan' ? 'selected' : '' }}>Dinas Kesehatan</option>
                     <option value="Kader" {{ request('role') == 'Kader' ? 'selected' : '' }}>Kader</option>
-                    <option value="Pasien" {{ request('role') == 'Pasien' ? 'selected' : '' }}>Pasien</option>
+                    <option value="Pasien" {{ request('role') == 'Pasien' ? 'selected' : '' }}>Pasien Umum / Anak</option>
+                    <option value="Ibu Hamil" {{ request('role') == 'Ibu Hamil' ? 'selected' : '' }}>Ibu Hamil</option>
+                    <option value="Pasien KB" {{ request('role') == 'Pasien KB' ? 'selected' : '' }}>Pasien KB</option>
                 </select>
             </form>
 

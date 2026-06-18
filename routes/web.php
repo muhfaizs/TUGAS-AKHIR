@@ -103,6 +103,8 @@ Route::middleware('auth')->group(function () {
     })->name('notifications.read');
 
 
+    // Cetak Rekap (Bisa diakses oleh Bidan, Super Admin, dan Ibu Hamil)
+    Route::get('ibu-hamil/{id}/cetak-rekap', [IbuHamilController::class, 'cetakRekapPdf'])->name('ibu-hamil.cetak-rekap');
 
     // Data Ibu Hamil: Hanya untuk Bidan (Bukan Super Admin)
     Route::middleware(BidanOnlyMiddleware::class)->group(function () {
@@ -112,7 +114,6 @@ Route::middleware('auth')->group(function () {
         // Kelola Data Pasien (Ibu Hamil)
         Route::resource('ibu-hamil', IbuHamilController::class);
         Route::post('ibu-hamil/{id}/turun-risiko', [IbuHamilController::class, 'turunRisiko'])->name('ibu-hamil.turun-risiko');
-        Route::get('ibu-hamil/{id}/cetak-rekap', [IbuHamilController::class, 'cetakRekapPdf'])->name('ibu-hamil.cetak-rekap');
         Route::post('ibu-hamil/{id}/send-reminder', [IbuHamilController::class, 'sendReminder'])->name('ibu-hamil.send-reminder');
         Route::post('ibu-hamil/{id}/send-rekap', [IbuHamilController::class, 'sendRekapPdf'])->name('ibu-hamil.send-rekap');
 

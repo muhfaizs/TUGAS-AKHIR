@@ -20,8 +20,8 @@ class AuthController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'nomor_kontak' => 'required|string|regex:/^[0-9]+$/',
             'reg_username' => 'required|string|max:255|unique:users,username',
-            'reg_password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()],
-            'role' => 'required|in:ortu,pasien_kb',
+            'reg_password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
+            'role' => 'required|in:ortu,pasien_kb,ibu_hamil',
         ], [
             'nik_ortu.size' => 'NIK harus tepat 16 angka.',
             'nik_ortu.regex' => 'NIK hanya boleh berisi angka.',
@@ -35,6 +35,7 @@ class AuthController extends Controller
             'username' => $request->reg_username,
             'password' => Hash::make($request->reg_password),
             'role' => $request->role,
+            'status' => 'active',
         ]);
 
         Auth::login($user);
@@ -52,8 +53,11 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        // Tentukan tipe login (Email, NIK, atau Username)
+        $loginType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : (is_numeric($request->username) && strlen($request->username) == 16 ? 'nik' : 'username');
+
         $credentials = [
-            'username' => $request->username,
+            $loginType => $request->username,
             'password' => $request->password,
         ];
 

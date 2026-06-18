@@ -7,6 +7,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -72,10 +75,18 @@ class User extends Authenticatable
     {
         return $this->role === 'ortu' || $this->role === 'patient';
     }
-    
+
     public function isOrangTua(): bool
     {
         return $this->isOrtu();
+    }
+
+    /**
+     * Check if the user is a Pregnant Mother.
+     */
+    public function isIbuHamil(): bool
+    {
+        return $this->role === 'ibu_hamil';
     }
 
     /**
@@ -114,53 +125,54 @@ class User extends Authenticatable
         if (is_array($role)) {
             return in_array($this->role, $role);
         }
+
         return $this->role === $role;
     }
 
     // --- Relationships ---
 
-    public function kbAcceptor(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function kbAcceptor(): HasOne
     {
         return $this->hasOne(KBAcceptor::class, 'user_id', 'id');
     }
 
-    public function puskesmas(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function puskesmas(): BelongsTo
     {
         return $this->belongsTo(Puskesmas::class, 'puskesmas_id', 'id');
     }
 
-    public function kbServices(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function kbServices(): HasMany
     {
         return $this->hasMany(KBService::class, 'created_by', 'id');
     }
 
-    public function registeredAcceptors(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function registeredAcceptors(): HasMany
     {
         return $this->hasMany(KBAcceptor::class, 'registered_by', 'id');
     }
 
-    public function kabupaten(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function kabupaten(): BelongsTo
     {
         return $this->belongsTo(Kabupaten::class, 'kabupaten_id', 'id');
     }
 
-    public function anak(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function anak(): HasMany
     {
         // Foreign key in anak is 'id_user', pointing to 'id'
         return $this->hasMany(Anak::class, 'id_user', 'id');
     }
 
-    public function tindakanMedis(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tindakanMedis(): HasMany
     {
         return $this->hasMany(TindakanMedis::class, 'id_bidan', 'id');
     }
 
-    public function imunisasi(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function imunisasi(): HasMany
     {
         return $this->hasMany(Imunisasi::class, 'id_bidan', 'id');
     }
 
-    public function posyandu(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function posyandu(): BelongsTo
     {
         return $this->belongsTo(Posyandu::class, 'posyandu_id', 'id');
     }

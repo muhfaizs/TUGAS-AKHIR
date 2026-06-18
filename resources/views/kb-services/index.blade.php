@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Riwayat Pelayanan KB')
 @section('page_title', 'Riwayat Pelayanan KB')
@@ -107,7 +107,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-medium text-gray-900 whitespace-nowrap">{{ $service->created_at->format('d M Y') }}</div>
+                                    <div class="text-sm font-medium text-gray-900 whitespace-nowrap">{{ \Carbon\Carbon::parse($service->service_date)->format('d M Y') }}</div>
                                     <div class="text-xs text-gray-500 mt-0.5 max-w-[150px] truncate" title="{{ $service->puskesmasData->name ?? '-' }}">{{ $service->puskesmasData->name ?? '-' }}</div>
                                 </td>
                                 <td class="px-6 py-4">
