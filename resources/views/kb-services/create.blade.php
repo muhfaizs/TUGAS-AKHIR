@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Input Pelayanan KB')
-@section('page_title', 'Dashboard')
+@section('page_title', 'Input Pelayanan KB')
 @section('page_subtitle', 'Kelola data pelayanan KB untuk pasien')
 
 @section('content')

@@ -190,6 +190,7 @@
                                 <option value="kader">Kader</option>
                                 <option value="ortu">Orang Tua</option>
                                 <option value="pasien_kb">Pasien KB</option>
+                                <option value="ibu_hamil">Ibu Hamil</option>
                                 <option value="dinkes">Dinas Kesehatan</option>
                             @endif
                         </select>

@@ -62,8 +62,9 @@ class FollowUpController extends Controller
             $message = 'Hasil follow-up berhasil disimpan.';
         }
 
-        // Opsional: Jika status Selesai, kita bisa tandai service-nya jika diperlukan
-        // tapi saat ini cukup disimpan di tabel follow_ups
+        if (!empty($validated['next_control_date'])) {
+            $service->update(['follow_up_date' => $validated['next_control_date']]);
+        }
 
         return redirect()->route('kb-acceptors.show', $service->kb_acceptor_id)->with('success', $message);
     }
