@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\KBService;
 
 class NotificationController extends Controller
@@ -23,4 +22,3 @@ class NotificationController extends Controller
         return view('notifications.index', compact('notifications', 'today'));
     }
 }
-

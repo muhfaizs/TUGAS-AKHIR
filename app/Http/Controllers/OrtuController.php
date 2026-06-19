@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Anak;
 use App\Models\IbuHamil;
+use App\Models\Notifikasi;
 use App\Models\PemeriksaanAnc;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -139,11 +141,11 @@ class OrtuController extends Controller
         $anakId = $request->input('anak_id');
         $vaksin = $request->input('vaksin');
 
-        $anak = \App\Models\Anak::where('id_anak', $anakId)->where('id_user', $user->id)->firstOrFail();
+        $anak = Anak::where('id_anak', $anakId)->where('id_user', $user->id)->firstOrFail();
 
         $notifTitle = "Pengingat Imunisasi: {$vaksin} - {$anak->nama_anak}";
 
-        \App\Models\Notifikasi::create([
+        Notifikasi::create([
             'id_user' => $user->id,
             'judul' => $notifTitle,
             'pesan' => "Anda telah membaca jadwal imunisasi {$vaksin} untuk {$anak->nama_anak}.",

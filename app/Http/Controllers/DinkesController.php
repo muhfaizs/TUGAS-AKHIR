@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Anak;
 use App\Models\IbuHamil;
+use App\Models\Imunisasi;
+use App\Models\KbAcceptor;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -106,24 +109,30 @@ class DinkesController extends Controller
         $metrics = $this->calculateMetrics($ibuHamils);
 
         // Metrics Anak
-        $anaks = \App\Models\Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->get();
+        $anaks = Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->get();
         $totalAnak = $anaks->count();
-        $anakBerisiko = $anaks->filter(function($a) {
+        $anakBerisiko = $anaks->filter(function ($a) {
             $latest = $a->latestPengukuran;
+
             return $latest && $latest->flag_risiko;
         })->count();
-        $totalImunisasi = \App\Models\Imunisasi::count();
+        $totalImunisasi = Imunisasi::count();
 
         // Metrics KB
-        $kbAkseptors = \App\Models\KbAcceptor::get();
+        $kbAkseptors = KbAcceptor::get();
         $totalKb = $kbAkseptors->count();
         $kbAktif = $kbAkseptors->where('status', 'active')->count();
-        $kbRisikoTinggi = $kbAkseptors->filter(function($kb) {
+        $kbRisikoTinggi = $kbAkseptors->filter(function ($kb) {
             $lastService = $kb->lastService();
+
             return $lastService && $lastService->risk_level === 'Tinggi';
         })->count();
 
-        return view('dinkes.laporan', compact('ibuHamils', 'metrics', 'totalAnak', 'anakBerisiko', 'totalImunisasi', 'totalKb', 'kbAktif', 'kbRisikoTinggi', 'anaks', 'kbAkseptors'));
+        // Unified Laporan Anak
+        $laporanController = new LaporanController;
+        $laporanAnak = $laporanController->getUnifiedLaporan($request)->sortByDesc('tanggal')->values();
+
+        return view('dinkes.laporan', compact('ibuHamils', 'metrics', 'totalAnak', 'anakBerisiko', 'totalImunisasi', 'totalKb', 'kbAktif', 'kbRisikoTinggi', 'anaks', 'kbAkseptors', 'laporanAnak'));
     }
 
     /**
@@ -155,14 +164,16 @@ class DinkesController extends Controller
 
     public function exportBayiPdf()
     {
-        $anaks = \App\Models\Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->orderBy('created_at', 'desc')->get();
+        $anaks = Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->orderBy('created_at', 'desc')->get();
         $pdf = Pdf::loadView('dinkes.exports.pdf_bayi', compact('anaks'))->setPaper('a4', 'landscape');
+
         return $pdf->download('Laporan_Bayi_'.date('Ymd').'.pdf');
     }
 
     public function exportBayiExcel()
     {
-        $anaks = \App\Models\Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->orderBy('created_at', 'desc')->get();
+        $anaks = Anak::with(['pengukuran.kader.posyandu', 'orangTua.posyandu', 'orangTua.puskesmas', 'tindakanMedis.bidan.puskesmas', 'tindakanMedis.posyandu', 'tindakanMedis.puskesmas', 'imunisasi.bidan.puskesmas', 'imunisasi.posyandu', 'imunisasi.puskesmas'])->orderBy('created_at', 'desc')->get();
+
         return response()->view('dinkes.exports.excel_bayi', compact('anaks'))
             ->header('Content-Type', 'application/vnd.ms-excel')
             ->header('Content-Disposition', 'attachment; filename="Laporan_Bayi_'.date('Ymd').'.xls"');
@@ -170,14 +181,16 @@ class DinkesController extends Controller
 
     public function exportKbPdf()
     {
-        $akseptors = \App\Models\KbAcceptor::with(['user', 'puskesmas', 'kader', 'activeServices'])->orderBy('created_at', 'desc')->get();
+        $akseptors = KbAcceptor::with(['user', 'puskesmas', 'kader', 'activeServices'])->orderBy('created_at', 'desc')->get();
         $pdf = Pdf::loadView('dinkes.exports.pdf_kb', compact('akseptors'))->setPaper('a4', 'landscape');
+
         return $pdf->download('Laporan_KB_'.date('Ymd').'.pdf');
     }
 
     public function exportKbExcel()
     {
-        $akseptors = \App\Models\KbAcceptor::with(['user', 'puskesmas', 'kader', 'activeServices'])->orderBy('created_at', 'desc')->get();
+        $akseptors = KbAcceptor::with(['user', 'puskesmas', 'kader', 'activeServices'])->orderBy('created_at', 'desc')->get();
+
         return response()->view('dinkes.exports.excel_kb', compact('akseptors'))
             ->header('Content-Type', 'application/vnd.ms-excel')
             ->header('Content-Disposition', 'attachment; filename="Laporan_KB_'.date('Ymd').'.xls"');

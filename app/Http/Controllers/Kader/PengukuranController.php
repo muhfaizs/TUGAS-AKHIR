@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Kader;
 
 use App\Http\Controllers\Controller;
 use App\Models\Anak;
+use App\Models\Notifikasi;
 use App\Models\Pengukuran;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,17 +72,17 @@ class PengukuranController extends Controller
         ]);
 
         if ($flagRisiko) {
-            $anak = \App\Models\Anak::find($validated['id_anak']);
+            $anak = Anak::find($validated['id_anak']);
             $kader = $request->user();
-            $bidans = \App\Models\User::where('role', 'bidan')
+            $bidans = User::where('role', 'bidan')
                 ->where('puskesmas_id', $kader->puskesmas_id)
                 ->get();
-                
+
             foreach ($bidans as $bidan) {
-                \App\Models\Notifikasi::create([
+                Notifikasi::create([
                     'id_user' => $bidan->id,
                     'judul' => 'Peringatan: Bayi Beresiko Stunting',
-                    'pesan' => "Kader {$kader->name} melaporkan bahwa anak {$anak->nama_anak} berisiko (IMT: " . round($imt, 2) . ").",
+                    'pesan' => "Kader {$kader->name} melaporkan bahwa anak {$anak->nama_anak} berisiko (IMT: ".round($imt, 2).').',
                 ]);
             }
         }

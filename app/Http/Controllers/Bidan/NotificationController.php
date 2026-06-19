@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Anak;
 use App\Models\Notifikasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class NotificationController extends Controller
 {

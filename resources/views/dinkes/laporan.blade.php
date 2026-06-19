@@ -375,63 +375,46 @@
             <table class="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                     <tr>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Posyandu/Puskesmas</th>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Nama Bayi</th>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Orang Tua</th>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">BB/TB Terakhir</th>
-                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Status Stunting</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Tanggal</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Nama Anak</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Posyandu</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">BB / TB</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Status Gizi</th>
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Tindakan & Imunisasi</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @forelse($anaks as $anak)
-                    @php 
-                        $latest = $anak->latestPengukuran;
-                        
-                        $lokasiUtama = '-';
-                        if(isset($anak->orangTua->posyandu)) {
-                            $lokasiUtama = $anak->orangTua->posyandu->nama_posyandu;
-                        } elseif(isset($anak->orangTua->puskesmas)) {
-                            $lokasiUtama = $anak->orangTua->puskesmas->name ?? $anak->orangTua->puskesmas->nama_puskesmas ?? 'Puskesmas';
-                        } elseif($latest && isset($latest->kader->posyandu)) {
-                            $lokasiUtama = $latest->kader->posyandu->nama_posyandu;
-                        } elseif($anak->tindakanMedis->count() > 0) {
-                            $lastTindakan = $anak->tindakanMedis->last();
-                            $lokasiUtama = $lastTindakan->bidan->puskesmas->name ?? $lastTindakan->bidan->puskesmas->nama_puskesmas ?? $lastTindakan->puskesmas->name ?? $lastTindakan->puskesmas->nama_puskesmas ?? $lastTindakan->posyandu->nama_posyandu ?? 'Faskes';
-                        } elseif($anak->imunisasi->count() > 0) {
-                            $lastImun = $anak->imunisasi->last();
-                            $lokasiUtama = $lastImun->bidan->puskesmas->name ?? $lastImun->bidan->puskesmas->nama_puskesmas ?? $lastImun->puskesmas->name ?? $lastImun->puskesmas->nama_puskesmas ?? $lastImun->posyandu->nama_posyandu ?? 'Faskes';
-                        }
-                    @endphp
+                    @forelse($laporanAnak as $data)
                     <tr class="hover:bg-slate-50 transition-colors border-b border-slate-50">
                         <td class="py-4 px-4 font-medium text-slate-700 whitespace-nowrap">
-                            <span class="font-bold text-slate-800">{{ $lokasiUtama }}</span>
+                            {{ \Carbon\Carbon::parse($data->tanggal)->translatedFormat('d M Y') }}
                         </td>
                         <td class="py-4 px-4">
-                            <p class="font-bold text-slate-800">{{ $anak->nama_anak }}</p>
-                            <p class="text-[10px] text-slate-500">NIK: {{ $anak->nik_anak }}</p>
+                            <p class="font-bold text-slate-800">{{ $data->anak->nama_anak ?? '-' }}</p>
+                            <p class="text-[10px] text-slate-500">NIK: {{ $data->anak->nik_anak ?? '-' }}</p>
                         </td>
                         <td class="py-4 px-4">
-                            <p class="font-bold text-slate-800 whitespace-nowrap">{{ $anak->nama_ibu }}</p>
+                            <p class="font-bold text-slate-800 whitespace-nowrap">{{ $data->posyandu }}</p>
+                            @if(count($data->pelaksana) > 0)
+                                <p class="text-[10px] text-slate-500 mt-1">{{ implode(', ', $data->pelaksana) }}</p>
+                            @endif
                         </td>
-                        <td class="py-4 px-4">
-                            @if($latest)
-                                <span class="font-semibold">{{ $latest->berat_badan }} kg</span> / <span class="font-semibold">{{ $latest->tinggi_badan }} cm</span>
+                        <td class="py-4 px-4 text-slate-700">
+                            @if($data->pengukuran)
+                                <span class="font-semibold">{{ $data->pengukuran->berat_badan }} kg</span> / <span class="font-semibold">{{ $data->pengukuran->tinggi_badan }} cm</span>
                             @else
                                 <span class="text-slate-400">-</span>
                             @endif
                         </td>
                         <td class="py-4 px-4">
-                            @if($latest)
-                                @if($latest->flag_risiko)
-                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">Beresiko</span>
-                                    <div class="text-[10px] text-slate-500 mt-1">{{ $latest->status_stunting }} / {{ $latest->status_gizi }}</div>
-                                @elseif($latest->status_stunting == 'Stunting')
-                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">{{ $latest->status_stunting }}</span>
-                                @elseif($latest->status_stunting == 'Berisiko Stunting')
-                                    <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-md text-xs font-bold">{{ $latest->status_stunting }}</span>
+                            @if($data->pengukuran)
+                                @if(str_contains(strtolower($data->pengukuran->status_stunting), 'stunting'))
+                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded-md text-xs font-bold">{{ $data->pengukuran->status_stunting }}</span><br>
+                                @endif
+                                @if(str_contains(strtolower($data->pengukuran->status_gizi), 'kurang') || str_contains(strtolower($data->pengukuran->status_gizi), 'buruk'))
+                                    <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-md text-xs font-bold mt-1 inline-block">{{ $data->pengukuran->status_gizi }}</span>
                                 @else
-                                    <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold">{{ $latest->status_stunting }}</span>
+                                    <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-bold mt-1 inline-block">{{ $data->pengukuran->status_gizi }}</span>
                                 @endif
                             @else
                                 <span class="text-slate-400">-</span>
@@ -439,19 +422,14 @@
                         </td>
                         <td class="py-4 px-4">
                             <div class="space-y-1">
-                                @if($anak->imunisasi && $anak->imunisasi->count() > 0)
-                                    @foreach($anak->imunisasi as $imun)
-                                        @php $lokasi = $imun->bidan->puskesmas->name ?? $imun->bidan->puskesmas->nama_puskesmas ?? $imun->puskesmas->name ?? $imun->puskesmas->nama_puskesmas ?? $imun->posyandu->nama_posyandu ?? 'Faskes'; @endphp
-                                        <div class="text-[11px] text-blue-600 bg-blue-50 px-2 py-1 rounded-md mb-1"><span class="font-bold">Imunisasi:</span> {{ $imun->nama_vaksin }} <span class="text-slate-500">({{ $imun->tanggal_imunisasi ? $imun->tanggal_imunisasi->format('d/m/y') : '' }} - {{ $imun->bidan->name ?? 'Bidan' }} @ {{ $lokasi }})</span></div>
-                                    @endforeach
-                                @endif
-                                @if($anak->tindakanMedis && $anak->tindakanMedis->count() > 0)
-                                    @foreach($anak->tindakanMedis as $tind)
-                                        @php $lokasi = $tind->bidan->puskesmas->name ?? $tind->bidan->puskesmas->nama_puskesmas ?? $tind->puskesmas->name ?? $tind->puskesmas->nama_puskesmas ?? $tind->posyandu->nama_posyandu ?? 'Faskes'; @endphp
-                                        <div class="text-[11px] text-red-600 bg-red-50 px-2 py-1 rounded-md mb-1"><span class="font-bold">Tindakan:</span> {{ \Illuminate\Support\Str::limit($tind->diagnosa, 20) }} <span class="text-slate-500">({{ $tind->tanggal_pemeriksaan ? $tind->tanggal_pemeriksaan->format('d/m/y') : '' }} - {{ $tind->bidan->name ?? 'Bidan' }} @ {{ $lokasi }})</span></div>
-                                    @endforeach
-                                @endif
-                                @if((!$anak->imunisasi || $anak->imunisasi->count() == 0) && (!$anak->tindakanMedis || $anak->tindakanMedis->count() == 0))
+                                @if($data->tindakan || $data->imunisasi)
+                                    @if($data->imunisasi)
+                                        <div class="text-[11px] text-blue-600 bg-blue-50 px-2 py-1 rounded-md mb-1"><span class="font-bold">Vaksin:</span> {{ $data->imunisasi->nama_vaksin }}</div>
+                                    @endif
+                                    @if($data->tindakan)
+                                        <div class="text-[11px] text-red-600 bg-red-50 px-2 py-1 rounded-md mb-1"><span class="font-bold">Tindakan:</span> {{ \Illuminate\Support\Str::limit($data->tindakan->diagnosa, 20) }}</div>
+                                    @endif
+                                @else
                                     <span class="text-slate-400">-</span>
                                 @endif
                             </div>
@@ -460,7 +438,7 @@
                     @empty
                     <tr>
                         <td colspan="6" class="py-8 text-center text-slate-500">
-                            Belum ada data bayi yang masuk.
+                            Belum ada data layanan bayi yang masuk sesuai filter.
                         </td>
                     </tr>
                     @endforelse

@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
-    private function getUnifiedLaporan(Request $request)
+    public function getUnifiedLaporan(Request $request)
     {
         // Fetch Pengukuran
         $qPengukuran = Pengukuran::with(['anak.orangTua', 'kader']);

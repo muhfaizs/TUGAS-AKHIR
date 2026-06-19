@@ -34,6 +34,7 @@ class JadwalPosyanduController extends Controller
     {
         $user = Auth::user();
         $posyanduName = $user->posyandu ? $user->posyandu->nama_posyandu : 'Balai Posyandu';
+
         return view('dashboard.kader.jadwal.create', compact('posyanduName'));
     }
 
@@ -77,6 +78,7 @@ class JadwalPosyanduController extends Controller
 
         $user = Auth::user();
         $posyanduName = $user->posyandu ? $user->posyandu->nama_posyandu : 'Balai Posyandu';
+
         return view('dashboard.kader.jadwal.edit', compact('jadwal', 'posyanduName'));
     }
 

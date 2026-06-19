@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -63,4 +63,3 @@ class AdminProfileController extends Controller
             ->with('success', 'Profil berhasil diperbarui.');
     }
 }
-

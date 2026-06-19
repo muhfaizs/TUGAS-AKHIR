@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KBService;
 use App\Models\KBAcceptor;
-use App\Models\Puskesmas;
+use App\Models\KBService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class KBServiceController extends Controller
 {
@@ -19,7 +18,7 @@ class KBServiceController extends Controller
             $search = $request->search;
             $query->whereHas('acceptor', function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                  ->orWhere('nik', 'like', "%{$search}%");
+                    ->orWhere('nik', 'like', "%{$search}%");
             });
         }
 
@@ -70,11 +69,11 @@ class KBServiceController extends Controller
         ]);
 
         $acceptor = KBAcceptor::findOrFail($validated['kb_acceptor_id']);
-        
+
         $validated['bidan_id'] = Auth::id();
         $validated['puskesmas_id'] = $acceptor->puskesmas_id;
         $validated['created_by'] = Auth::id();
-        
+
         // Ensure service_date is set to now if empty (although it should be required now)
         if (empty($validated['service_date'])) {
             $validated['service_date'] = now();
@@ -90,7 +89,7 @@ class KBServiceController extends Controller
     public function show(KBService $kbService)
     {
         $kbService->load('acceptor', 'bidan', 'puskesmasData', 'creator', 'verifier', 'followUp');
-        
+
         return view('kb-services.show', compact('kbService'));
     }
 
@@ -145,7 +144,7 @@ class KBServiceController extends Controller
 
     public function verify(Request $request, KBService $kbService)
     {
-        if (!Auth::user()->hasRole(['super_admin', 'bidan', 'dinas_kesehatan'])) {
+        if (! Auth::user()->hasRole(['super_admin', 'bidan', 'dinas_kesehatan'])) {
             abort(403, 'Akses Ditolak: Anda tidak memiliki izin untuk memverifikasi layanan ini.');
         }
 
@@ -163,10 +162,10 @@ class KBServiceController extends Controller
         $query = $request->get('q', '');
 
         $acceptors = KBAcceptor::where('is_verified', true)
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('full_name', 'like', "%{$query}%")
-                  ->orWhere('nik', 'like', "%{$query}%")
-                  ->orWhere('phone', 'like', "%{$query}%");
+                    ->orWhere('nik', 'like', "%{$query}%")
+                    ->orWhere('phone', 'like', "%{$query}%");
             })
             ->limit(10)
             ->get(['id', 'full_name', 'nik', 'phone']);
@@ -178,9 +177,9 @@ class KBServiceController extends Controller
     {
         // Get services with follow_up_date within the next 14 days or overdue but not resolved yet
         // For simplicity, just get all upcoming or recent follow_up_dates
-        $query = KBService::with(['acceptor' => function($q) {
-                $q->select('id', 'full_name', 'nik', 'phone', 'address');
-            }])
+        $query = KBService::with(['acceptor' => function ($q) {
+            $q->select('id', 'full_name', 'nik', 'phone', 'address');
+        }])
             ->whereNotNull('follow_up_date')
             ->orderBy('follow_up_date', 'asc');
 
@@ -204,13 +203,13 @@ class KBServiceController extends Controller
     public function sendReminder(Request $request, KBService $kbService)
     {
         $acceptor = $kbService->acceptor;
-        if (!$acceptor || !$acceptor->phone) {
+        if (! $acceptor || ! $acceptor->phone) {
             return back()->with('error', 'Nomor telepon akseptor tidak ditemukan.');
         }
 
         // Create the WhatsApp message
-        $tanggalKontrol = \Carbon\Carbon::parse($kbService->follow_up_date)->translatedFormat('l, d F Y');
-        
+        $tanggalKontrol = Carbon::parse($kbService->follow_up_date)->translatedFormat('l, d F Y');
+
         $pesan = "Halo Ibu {$acceptor->full_name},\n\n";
         $pesan .= "Ini adalah pesan pengingat otomatis dari *SatuKIA (Sistem Informasi KIA)*.\n\n";
         $pesan .= "Kami mengingatkan bahwa jadwal kunjungan ulang / kontrol KB Ibu untuk metode *{$kbService->service_method}* adalah pada:\n";
@@ -221,10 +220,10 @@ class KBServiceController extends Controller
         $phone = preg_replace('/[^0-9]/', '', $acceptor->phone);
         // Replace leading 0 with 62
         if (strpos($phone, '0') === 0) {
-            $phone = '62' . substr($phone, 1);
+            $phone = '62'.substr($phone, 1);
         }
 
-        $waUrl = "https://wa.me/{$phone}?text=" . urlencode($pesan);
+        $waUrl = "https://wa.me/{$phone}?text=".urlencode($pesan);
 
         return redirect()->away($waUrl);
     }
