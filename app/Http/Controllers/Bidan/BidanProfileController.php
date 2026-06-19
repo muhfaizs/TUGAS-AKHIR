@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers\Bidan;
 
@@ -71,4 +71,3 @@ class BidanProfileController extends Controller
             ->with('success', 'Profil berhasil diperbarui.');
     }
 }
-

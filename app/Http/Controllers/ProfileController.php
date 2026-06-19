@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Posyandu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
     public function edit()
     {
-        $posyandus = \App\Models\Posyandu::all();
-        
+        $posyandus = Posyandu::all();
+
         return view('profile.edit', [
             'user' => Auth::user(),
             'posyandus' => $posyandus,
@@ -62,8 +64,8 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('profile_photo')) {
-            if ($user->profile_photo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->profile_photo_path)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_photo_path);
+            if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+                Storage::disk('public')->delete($user->profile_photo_path);
             }
             $user->profile_photo_path = $request->file('profile_photo')->store('profile-photos', 'public');
         }

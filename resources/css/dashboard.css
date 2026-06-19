@@ -85,6 +85,68 @@
 }
 .sidebar-link--active svg { opacity: 1; }
 
+/* ===== Sidebar Collapsible Groups ===== */
+.sidebar-group {
+    margin: 2px 0;
+}
+.sidebar-group-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 11px 14px; border-radius: 12px;
+    font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    background: none; border: none; cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+.sidebar-group-toggle:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+.sidebar-group-toggle--active {
+    color: #fff;
+    font-weight: 600;
+}
+.sidebar-group-left {
+    display: flex; align-items: center; gap: 12px;
+}
+.sidebar-group-left svg {
+    width: 20px; height: 20px; fill: currentColor; flex-shrink: 0;
+    opacity: 0.8;
+}
+.sidebar-group-toggle--active .sidebar-group-left svg {
+    opacity: 1;
+}
+.sidebar-group-arrow {
+    width: 18px; height: 18px; fill: currentColor;
+    opacity: 0.5; flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar-group-arrow--open {
+    transform: rotate(180deg);
+    opacity: 0.8;
+}
+.sidebar-group-items {
+    overflow: hidden;
+    padding-left: 16px;
+    margin-left: 20px;
+    border-left: 2px solid rgba(255,255,255,0.12);
+}
+.sidebar-sublink {
+    font-size: 13px;
+    padding: 9px 14px;
+    border-radius: 10px;
+}
+.sidebar-sublink:hover {
+    padding-left: 18px;
+}
+
+/* Sidebar divider */
+.sidebar-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    margin: 10px 8px;
+}
+
 .sidebar-footer {
     padding: 16px;
     border-top: 1px solid rgba(255,255,255,0.1);

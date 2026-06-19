@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     private function checkSuperAdmin()
     {
-        if (auth()->check() && !in_array(auth()->user()->role, ['super_admin', 'admin'])) {
+        if (auth()->check() && ! in_array(auth()->user()->role, ['super_admin', 'admin'])) {
             abort(403, 'Akses Ditolak: Halaman ini hanya untuk Super Admin.');
         }
     }
@@ -22,17 +22,17 @@ class UserController extends Controller
         $this->checkSuperAdmin();
 
         $query = User::query();
-        
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('nik', 'like', "%{$search}%");
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('nik', 'like', "%{$search}%");
             });
         }
-        
+
         if ($request->filled('role')) {
             $roleMapping = [
                 'Bidan' => 'bidan',
@@ -41,17 +41,17 @@ class UserController extends Controller
                 'Pasien' => 'patient',
                 'Super Admin' => 'super_admin',
                 'Ibu Hamil' => 'ibu_hamil',
-                'Pasien KB' => 'pasien_kb'
+                'Pasien KB' => 'pasien_kb',
             ];
-            
+
             $role = $roleMapping[$request->role] ?? $request->role;
-            if($role) {
+            if ($role) {
                 $query->where('role', $role);
             }
         }
-        
+
         $users = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
-        
+
         // Format roles back for view
         $users->getCollection()->transform(function ($user) {
             $map = [
@@ -64,10 +64,11 @@ class UserController extends Controller
                 'super_admin' => 'Super Admin',
                 'ibu_hamil' => 'Ibu Hamil',
                 'pasien_kb' => 'Pasien KB',
-                'upt_kb' => 'UPT KB'
+                'upt_kb' => 'UPT KB',
             ];
             $user->role = $map[$user->role] ?? $user->role;
             $user->is_active = $user->status === 'active';
+
             return $user;
         });
 

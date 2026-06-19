@@ -22,9 +22,9 @@ class IbuHamilController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('nama_lengkap', 'like', '%' . $search . '%')
-                  ->orWhere('nik', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%'.$search.'%')
+                    ->orWhere('nik', 'like', '%'.$search.'%');
             });
         }
 
@@ -204,7 +204,7 @@ class IbuHamilController extends Controller
         $user = Auth::user();
         if ($user->isIbuHamil() && $user->nik !== $ibuHamil->nik) {
             abort(403, 'Akses ditolak. Anda hanya dapat mengunduh rekam medis milik Anda sendiri.');
-        } elseif (!$user->isIbuHamil() && !$user->isBidanOnly() && !$user->isSuperAdmin()) {
+        } elseif (! $user->isIbuHamil() && ! $user->isBidanOnly() && ! $user->isSuperAdmin()) {
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengunduh rekam medis ini.');
         }
 
@@ -263,7 +263,7 @@ class IbuHamilController extends Controller
 
         $latestAnc = $ibuHamil->pemeriksaanAncs->last();
         $tanggalBerikutnya = null;
-        
+
         if ($latestAnc) {
             $usiaMinggu = $ibuHamil->usia_kehamilan;
             $hariTambahan = 28;

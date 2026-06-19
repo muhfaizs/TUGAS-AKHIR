@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\KBService;
 use App\Models\FollowUp;
-use Carbon\Carbon;
+use App\Models\KBService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FollowUpController extends Controller
@@ -17,14 +16,14 @@ class FollowUpController extends Controller
             ->whereNotNull('follow_up_date')
             ->orderBy('follow_up_date', 'asc')
             ->paginate(15);
-            
+
         return view('followups.index', compact('services'));
     }
 
     public function show($id)
     {
         $service = KBService::with(['acceptor'])->findOrFail($id);
-        
+
         // Find existing follow up if any
         $followUp = FollowUp::where('kb_service_id', $id)->first();
 
@@ -69,7 +68,7 @@ class FollowUpController extends Controller
             $message = 'Hasil follow-up berhasil disimpan.';
         }
 
-        if (!empty($validated['next_control_date'])) {
+        if (! empty($validated['next_control_date'])) {
             $service->update(['follow_up_date' => $validated['next_control_date']]);
         }
 

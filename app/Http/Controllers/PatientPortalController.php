@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\KBAcceptor;
 use App\Models\KBService;
+use Illuminate\Support\Facades\Auth;
 
 class PatientPortalController extends Controller
 {
@@ -26,7 +25,7 @@ class PatientPortalController extends Controller
         if ($acceptor && empty($acceptor->user_id)) {
             $acceptor->update(['user_id' => $user->id]);
         }
-        
+
         $services = collect();
         $nextFollowUp = null;
 

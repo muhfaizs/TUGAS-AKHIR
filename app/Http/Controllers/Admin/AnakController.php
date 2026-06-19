@@ -19,8 +19,8 @@ class AnakController extends Controller
         $query = Anak::with('orangTua')->latest();
 
         if ($request->filled('search')) {
-            $query->where('nama_anak', 'like', '%' . $request->search . '%')
-                  ->orWhere('nik_anak', 'like', '%' . $request->search . '%');
+            $query->where('nama_anak', 'like', '%'.$request->search.'%')
+                ->orWhere('nik_anak', 'like', '%'.$request->search.'%');
         }
 
         if ($request->filled('status')) {
@@ -221,4 +221,3 @@ class AnakController extends Controller
             ->with('success', 'Data anak berhasil dihapus.');
     }
 }
-

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\KBService;
 use App\Models\ServiceReport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -14,14 +14,14 @@ class ReportController extends Controller
         $reports = ServiceReport::with(['submittedBy', 'verifiedBy'])
             ->orderBy('year', 'desc')
             ->get();
-            
+
         return view('reports.index', compact('reports'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'year' => 'required|integer|min:2000|max:' . (date('Y') + 5),
+            'year' => 'required|integer|min:2000|max:'.(date('Y') + 5),
         ]);
 
         $year = $request->year;
@@ -30,7 +30,7 @@ class ReportController extends Controller
         $existingReport = ServiceReport::where('year', $year)->first();
 
         if ($existingReport) {
-            return redirect()->route('reports.index')->with('error', 'Laporan untuk tahun ' . $year . ' sudah ada.');
+            return redirect()->route('reports.index')->with('error', 'Laporan untuk tahun '.$year.' sudah ada.');
         }
 
         ServiceReport::create([
@@ -39,7 +39,7 @@ class ReportController extends Controller
             'status' => 'draft',
         ]);
 
-        return redirect()->route('reports.index')->with('success', 'Draft laporan tahun ' . $year . ' berhasil dibuat.');
+        return redirect()->route('reports.index')->with('success', 'Draft laporan tahun '.$year.' berhasil dibuat.');
     }
 
     public function download(ServiceReport $report)
@@ -53,10 +53,10 @@ class ReportController extends Controller
         $pdf = Pdf::loadView('reports.pdf', [
             'report' => $report,
             'services' => $services,
-            'year' => $report->year
+            'year' => $report->year,
         ]);
 
-        return $pdf->download('Laporan_Pelayanan_KB_Tahun_' . $report->year . '.pdf');
+        return $pdf->download('Laporan_Pelayanan_KB_Tahun_'.$report->year.'.pdf');
     }
 
     public function submit(ServiceReport $report)
@@ -69,7 +69,7 @@ class ReportController extends Controller
             'status' => 'submitted',
         ]);
 
-        return back()->with('success', 'Laporan tahun ' . $report->year . ' berhasil dikirim ke Dinas Kesehatan.');
+        return back()->with('success', 'Laporan tahun '.$report->year.' berhasil dikirim ke Dinas Kesehatan.');
     }
 
     public function verify(Request $request, ServiceReport $report)
@@ -88,13 +88,13 @@ class ReportController extends Controller
             'verified_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'Laporan tahun ' . $report->year . ' berhasil diverifikasi.');
+        return back()->with('success', 'Laporan tahun '.$report->year.' berhasil diverifikasi.');
     }
 
     public function destroy(ServiceReport $report)
     {
         $report->delete();
 
-        return back()->with('success', 'Laporan R1 KB Tahun ' . $report->year . ' berhasil dihapus.');
+        return back()->with('success', 'Laporan R1 KB Tahun '.$report->year.' berhasil dihapus.');
     }
 }

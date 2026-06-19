@@ -20,7 +20,7 @@
     <style>
         /* Memperbaiki ukuran pop up SweetAlert2 yang keriput */
         .swal2-popup { border-radius: 16px !important; padding: 32px 24px !important; }
-        .swal2-icon { margin: 16px auto 24px !important; width: 72px !important; height: 72px !important; }
+        .swal2-icon { margin: 16px auto 24px !important; }
         .swal2-title { font-size: 24px !important; margin-bottom: 12px !important; color: #1e293b !important; }
         .swal2-html-container { font-size: 15px !important; color: #64748b !important; margin-bottom: 24px !important; }
         .swal2-confirm { padding: 12px 32px !important; font-size: 16px !important; font-weight: 600 !important; border-radius: 8px !important; box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.2) !important; min-width: 120px !important; transition: all 0.2s !important; }

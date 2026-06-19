@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\KBAcceptor;
-use App\Models\KBAcceptorFamily;
+use App\Models\KBService;
+use App\Models\Notifikasi;
 use App\Models\Puskesmas;
+use App\Models\TbLaporanDinkes;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 
 class KBAcceptorController extends Controller
 {
@@ -29,10 +32,10 @@ class KBAcceptorController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nik', 'like', "%{$search}%")
-                  ->orWhere('full_name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('full_name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -50,11 +53,12 @@ class KBAcceptorController extends Controller
      */
     public function create()
     {
-        if (!in_array(auth()->user()->role, ['kader', 'bidan', 'admin'])) {
+        if (! in_array(auth()->user()->role, ['kader', 'bidan', 'admin'])) {
             abort(403);
         }
 
         $puskesmas = Puskesmas::orderBy('name')->get();
+
         return view('kb-acceptors.create', compact('puskesmas'));
     }
 
@@ -63,7 +67,7 @@ class KBAcceptorController extends Controller
      */
     public function store(Request $request)
     {
-        if (!in_array(auth()->user()->role, ['kader', 'bidan', 'admin'])) {
+        if (! in_array(auth()->user()->role, ['kader', 'bidan', 'admin'])) {
             abort(403);
         }
 
@@ -93,7 +97,7 @@ class KBAcceptorController extends Controller
             'allergies' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
         ], [
-            'nik.unique' => 'NIK sudah terdaftar.'
+            'nik.unique' => 'NIK sudah terdaftar.',
         ]);
 
         $validated['registered_at'] = now();
@@ -120,8 +124,8 @@ class KBAcceptorController extends Controller
 
         // Cek apakah user dengan NIK ini sudah ada
         $user = User::where('nik', $validated['nik'])->first();
-        
-        if (!$user) {
+
+        if (! $user) {
             // Buat User Akun Pasien baru
             $user = User::create([
                 'name' => $validated['full_name'],
@@ -137,7 +141,7 @@ class KBAcceptorController extends Controller
             // Jika user sudah ada (misal dia juga Ibu Hamil / Ortu),
             // update passwordnya jika diisi (opsional) atau gunakan user id tersebut
             $user->update([
-                'password' => Hash::make($validated['password'])
+                'password' => Hash::make($validated['password']),
             ]);
         }
 
@@ -157,6 +161,7 @@ class KBAcceptorController extends Controller
     public function show(KBAcceptor $kbAcceptor)
     {
         $kbAcceptor->load(['kbServices', 'puskesmas', 'registeredBy']);
+
         return view('kb-acceptors.show', compact('kbAcceptor'));
     }
 
@@ -165,11 +170,12 @@ class KBAcceptorController extends Controller
      */
     public function edit(KBAcceptor $kbAcceptor)
     {
-        if (!in_array(auth()->user()->role, ['kader', 'bidan', 'admin']) || (auth()->user()->role === 'kader' && $kbAcceptor->registered_by !== auth()->id())) {
+        if (! in_array(auth()->user()->role, ['kader', 'bidan', 'admin']) || (auth()->user()->role === 'kader' && $kbAcceptor->registered_by !== auth()->id())) {
             abort(403);
         }
 
         $puskesmas = Puskesmas::orderBy('name')->get();
+
         return view('kb-acceptors.edit', compact('kbAcceptor', 'puskesmas'));
     }
 
@@ -178,7 +184,7 @@ class KBAcceptorController extends Controller
      */
     public function update(Request $request, KBAcceptor $kbAcceptor)
     {
-        if (!in_array(auth()->user()->role, ['kader', 'bidan', 'admin']) || (auth()->user()->role === 'kader' && $kbAcceptor->registered_by !== auth()->id())) {
+        if (! in_array(auth()->user()->role, ['kader', 'bidan', 'admin']) || (auth()->user()->role === 'kader' && $kbAcceptor->registered_by !== auth()->id())) {
             abort(403);
         }
 
@@ -206,7 +212,7 @@ class KBAcceptorController extends Controller
             'bmi' => 'nullable|numeric',
             'allergies' => 'nullable|string',
         ], [
-            'nik.unique' => 'NIK sudah terdaftar.'
+            'nik.unique' => 'NIK sudah terdaftar.',
         ]);
 
         // Handle file uploads
@@ -238,11 +244,11 @@ class KBAcceptorController extends Controller
     private function generatePuskesmasCode(string $name): string
     {
         $base = Str::upper(preg_replace('/[^A-Z0-9]/', '', $name));
-        $code = substr($base . str_repeat('X', 10), 0, 10);
+        $code = substr($base.str_repeat('X', 10), 0, 10);
 
         while (Puskesmas::where('code', $code)->exists()) {
             $suffix = mt_rand(10, 99);
-            $code = substr($base . str_repeat('X', 10), 0, 8) . $suffix;
+            $code = substr($base.str_repeat('X', 10), 0, 8).$suffix;
         }
 
         return $code;
@@ -253,11 +259,12 @@ class KBAcceptorController extends Controller
      */
     public function destroy(KBAcceptor $kbAcceptor)
     {
-        if (!in_array(auth()->user()->role, ['kader', 'bidan', 'admin'])) {
+        if (! in_array(auth()->user()->role, ['kader', 'bidan', 'admin'])) {
             abort(403);
         }
 
         $kbAcceptor->delete();
+
         return redirect()->route('kb-acceptors.index')
             ->with('success', 'Akseptor KB berhasil dihapus.');
     }
@@ -295,7 +302,7 @@ class KBAcceptorController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
-        
+
         $acceptors = KBAcceptor::where('nik', 'like', "%{$query}%")
             ->orWhere('full_name', 'like', "%{$query}%")
             ->orWhere('phone', 'like', "%{$query}%")
@@ -311,7 +318,7 @@ class KBAcceptorController extends Controller
             abort(403);
         }
 
-        if (!$kbAcceptor->verification_requested_at) {
+        if (! $kbAcceptor->verification_requested_at) {
             return back()->with('warning', 'Akseptor belum dikirim ke bidan untuk verifikasi.');
         }
 
@@ -334,20 +341,20 @@ class KBAcceptorController extends Controller
 
         // Basic stats for Laporan R1 KB
         $methods = ['IUD', 'MOW', 'MOP', 'Implant', 'Tubektomi', 'Vasektomi', 'Pil', 'Suntik', 'Kondom', 'Jelly'];
-        
+
         $laporanData = [];
         $totalBaru = 0;
         $totalAktif = 0;
-        $selectedDate = \Carbon\Carbon::create($tahun, $bulan)->endOfMonth()->toDateString();
+        $selectedDate = Carbon::create($tahun, $bulan)->endOfMonth()->toDateString();
 
         foreach ($methods as $method) {
-            $baruCount = \App\Models\KBService::where('service_method', $method)
+            $baruCount = KBService::where('service_method', $method)
                 ->whereMonth('service_date', $bulan)
                 ->whereYear('service_date', $tahun)
                 ->count();
 
             // Hitung aktif pada bulan/tahun yang dipilih
-            $aktifCount = \App\Models\KBService::where('service_method', $method)
+            $aktifCount = KBService::where('service_method', $method)
                 ->where('status', 'Aktif')
                 ->whereDate('service_date', '<=', $selectedDate)
                 ->distinct('kb_acceptor_id')
@@ -356,7 +363,7 @@ class KBAcceptorController extends Controller
             $laporanData[] = [
                 'metode' => $method,
                 'baru' => $baruCount,
-                'aktif' => $aktifCount
+                'aktif' => $aktifCount,
             ];
 
             $totalBaru += $baruCount;
@@ -364,7 +371,7 @@ class KBAcceptorController extends Controller
         }
 
         // Get Detail Data Pasien
-        $detailLayanan = \App\Models\KBService::with('acceptor')
+        $detailLayanan = KBService::with('acceptor')
             ->whereMonth('service_date', $bulan)
             ->whereYear('service_date', $tahun)
             ->orderBy('service_date', 'desc')
@@ -384,17 +391,17 @@ class KBAcceptorController extends Controller
 
         // Basic stats for Laporan R1 KB
         $methods = ['IUD', 'MOW', 'MOP', 'Implant', 'Tubektomi', 'Vasektomi', 'Pil', 'Suntik', 'Kondom', 'Jelly'];
-        
+
         $laporanData = [];
-        $selectedDate = \Carbon\Carbon::create($tahun, $bulan)->endOfMonth()->toDateString();
+        $selectedDate = Carbon::create($tahun, $bulan)->endOfMonth()->toDateString();
 
         foreach ($methods as $method) {
-            $baruCount = \App\Models\KBService::where('service_method', $method)
+            $baruCount = KBService::where('service_method', $method)
                 ->whereMonth('service_date', $bulan)
                 ->whereYear('service_date', $tahun)
                 ->count();
 
-            $aktifCount = \App\Models\KBService::where('service_method', $method)
+            $aktifCount = KBService::where('service_method', $method)
                 ->where('status', 'Aktif')
                 ->whereDate('service_date', '<=', $selectedDate)
                 ->distinct('kb_acceptor_id')
@@ -403,11 +410,11 @@ class KBAcceptorController extends Controller
             $laporanData[] = [
                 'metode' => $method,
                 'baru' => $baruCount,
-                'aktif' => $aktifCount
+                'aktif' => $aktifCount,
             ];
         }
 
-        $detailLayanan = \App\Models\KBService::with('acceptor')
+        $detailLayanan = KBService::with('acceptor')
             ->whereMonth('service_date', $bulan)
             ->whereYear('service_date', $tahun)
             ->orderBy('service_date', 'desc')
@@ -417,22 +424,22 @@ class KBAcceptorController extends Controller
             'laporanData' => $laporanData,
             'detailLayanan' => $detailLayanan,
             'bulan' => $bulan,
-            'tahun' => $tahun
+            'tahun' => $tahun,
         ]);
 
-        $laporanDinkes = \App\Models\TbLaporanDinkes::create([
+        $laporanDinkes = TbLaporanDinkes::create([
             'id_bidan' => auth()->id(),
             'nama_puskesmas' => auth()->user()->puskesmas->nama_puskesmas ?? 'Puskesmas',
-            'periode_awal' => \Carbon\Carbon::create($tahun, $bulan, 1)->toDateString(),
-            'periode_akhir' => \Carbon\Carbon::create($tahun, $bulan)->endOfMonth()->toDateString(),
+            'periode_awal' => Carbon::create($tahun, $bulan, 1)->toDateString(),
+            'periode_akhir' => Carbon::create($tahun, $bulan)->endOfMonth()->toDateString(),
             'status' => 'Terkirim',
             'jenis_laporan' => 'KB',
             'data_serialized' => $dataSerialized,
         ]);
 
-        $dinkesUsers = \App\Models\User::where('role', 'dinkes')->get();
+        $dinkesUsers = User::where('role', 'dinkes')->get();
         foreach ($dinkesUsers as $dinkes) {
-            \App\Models\Notifikasi::create([
+            Notifikasi::create([
                 'id_user' => $dinkes->id,
                 'judul' => 'Laporan KB Baru',
                 'pesan' => 'Ada laporan KB baru dari '.($laporanDinkes->nama_puskesmas).' oleh Bidan '.auth()->user()->name.'.',

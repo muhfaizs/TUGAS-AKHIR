@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\IbuHamil;
+use App\Models\Notifikasi;
 use App\Models\TbLaporanDinkes;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -235,10 +236,10 @@ class BidanReportController extends Controller
         // Kirim Notifikasi ke Dinkes
         $dinkesUsers = User::where('role', 'dinkes')->get();
         foreach ($dinkesUsers as $dinkes) {
-            \App\Models\Notifikasi::create([
+            Notifikasi::create([
                 'id_user' => $dinkes->id,
                 'judul' => 'Laporan Periodik Baru',
-                'pesan' => 'Ada laporan periodik baru dari ' . (auth()->user()->puskesmas->nama_puskesmas ?? 'Puskesmas') . ' oleh ' . auth()->user()->name . '.',
+                'pesan' => 'Ada laporan periodik baru dari '.(auth()->user()->puskesmas->nama_puskesmas ?? 'Puskesmas').' oleh '.auth()->user()->name.'.',
                 'wa_link' => null,
             ]);
         }
