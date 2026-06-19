@@ -1,6 +1,7 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Detail Data Pasien - ' . $kbAcceptor->full_name)
+@section('page_title', 'Data Pasien KB')
 
 @section('content')
 <div class="bg-white">
@@ -63,10 +64,7 @@
                             <label class="text-sm text-gray-600">NIK</label>
                             <p class="font-medium">{{ $kbAcceptor->nik }}</p>
                         </div>
-                        <div>
-                            <label class="text-sm text-gray-600">Nomor KK</label>
-                            <p class="font-medium">{{ $kbAcceptor->kk_number ?? '-' }}</p>
-                        </div>
+
                         <div>
                             <label class="text-sm text-gray-600">Tanggal Lahir</label>
                             <p class="font-medium">{{ $kbAcceptor->date_of_birth ? \Carbon\Carbon::parse($kbAcceptor->date_of_birth)->format('d/m/Y') : '-' }}</p>
@@ -172,7 +170,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div>
                     <label class="font-medium">Terdaftar Oleh:</label>
-                    <p>{{ $kbAcceptor->registeredBy->name }}</p>
+                    <p>{{ optional($kbAcceptor->registeredBy)->name ?? '-' }}</p>
                 </div>
                 <div>
                     <label class="font-medium">Tanggal Daftar:</label>

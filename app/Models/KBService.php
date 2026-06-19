@@ -112,5 +112,55 @@ class KBService extends Model
         return $query->whereMonth('service_date', $month)
                      ->whereYear('service_date', $year);
     }
+
+    /**
+     * Get the follow up record for this service
+     */
+    public function followUp()
+    {
+        return $this->hasOne(FollowUp::class, 'kb_service_id');
+    }
+
+    /**
+     * Get the automatic risk level evaluation based on clinical data
+     */
+    public function getRiskLevelAttribute()
+    {
+        // 1. Tekanan darah >140/90 -> Risiko tinggi
+        if (!empty($this->blood_pressure)) {
+            $bp = explode('/', $this->blood_pressure);
+            if (count($bp) == 2) {
+                $systolic = (int) trim($bp[0]);
+                $diastolic = (int) trim($bp[1]);
+                if ($systolic > 140 || $diastolic > 90) {
+                    return 'Tinggi';
+                }
+            }
+        }
+
+        // 2. Usia >35 tahun + merokok -> Risiko tinggi
+        if (!empty($this->contraindication) && stripos($this->contraindication, 'merokok usia >35 tahun') !== false) {
+            return 'Tinggi';
+        }
+
+        // 3. Perdarahan abnormal -> Risiko tinggi
+        if ((!empty($this->side_effects) && stripos($this->side_effects, 'perdarahan') !== false) || 
+            (!empty($this->clinical_findings) && stripos($this->clinical_findings, 'perdarahan') !== false)) {
+            return 'Tinggi';
+        }
+
+        // 4. Terlambat kontrol >30 hari -> Risiko sedang
+        if (!empty($this->follow_up_date)) {
+            $deadline = \Carbon\Carbon::parse($this->follow_up_date)->addDays(30);
+            if (now()->isAfter($deadline)) {
+                // cek apakah follow up sudah dilakukan
+                if (!$this->followUp || $this->followUp->status != 'selesai') {
+                    return 'Sedang';
+                }
+            }
+        }
+
+        return 'Rendah';
+    }
 }
 

@@ -118,8 +118,12 @@ class DinkesController extends Controller
         $kbAkseptors = \App\Models\KbAcceptor::get();
         $totalKb = $kbAkseptors->count();
         $kbAktif = $kbAkseptors->where('status', 'active')->count();
+        $kbRisikoTinggi = $kbAkseptors->filter(function($kb) {
+            $lastService = $kb->lastService();
+            return $lastService && $lastService->risk_level === 'Tinggi';
+        })->count();
 
-        return view('dinkes.laporan', compact('ibuHamils', 'metrics', 'totalAnak', 'anakBerisiko', 'totalImunisasi', 'totalKb', 'kbAktif', 'anaks', 'kbAkseptors'));
+        return view('dinkes.laporan', compact('ibuHamils', 'metrics', 'totalAnak', 'anakBerisiko', 'totalImunisasi', 'totalKb', 'kbAktif', 'kbRisikoTinggi', 'anaks', 'kbAkseptors'));
     }
 
     /**

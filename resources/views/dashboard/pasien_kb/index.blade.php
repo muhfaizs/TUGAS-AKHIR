@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Dashboard Pasien KB - SatuKIA')
-@section('page_title', 'Dashboard')
+@section('page_title', 'Pasien')
 
 @section('content')
 <div class="min-h-screen bg-transparent">
@@ -35,11 +35,11 @@
             </div>
             <div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tanggal Lahir</div>
-                <div class="text-slate-800 font-medium">{{ optional($acceptor)->tanggal_lahir ? \Carbon\Carbon::parse($acceptor->tanggal_lahir)->format('d M Y') . ' (' . \Carbon\Carbon::parse($acceptor->tanggal_lahir)->age . ' thn)' : '- (- thn)' }}</div>
+                <div class="text-slate-800 font-medium">{{ optional($acceptor)->date_of_birth ? \Carbon\Carbon::parse($acceptor->date_of_birth)->format('d M Y') . ' (' . $acceptor->age . ' thn)' : '- (- thn)' }}</div>
             </div>
             <div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Alamat</div>
-                <div class="text-slate-800 font-medium">{{ Auth::user()->address ?? '-' }}</div>
+                <div class="text-slate-800 font-medium">{{ optional($acceptor)->address ?? '-' }}</div>
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@
         </div>
         <!-- Decorative icon -->
         <div class="absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
-            <!-- Decorative box -->
+            <svg class="w-8 h-8 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
         </div>
     </div>
 

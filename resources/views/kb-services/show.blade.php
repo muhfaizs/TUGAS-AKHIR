@@ -1,6 +1,7 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Detail Layanan KB')
+@section('page_title', 'Riwayat Pelayanan KB')
 
 @section('content')
 <div class="bg-white">
@@ -17,6 +18,23 @@
                             bg-yellow-100 text-yellow-800
                         @endif">
                         {{ $kbService->is_verified ? 'Terverifikasi' : 'Pending Verifikasi' }}
+                    </span>
+                    <span class="badge px-3 py-1 rounded-full text-sm font-medium ml-2
+                        @if($kbService->risk_level == 'Tinggi')
+                            bg-red-100 text-red-800
+                        @elseif($kbService->risk_level == 'Sedang')
+                            bg-yellow-100 text-yellow-800
+                        @else
+                            bg-green-100 text-green-800
+                        @endif">
+                        @if($kbService->risk_level == 'Tinggi')
+                            <span class="w-2 h-2 rounded-full bg-red-500 inline-block mr-1"></span>
+                        @elseif($kbService->risk_level == 'Sedang')
+                            <span class="w-2 h-2 rounded-full bg-yellow-500 inline-block mr-1"></span>
+                        @else
+                            <span class="w-2 h-2 rounded-full bg-green-500 inline-block mr-1"></span>
+                        @endif
+                        Risiko {{ $kbService->risk_level }}
                     </span>
                 </p>
             </div>
@@ -40,9 +58,9 @@
                         Hapus
                     </button>
                 </form>
-                <a href="{{ route('kb-acceptors.show', $kbService->acceptor->id) }}" 
+                <a href="{{ route('kb-services.index') }}" 
                    class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded no-underline flex items-center justify-center border-none h-10 font-medium">
-                    Kembali ke Akseptor
+                    Kembali
                 </a>
             </div>
         </div>
@@ -126,25 +144,92 @@
             </div>
         </div>
 
-        <!-- Follow-up -->
+        <!-- Hasil Follow-up -->
         <div class="bg-green-50 p-6 rounded-lg mb-8 border border-green-200">
-            <h2 class="text-lg font-bold text-gray-900 mb-4">Jadwal Follow-up</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-sm text-gray-600">Tanggal Follow-up</label>
-                    <p class="font-medium">
-                        @if($kbService->follow_up_date)
-                            {{ \Carbon\Carbon::parse($kbService->follow_up_date)->format('d/m/Y') }}
-                        @else
-                            -
-                        @endif
-                    </p>
-                </div>
-                <div>
-                    <label class="text-sm text-gray-600">Tipe Follow-up</label>
-                    <p class="font-medium">{{ $kbService->follow_up_type ?? '-' }}</p>
-                </div>
+            <div class="flex items-center justify-between mb-4 border-b border-green-200 pb-3">
+                <h2 class="text-lg font-bold text-gray-900">Hasil Follow-up</h2>
+                @if($kbService->followUp && $kbService->followUp->status == 'selesai')
+                    <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full border border-green-300">Selesai</span>
+                @else
+                    <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full border border-yellow-300">Belum Selesai / Belum Ada</span>
+                @endif
             </div>
+
+            @if($kbService->followUp)
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tanggal Follow-up</label>
+                        <p class="font-medium mt-1">{{ $kbService->followUp->follow_up_date ? \Carbon\Carbon::parse($kbService->followUp->follow_up_date)->format('d/m/Y') : '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Kehadiran</label>
+                        <p class="font-medium mt-1">
+                            @if($kbService->followUp->attendance_status == 'hadir')
+                                <span class="text-green-600">Hadir</span>
+                            @elseif($kbService->followUp->attendance_status == 'tidak_hadir')
+                                <span class="text-red-600">Tidak Hadir</span>
+                            @else
+                                -
+                            @endif
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Kondisi Akseptor</label>
+                        <p class="font-medium mt-1">{{ $kbService->followUp->condition ?: '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Keluhan</label>
+                        <p class="font-medium mt-1">{{ $kbService->followUp->complaints ?: '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Efek Samping</label>
+                        <p class="font-medium mt-1">{{ $kbService->followUp->side_effects ?: '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Catatan Bidan</label>
+                        <p class="font-medium mt-1">{{ $kbService->followUp->notes ?: '-' }}</p>
+                    </div>
+                </div>
+
+                <!-- Jadwal Kontrol Berikutnya dari Follow Up -->
+                <div class="mt-6 bg-white bg-opacity-50 p-4 rounded-lg border border-green-100">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Jadwal Kontrol Berikutnya
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Tanggal Kontrol</label>
+                            <p class="font-medium mt-1">{{ $kbService->followUp->next_control_date ? \Carbon\Carbon::parse($kbService->followUp->next_control_date)->format('d/m/Y') : '-' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Keterangan</label>
+                            <p class="font-medium mt-1">{{ $kbService->followUp->next_control_notes ?: '-' }}</p>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <!-- Tampilan jika belum ada hasil follow up -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-sm text-gray-600">Jadwal Follow-up Saat Ini</label>
+                        <p class="font-medium">
+                            @if($kbService->follow_up_date)
+                                {{ \Carbon\Carbon::parse($kbService->follow_up_date)->format('d/m/Y') }}
+                            @else
+                                -
+                            @endif
+                        </p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-600">Tipe Follow-up</label>
+                        <p class="font-medium">{{ $kbService->follow_up_type ?? '-' }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500 italic">
+                    Belum ada hasil follow-up yang dicatat secara rinci untuk layanan KB ini.
+                </div>
+            @endif
         </div>
 
         <!-- Catatan -->

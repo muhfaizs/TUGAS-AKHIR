@@ -157,14 +157,82 @@
 
                         <section class="rounded-2xl bg-white p-6 shadow-sm border border-slate-100">
                             <h3 class="text-lg font-bold text-slate-800 mb-5">Kontraindikasi & Efek Samping</h3>
-                            <div class="grid gap-6 md:grid-cols-2">
+                            <div class="grid gap-6 md:grid-cols-2" 
+                                 x-data="{ 
+                                    contraSelected: [], 
+                                    contraLainnya: '',
+                                    sideSelected: [],
+                                    sideLainnya: '',
+                                    init() {
+                                        const oldContra = `{{ old('contraindication') }}`;
+                                        const contraOpts = ['Hipertensi', 'Diabetes Melitus', 'Penyakit Jantung', 'Riwayat Stroke', 'Migrain Berat', 'Kanker Payudara', 'Gangguan Hati', 'Gangguan Pembekuan Darah', 'Merokok usia >35 tahun', 'Sedang Hamil', 'Tidak ada kontraindikasi'];
+                                        if(oldContra) {
+                                            let parts = oldContra.split(',').map(s => s.trim());
+                                            this.contraSelected = parts.filter(p => contraOpts.includes(p));
+                                            this.contraLainnya = parts.filter(p => !contraOpts.includes(p)).join(', ');
+                                        }
+                                        
+                                        const oldSide = `{{ old('side_effects') }}`;
+                                        const sideOpts = ['Mual', 'Pusing', 'Sakit kepala', 'Berat badan meningkat', 'Perdarahan', 'Menstruasi tidak teratur', 'Nyeri panggul', 'Jerawat', 'Nyeri payudara', 'Tidak ada efek samping'];
+                                        if(oldSide) {
+                                            let parts = oldSide.split(',').map(s => s.trim());
+                                            this.sideSelected = parts.filter(p => sideOpts.includes(p));
+                                            this.sideLainnya = parts.filter(p => !sideOpts.includes(p)).join(', ');
+                                        }
+                                    },
+                                    get contraResult() {
+                                        let res = this.contraSelected.join(', ');
+                                        if(this.contraLainnya) res += (res ? ', ' : '') + this.contraLainnya;
+                                        return res;
+                                    },
+                                    get sideResult() {
+                                        let res = this.sideSelected.join(', ');
+                                        if(this.sideLainnya) res += (res ? ', ' : '') + this.sideLainnya;
+                                        return res;
+                                    }
+                                }">
+                                
+                                <input type="hidden" name="contraindication" :value="contraResult">
+                                <input type="hidden" name="side_effects" :value="sideResult">
+
                                 <div>
                                     <label class="block text-slate-700 font-medium mb-2">Kontraindikasi</label>
-                                    <textarea name="contraindication" rows="3" placeholder="Kondisi kesehatan yang tidak sesuai" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-slate-900 shadow-sm outline-none transition focus:ring-2 focus:ring-teal-500 focus:bg-white focus:border-teal-500">{{ old('contraindication') }}</textarea>
+                                    <div class="space-y-2 mb-3 max-h-60 overflow-y-auto border border-slate-200 rounded-xl p-4 bg-slate-50/50 custom-scrollbar">
+                                        @php
+                                            $contraOptions = ['Hipertensi', 'Diabetes Melitus', 'Penyakit Jantung', 'Riwayat Stroke', 'Migrain Berat', 'Kanker Payudara', 'Gangguan Hati', 'Gangguan Pembekuan Darah', 'Merokok usia >35 tahun', 'Sedang Hamil', 'Tidak ada kontraindikasi'];
+                                        @endphp
+                                        @foreach($contraOptions as $opt)
+                                        <label class="flex items-start gap-3 cursor-pointer group">
+                                            <div class="relative flex items-center mt-0.5">
+                                                <input type="checkbox" value="{{ $opt }}" x-model="contraSelected" class="peer h-4 w-4 cursor-pointer appearance-none rounded border border-slate-300 checked:border-blue-600 checked:bg-blue-600 transition-all focus:ring-blue-500">
+                                                <svg class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                            <span class="text-sm text-slate-700 group-hover:text-slate-900">{{ $opt }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                    <label class="block text-slate-700 text-sm font-medium mb-1">Tambahkan (Lainnya):</label>
+                                    <textarea x-model="contraLainnya" rows="2" placeholder="Lainnya..." class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-slate-900 shadow-sm outline-none transition focus:ring-2 focus:ring-teal-500 focus:bg-white focus:border-teal-500"></textarea>
                                 </div>
+                                
                                 <div>
                                     <label class="block text-slate-700 font-medium mb-2">Efek Samping / Reaksi</label>
-                                    <textarea name="side_effects" rows="3" placeholder="Efek samping yang mungkin timbul" class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-slate-900 shadow-sm outline-none transition focus:ring-2 focus:ring-teal-500 focus:bg-white focus:border-teal-500">{{ old('side_effects') }}</textarea>
+                                    <div class="space-y-2 mb-3 max-h-60 overflow-y-auto border border-slate-200 rounded-xl p-4 bg-slate-50/50 custom-scrollbar">
+                                        @php
+                                            $sideOptions = ['Mual', 'Pusing', 'Sakit kepala', 'Berat badan meningkat', 'Perdarahan', 'Menstruasi tidak teratur', 'Nyeri panggul', 'Jerawat', 'Nyeri payudara', 'Tidak ada efek samping'];
+                                        @endphp
+                                        @foreach($sideOptions as $opt)
+                                        <label class="flex items-start gap-3 cursor-pointer group">
+                                            <div class="relative flex items-center mt-0.5">
+                                                <input type="checkbox" value="{{ $opt }}" x-model="sideSelected" class="peer h-4 w-4 cursor-pointer appearance-none rounded border border-slate-300 checked:border-blue-600 checked:bg-blue-600 transition-all focus:ring-blue-500">
+                                                <svg class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                            <span class="text-sm text-slate-700 group-hover:text-slate-900">{{ $opt }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                    <label class="block text-slate-700 text-sm font-medium mb-1">Catatan Tambahan:</label>
+                                    <textarea x-model="sideLainnya" rows="2" placeholder="Catatan tambahan..." class="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2.5 text-slate-900 shadow-sm outline-none transition focus:ring-2 focus:ring-teal-500 focus:bg-white focus:border-teal-500"></textarea>
                                 </div>
                             </div>
                         </section>
