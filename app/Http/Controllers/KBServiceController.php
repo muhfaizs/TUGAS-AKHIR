@@ -89,7 +89,7 @@ class KBServiceController extends Controller
 
     public function show(KBService $kbService)
     {
-        $kbService->load('acceptor', 'bidan', 'puskesmasData', 'creator', 'verifier');
+        $kbService->load('acceptor', 'bidan', 'puskesmasData', 'creator', 'verifier', 'followUp');
         
         return view('kb-services.show', compact('kbService'));
     }

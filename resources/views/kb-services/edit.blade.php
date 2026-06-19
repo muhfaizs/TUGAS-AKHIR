@@ -1,6 +1,7 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Edit Layanan KB')
+@section('page_title', 'Edit Layanan KB')
 
 @section('content')
 <div class="bg-white">
@@ -110,16 +111,76 @@
                 <!-- Kontraindikasi & Efek Samping -->
                 <div class="bg-red-50 p-6 rounded-lg border border-red-200">
                     <h2 class="text-lg font-bold text-gray-900 mb-4">Kontraindikasi & Efek Samping</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                         x-data="{ 
+                            contraSelected: [], 
+                            contraLainnya: '',
+                            sideSelected: [],
+                            sideLainnya: '',
+                            init() {
+                                const oldContra = `{{ old('contraindication', $kbService->contraindication ?? '') }}`;
+                                const contraOpts = ['Hipertensi', 'Diabetes Melitus', 'Penyakit Jantung', 'Riwayat Stroke', 'Migrain Berat', 'Kanker Payudara', 'Gangguan Hati', 'Gangguan Pembekuan Darah', 'Merokok usia >35 tahun', 'Sedang Hamil', 'Tidak ada kontraindikasi'];
+                                if(oldContra) {
+                                    let parts = oldContra.split(',').map(s => s.trim());
+                                    this.contraSelected = parts.filter(p => contraOpts.includes(p));
+                                    this.contraLainnya = parts.filter(p => !contraOpts.includes(p)).join(', ');
+                                }
+                                
+                                const oldSide = `{{ old('side_effects', $kbService->side_effects ?? '') }}`;
+                                const sideOpts = ['Mual', 'Pusing', 'Sakit kepala', 'Berat badan meningkat', 'Perdarahan', 'Menstruasi tidak teratur', 'Nyeri panggul', 'Jerawat', 'Nyeri payudara', 'Tidak ada efek samping'];
+                                if(oldSide) {
+                                    let parts = oldSide.split(',').map(s => s.trim());
+                                    this.sideSelected = parts.filter(p => sideOpts.includes(p));
+                                    this.sideLainnya = parts.filter(p => !sideOpts.includes(p)).join(', ');
+                                }
+                            },
+                            get contraResult() {
+                                let res = this.contraSelected.join(', ');
+                                if(this.contraLainnya) res += (res ? ', ' : '') + this.contraLainnya;
+                                return res;
+                            },
+                            get sideResult() {
+                                let res = this.sideSelected.join(', ');
+                                if(this.sideLainnya) res += (res ? ', ' : '') + this.sideLainnya;
+                                return res;
+                            }
+                        }">
+                        
+                        <input type="hidden" name="contraindication" :value="contraResult">
+                        <input type="hidden" name="side_effects" :value="sideResult">
+
                         <div>
                             <label class="block text-gray-700 font-medium mb-2">Kontraindikasi</label>
-                            <textarea name="contraindication" rows="3" placeholder="Kondisi kesehatan yang tidak sesuai"
-                                      class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-600">{{ old('contraindication', $kbService->contraindication) }}</textarea>
+                            <div class="space-y-2 mb-3 max-h-60 overflow-y-auto border border-gray-300 rounded bg-white p-3">
+                                @php
+                                    $contraOptions = ['Hipertensi', 'Diabetes Melitus', 'Penyakit Jantung', 'Riwayat Stroke', 'Migrain Berat', 'Kanker Payudara', 'Gangguan Hati', 'Gangguan Pembekuan Darah', 'Merokok usia >35 tahun', 'Sedang Hamil', 'Tidak ada kontraindikasi'];
+                                @endphp
+                                @foreach($contraOptions as $opt)
+                                <label class="flex items-start gap-2 cursor-pointer">
+                                    <input type="checkbox" value="{{ $opt }}" x-model="contraSelected" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">{{ $opt }}</span>
+                                </label>
+                                @endforeach
+                            </div>
+                            <label class="block text-gray-700 text-sm font-medium mb-1">Tambahkan (Lainnya):</label>
+                            <textarea x-model="contraLainnya" rows="2" placeholder="Lainnya..." class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-600"></textarea>
                         </div>
+                        
                         <div>
                             <label class="block text-gray-700 font-medium mb-2">Efek Samping / Reaksi</label>
-                            <textarea name="side_effects" rows="3" placeholder="Efek samping yang mungkin timbul"
-                                      class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-600">{{ old('side_effects', $kbService->side_effects) }}</textarea>
+                            <div class="space-y-2 mb-3 max-h-60 overflow-y-auto border border-gray-300 rounded bg-white p-3">
+                                @php
+                                    $sideOptions = ['Mual', 'Pusing', 'Sakit kepala', 'Berat badan meningkat', 'Perdarahan', 'Menstruasi tidak teratur', 'Nyeri panggul', 'Jerawat', 'Nyeri payudara', 'Tidak ada efek samping'];
+                                @endphp
+                                @foreach($sideOptions as $opt)
+                                <label class="flex items-start gap-2 cursor-pointer">
+                                    <input type="checkbox" value="{{ $opt }}" x-model="sideSelected" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm text-gray-700">{{ $opt }}</span>
+                                </label>
+                                @endforeach
+                            </div>
+                            <label class="block text-gray-700 text-sm font-medium mb-1">Catatan Tambahan:</label>
+                            <textarea x-model="sideLainnya" rows="2" placeholder="Catatan tambahan..." class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-600"></textarea>
                         </div>
                     </div>
                 </div>
@@ -156,11 +217,13 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex gap-2 justify-between">
-                    <a href="{{ route('kb-services.show', $kbService->id) }}" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded">
+                <div class="flex gap-4 justify-end mt-8 border-t border-gray-100 pt-6">
+                    <a href="{{ route('kb-services.show', $kbService->id) }}" 
+                       class="px-6 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center">
                         Batal
                     </a>
-                    <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded">
+                    <button type="submit" 
+                            class="px-6 py-2.5 bg-[#117a65] hover:bg-[#0e6352] text-white font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center">
                         Perbarui Layanan KB
                     </button>
                 </div>

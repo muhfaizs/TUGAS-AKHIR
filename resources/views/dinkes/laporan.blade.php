@@ -210,6 +210,17 @@
                     <p class="text-2xl font-bold text-slate-800">{{ $kbAktif ?? 0 }}</p>
                 </div>
             </div>
+
+            <!-- Akseptor Risiko Tinggi -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4 border-l-4 border-l-red-400">
+                <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Risiko Tinggi</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $kbRisikoTinggi ?? 0 }}</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -491,6 +502,7 @@
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Metode KB</th>
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Kunjungan Terakhir</th>
                         <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Status</th>
+                        <th class="pb-4 pt-2 px-4 font-bold text-slate-400 text-xs tracking-wider uppercase border-b border-slate-100">Tingkat Risiko</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm">
@@ -509,10 +521,30 @@
                                 <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-bold uppercase">{{ $kb->status }}</span>
                             @endif
                         </td>
+                        <td class="py-4 px-4">
+                            @php
+                                $lastService = $kb->lastService();
+                            @endphp
+                            @if($lastService && $lastService->risk_level == 'Tinggi')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-100 uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span> Risiko Tinggi
+                                </span>
+                            @elseif($lastService && $lastService->risk_level == 'Sedang')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-50 text-yellow-700 border border-yellow-100 uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5"></span> Risiko Sedang
+                                </span>
+                            @elseif($lastService)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-700 border border-green-100 uppercase tracking-wide">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span> Risiko Rendah
+                                </span>
+                            @else
+                                <span class="text-slate-400 text-xs italic">-</span>
+                            @endif
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="py-8 text-center text-slate-500">
+                        <td colspan="6" class="py-8 text-center text-slate-500">
                             Belum ada data akseptor KB yang masuk.
                         </td>
                     </tr>

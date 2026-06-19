@@ -123,17 +123,33 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
-                                    @if($service->is_verified)
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-green-50 text-green-700 border border-green-100 whitespace-nowrap">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                            Terverifikasi
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-yellow-50 text-yellow-700 border border-yellow-100 whitespace-nowrap">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
-                                            Pending
-                                        </span>
-                                    @endif
+                                    <div class="flex flex-col items-start gap-1">
+                                        @if($service->is_verified)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-green-50 text-green-700 border border-green-100 whitespace-nowrap">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                Terverifikasi
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-yellow-50 text-yellow-700 border border-yellow-100 whitespace-nowrap">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                                                Pending
+                                            </span>
+                                        @endif
+                                        
+                                        @if($service->risk_level == 'Tinggi')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-100 uppercase tracking-wide">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span> Risiko Tinggi
+                                            </span>
+                                        @elseif($service->risk_level == 'Sedang')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-50 text-yellow-700 border border-yellow-100 uppercase tracking-wide">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5"></span> Risiko Sedang
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-50 text-green-700 border border-green-100 uppercase tracking-wide">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span> Risiko Rendah
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-center gap-2">

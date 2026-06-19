@@ -37,12 +37,19 @@ class FollowUpController extends Controller
 
         $validated = $request->validate([
             'follow_up_date' => 'required|date',
-            'attendance_status' => 'required|in:hadir,tidak_hadir',
-            'condition' => 'nullable|string|max:255',
+            'attendance_status' => 'required|string',
+            'absence_reason' => 'nullable|string',
+            'condition' => 'nullable|string',
             'complaints' => 'nullable|string',
             'side_effects' => 'nullable|string',
+            'risk_level' => 'nullable|string',
+            'danger_signs' => 'nullable|string',
             'notes' => 'nullable|string',
-            'status' => 'required|in:belum_selesai,selesai',
+            'bidan_actions' => 'nullable|string',
+            'kb_method_decision' => 'nullable|string',
+            'new_kb_method' => 'nullable|string',
+            'method_change_reason' => 'nullable|string',
+            'status' => 'required|string',
             'next_control_date' => 'nullable|date',
             'next_control_notes' => 'nullable|string',
         ]);
@@ -66,6 +73,6 @@ class FollowUpController extends Controller
             $service->update(['follow_up_date' => $validated['next_control_date']]);
         }
 
-        return redirect()->route('kb-acceptors.show', $service->kb_acceptor_id)->with('success', $message);
+        return redirect()->route('kb-services.index')->with('success', $message);
     }
 }
