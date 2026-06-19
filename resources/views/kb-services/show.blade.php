@@ -110,39 +110,25 @@
         </div>
 
         <!-- Pemeriksaan Kesehatan -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">Pemeriksaan Kesehatan</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-600">Tekanan Darah</label>
-                        <p class="font-medium">{{ $kbService->blood_pressure ?? '-' }}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Berat Badan</label>
-                        <p class="font-medium">{{ $kbService->weight ? $kbService->weight . ' kg' : '-' }}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Temuan Klinis</label>
-                        <p class="font-medium text-sm">{{ $kbService->clinical_findings ?? '-' }}</p>
-                    </div>
+        <div class="bg-blue-50 p-6 rounded-lg mb-8 border border-blue-200">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Pemeriksaan Kesehatan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="text-sm text-gray-600">Tekanan Darah</label>
+                    <p class="font-medium mt-1">{{ $kbService->blood_pressure ?? '-' }}</p>
                 </div>
-            </div>
-
-            <div class="bg-red-50 p-6 rounded-lg border border-red-200">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">Kontraindikasi & Efek Samping</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-600">Kontraindikasi</label>
-                        <p class="font-medium text-sm">{{ $kbService->contraindication ?? '-' }}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-600">Efek Samping</label>
-                        <p class="font-medium text-sm">{{ $kbService->side_effects ?? '-' }}</p>
-                    </div>
+                <div>
+                    <label class="text-sm text-gray-600">Berat Badan</label>
+                    <p class="font-medium mt-1">{{ $kbService->weight ? $kbService->weight . ' kg' : '-' }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-600">Temuan Klinis</label>
+                    <p class="font-medium mt-1">{{ $kbService->clinical_findings ?? '-' }}</p>
                 </div>
             </div>
         </div>
+
+
 
         <!-- Hasil Follow-up -->
         <div class="bg-green-50 p-6 rounded-lg mb-8 border border-green-200">
@@ -180,6 +166,10 @@
                     <div>
                         <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Keluhan</label>
                         <p class="font-medium mt-1">{{ $kbService->followUp->complaints ?: '-' }}</p>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Kontraindikasi</label>
+                        <p class="font-medium mt-1">{{ $kbService->contraindication ?? '-' }}</p>
                     </div>
                     <div>
                         <label class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Efek Samping</label>
