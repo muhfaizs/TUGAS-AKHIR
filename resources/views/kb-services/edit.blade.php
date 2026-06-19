@@ -198,9 +198,9 @@
                             <label class="block text-gray-700 font-medium mb-2">Tipe Follow-up</label>
                             <select name="follow_up_type" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-teal-600">
                                 <option value="">Pilih...</option>
-                                <option value="Phone" @selected(old('follow_up_type', $kbService->follow_up_type) == 'Phone')>Telepon</option>
-                                <option value="Visit" @selected(old('follow_up_type', $kbService->follow_up_type) == 'Visit')>Kunjungan</option>
-                                <option value="SMS" @selected(old('follow_up_type', $kbService->follow_up_type) == 'SMS')>SMS/Pesan</option>
+                                <option value="phone" @selected(old('follow_up_type', $kbService->follow_up_type) == 'phone')>Telepon</option>
+                                <option value="visit" @selected(old('follow_up_type', $kbService->follow_up_type) == 'visit')>Kunjungan</option>
+                                <option value="sms" @selected(old('follow_up_type', $kbService->follow_up_type) == 'sms')>SMS/Pesan</option>
                             </select>
                         </div>
                     </div>

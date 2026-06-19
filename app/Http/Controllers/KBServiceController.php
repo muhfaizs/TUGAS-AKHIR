@@ -79,10 +79,19 @@ class KBServiceController extends Controller
             $validated['service_date'] = now();
         }
 
+        // Cek duplikasi: jangan izinkan input jika pasien sudah memiliki layanan di tanggal yang sama
+        $isDuplicate = KBService::where('kb_acceptor_id', $acceptor->id)
+            ->whereDate('service_date', Carbon::parse($validated['service_date'])->toDateString())
+            ->exists();
+
+        if ($isDuplicate) {
+            return back()->withErrors(['kb_acceptor_id' => 'Pasien dengan NIK tersebut sudah memiliki catatan pelayanan pada tanggal yang sama. Data tidak dapat diduplikat.'])->withInput();
+        }
+
         KBService::create($validated);
 
         return redirect()
-            ->route('kb-acceptors.show', $acceptor->id)
+            ->route('kb-services.index')
             ->with('success', 'Layanan KB berhasil ditambahkan');
     }
 
@@ -138,7 +147,7 @@ class KBServiceController extends Controller
         $kbService->delete();
 
         return redirect()
-            ->route('kb-acceptors.show', $acceptorId)
+            ->route('kb-services.index')
             ->with('success', 'Layanan KB berhasil dihapus');
     }
 
