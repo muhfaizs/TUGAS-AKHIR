@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\IbuHamil;
 use App\Models\TbLaporanDinkes;
 use App\Models\User;
-use App\Notifications\LaporanBidanDikirim;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 
 class BidanReportController extends Controller
 {
@@ -236,8 +234,13 @@ class BidanReportController extends Controller
 
         // Kirim Notifikasi ke Dinkes
         $dinkesUsers = User::where('role', 'dinkes')->get();
-        if ($dinkesUsers->count() > 0) {
-            Notification::send($dinkesUsers, new LaporanBidanDikirim(auth()->user()->name, $periode));
+        foreach ($dinkesUsers as $dinkes) {
+            \App\Models\Notifikasi::create([
+                'id_user' => $dinkes->id,
+                'judul' => 'Laporan Periodik Baru',
+                'pesan' => 'Ada laporan periodik baru dari ' . (auth()->user()->puskesmas->nama_puskesmas ?? 'Puskesmas') . ' oleh ' . auth()->user()->name . '.',
+                'wa_link' => null,
+            ]);
         }
 
         return back()->with('success', 'Laporan berhasil dikirim ke Dinkes.');
