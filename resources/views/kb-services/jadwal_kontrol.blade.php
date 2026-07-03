@@ -49,8 +49,8 @@
                         @endphp
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-6 py-4">
-                                <div class="font-medium text-slate-900">{{ $jadwal->acceptor->full_name }}</div>
-                                <div class="text-xs text-slate-500 mt-0.5">{{ $jadwal->acceptor->nik }}</div>
+                                <div class="font-medium text-slate-900">{{ $jadwal->acceptor?->full_name ?? '-' }}</div>
+                                <div class="text-xs text-slate-500 mt-0.5">{{ $jadwal->acceptor?->nik ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4 text-slate-700">
                                 {{ $jadwal->service_method }}

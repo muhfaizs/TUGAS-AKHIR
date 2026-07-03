@@ -189,6 +189,7 @@ class KBServiceController extends Controller
         $query = KBService::with(['acceptor' => function ($q) {
             $q->select('id', 'full_name', 'nik', 'phone', 'address');
         }])
+            ->whereHas('acceptor')
             ->whereNotNull('follow_up_date')
             ->orderBy('follow_up_date', 'asc');
 
