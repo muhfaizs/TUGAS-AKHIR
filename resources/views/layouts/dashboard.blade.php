@@ -278,7 +278,7 @@
 
                 <div class="topbar-right" style="display: flex; align-items: center; gap: 20px;">
                     @php
-                        $notifications = \App\Models\Notifikasi::where('id_user', auth()->id())->latest()->take(5)->get();
+                        $notifications = \App\Models\Notifikasi::where('id_user', auth()->id())->latest()->get();
                         $unreadNotifCount = $notifications->where('is_read', false)->count();
                     @endphp
                     
