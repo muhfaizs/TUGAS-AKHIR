@@ -105,8 +105,8 @@
                         <tr class="hover:bg-slate-50">
                             <td class="px-4 py-3 border-r border-slate-200">{{ $index + 1 }}</td>
                             <td class="px-4 py-3 border-r border-slate-200">
-                                <div class="font-semibold">{{ $layanan->acceptor->full_name }}</div>
-                                <div class="text-xs text-slate-500">{{ $layanan->acceptor->nik }}</div>
+                                <div class="font-semibold">{{ $layanan->acceptor->full_name ?? 'Data tidak ditemukan' }}</div>
+                                <div class="text-xs text-slate-500">{{ $layanan->acceptor->nik ?? '-' }}</div>
                             </td>
                             <td class="px-4 py-3 border-r border-slate-200">{{ $layanan->service_method }}</td>
                             <td class="px-4 py-3 border-r border-slate-200">{{ \Carbon\Carbon::parse($layanan->service_date)->translatedFormat('d M Y') }}</td>
